@@ -17,7 +17,9 @@
  */
 
 #include <assert.h>
+#include <atomic>
 #include <chrono>
+#include <condition_variable>
 #include <errno.h>
 #include <iostream>
 #include <new>
@@ -53,6 +55,8 @@
 using namespace ::chip;
 using namespace ::chip::Inet;
 
+namespace {
+
 // NOTE: Remote device ID is in sync with the echo server device id
 //       At some point, we may want to add an option to connect to a device without
 //       knowing its id, because the ID can be learned on the first response that is received.
@@ -60,18 +64,20 @@ constexpr NodeId kLocalDeviceId  = 112233;
 constexpr NodeId kRemoteDeviceId = 12344321;
 constexpr std::chrono::seconds kWaitingForResponseTimeout(1);
 
-static const char * PAYLOAD    = "Message from Standalone CHIP echo client!";
-bool isDeviceConnected         = false;
-static bool waitingForResponse = true;
+const char * PAYLOAD   = "Message from Standalone CHIP echo client!";
+bool isDeviceConnected = false;
+
+std::condition_variable cvWaitingForResponse;
+std::mutex cvWaitingForResponseMutex;
+std::atomic<bool> waitingForResponse{ true };
 
 // Device Manager Callbacks
-static void OnConnect(DeviceController::ChipDeviceController * controller, Transport::PeerConnectionState * state,
-                      void * appReqState)
+void OnConnect(DeviceController::ChipDeviceController * controller, Transport::PeerConnectionState * state, void * appReqState)
 {
     isDeviceConnected = true;
 }
 
-static bool ContentMayBeADataModelMessage(System::PacketBuffer * buffer)
+bool ContentMayBeADataModelMessage(System::PacketBuffer * buffer)
 {
     // A data model message has a first byte whose value is always one of  0x00,
     // 0x01, 0x02, 0x03.
@@ -79,7 +85,7 @@ static bool ContentMayBeADataModelMessage(System::PacketBuffer * buffer)
 }
 
 // This function consumes (i.e. frees) the buffer.
-static void HandleDataModelMessage(System::PacketBuffer * buffer)
+void HandleDataModelMessage(System::PacketBuffer * buffer)
 {
     EmberApsFrame frame;
     if (extractApsFrame(buffer->Start(), buffer->DataLength(), &frame) == 0)
@@ -148,10 +154,11 @@ exit:
     System::PacketBuffer::Free(buffer);
 }
 
-static void OnMessage(DeviceController::ChipDeviceController * deviceController, void * appReqState, System::PacketBuffer * buffer)
+void OnMessage(DeviceController::ChipDeviceController * deviceController, void * appReqState, System::PacketBuffer * buffer)
 {
     size_t data_len    = buffer->DataLength();
     waitingForResponse = false;
+    cvWaitingForResponse.notify_all();
 
     printf("Message received: %zu bytes\n", data_len);
 
@@ -183,8 +190,11 @@ static void OnError(DeviceController::ChipDeviceController * deviceController, v
                     const IPPacketInfo * pi)
 {
     waitingForResponse = false;
+    cvWaitingForResponse.notify_all();
     printf("ERROR: %s\n Got error\n", ErrorStr(error));
 }
+
+} // namespace
 
 void ShowUsage(const char * executable)
 {
@@ -450,20 +460,14 @@ void DoOnOff(DeviceController::ChipDeviceController * controller, Command comman
 #endif
 
     controller->SendMessage(NULL, buffer);
-    // FIXME: waitingForResponse is being written on other threads, presumably.
-    // We probably need some more synchronization here.
-    auto start = std::chrono::system_clock::now();
-    while (waitingForResponse &&
-           std::chrono::duration_cast<std::chrono::minutes>(std::chrono::system_clock::now() - start) < kWaitingForResponseTimeout)
-    {
-        // Just poll for the response.
-        sleep(1);
-    }
 
-    if (waitingForResponse)
+    std::unique_lock<std::mutex> lk(cvWaitingForResponseMutex);
+    auto waitingUntil = std::chrono::system_clock::now() + kWaitingForResponseTimeout;
+
+    if (!cvWaitingForResponse.wait_until(lk, waitingUntil, []() { return !waitingForResponse.load(); }))
     {
-        fprintf(stderr, "No response from device.");
-    }
+        fprintf(stderr, "No response from device.\n");
+    };
 }
 
 CHIP_ERROR ExecuteCommand(DeviceController::ChipDeviceController * controller, Command command, CommandArgs & commandArgs)
