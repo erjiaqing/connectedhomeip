@@ -467,7 +467,7 @@ void DoOnOff(DeviceController::ChipDeviceController * controller, Command comman
     if (!cvWaitingForResponse.wait_until(lk, waitingUntil, []() { return !waitingForResponse.load(); }))
     {
         fprintf(stderr, "No response from device.\n");
-    };
+    }
 }
 
 CHIP_ERROR ExecuteCommand(DeviceController::ChipDeviceController * controller, Command command, CommandArgs & commandArgs)
