@@ -22,6 +22,7 @@
 #include <condition_variable>
 #include <errno.h>
 #include <iostream>
+#include <mutex>
 #include <new>
 #include <sstream>
 #include <stdarg.h>
@@ -69,7 +70,7 @@ bool isDeviceConnected = false;
 
 std::condition_variable cvWaitingForResponse;
 std::mutex cvWaitingForResponseMutex;
-std::atomic<bool> waitingForResponse{ true };
+bool waitingForResponse{ true };
 
 // Device Manager Callbacks
 void OnConnect(DeviceController::ChipDeviceController * controller, Transport::PeerConnectionState * state, void * appReqState)
@@ -156,9 +157,12 @@ exit:
 
 void OnMessage(DeviceController::ChipDeviceController * deviceController, void * appReqState, System::PacketBuffer * buffer)
 {
-    size_t data_len    = buffer->DataLength();
-    waitingForResponse = false;
-    cvWaitingForResponse.notify_all();
+    size_t data_len = buffer->DataLength();
+    {
+        std::lock_guard<std::mutex> lk(cvWaitingForResponseMutex);
+        waitingForResponse = false;
+        cvWaitingForResponse.notify_all();
+    }
 
     printf("Message received: %zu bytes\n", data_len);
 
@@ -189,8 +193,11 @@ void OnMessage(DeviceController::ChipDeviceController * deviceController, void *
 static void OnError(DeviceController::ChipDeviceController * deviceController, void * appReqState, CHIP_ERROR error,
                     const IPPacketInfo * pi)
 {
-    waitingForResponse = false;
-    cvWaitingForResponse.notify_all();
+    {
+        std::lock_guard<std::mutex> lk(cvWaitingForResponseMutex);
+        waitingForResponse = false;
+        cvWaitingForResponse.notify_all();
+    }
     printf("ERROR: %s\n Got error\n", ErrorStr(error));
 }
 
@@ -464,7 +471,7 @@ void DoOnOff(DeviceController::ChipDeviceController * controller, Command comman
     std::unique_lock<std::mutex> lk(cvWaitingForResponseMutex);
     auto waitingUntil = std::chrono::system_clock::now() + kWaitingForResponseTimeout;
 
-    if (!cvWaitingForResponse.wait_until(lk, waitingUntil, []() { return !waitingForResponse.load(); }))
+    if (!cvWaitingForResponse.wait_until(lk, waitingUntil, []() { return !waitingForResponse; }))
     {
         fprintf(stderr, "No response from device.\n");
     }
