@@ -161,8 +161,8 @@ void OnMessage(DeviceController::ChipDeviceController * deviceController, void *
     {
         std::lock_guard<std::mutex> lk(cvWaitingForResponseMutex);
         waitingForResponse = false;
-        cvWaitingForResponse.notify_all();
     }
+    cvWaitingForResponse.notify_all();
 
     printf("Message received: %zu bytes\n", data_len);
 
@@ -196,8 +196,8 @@ static void OnError(DeviceController::ChipDeviceController * deviceController, v
     {
         std::lock_guard<std::mutex> lk(cvWaitingForResponseMutex);
         waitingForResponse = false;
-        cvWaitingForResponse.notify_all();
     }
+    cvWaitingForResponse.notify_all();
     printf("ERROR: %s\n Got error\n", ErrorStr(error));
 }
 
