@@ -21,6 +21,7 @@ assert(chip_build_tools)
 executable("chip-tool-server") {
   sources = [
     "${chip_root}/src/app/clusters/on-off-server/on-off.c",
+    "${chip_root}/src/app/util/af-event.cpp",
     "${chip_root}/src/app/util/attribute-size.c",
     "${chip_root}/src/app/util/attribute-storage.c",
     "${chip_root}/src/app/util/attribute-table.c",
@@ -35,7 +36,7 @@ executable("chip-tool-server") {
     "gen/call-command-handler.c",
     "gen/callback-stub.c",
     "gen/znet-bookkeeping.c",
-    "main.cpp",
+    "server.cpp",
   ]
 
   include_dirs = [
