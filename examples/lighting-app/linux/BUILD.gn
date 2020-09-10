@@ -36,7 +36,7 @@ executable("chip-tool-server") {
     "gen/call-command-handler.c",
     "gen/callback-stub.c",
     "gen/znet-bookkeeping.c",
-    "server.cpp",
+    "main.cpp",
   ]
 
   include_dirs = [
