@@ -44,6 +44,7 @@
 #include <transport/SecureSessionMgr.h>
 #include <transport/Tuple.h>
 #include <transport/UDP.h>
+#include <platform/ESP32/ESP32Utils.h>
 
 #include "DataModelHandler.h"
 #include "LEDWidget.h"
@@ -245,7 +246,7 @@ void startServer()
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     err            = sessions.Init(kLocalNodeId, &DeviceLayer::SystemLayer,
-                        UdpListenParameters(&DeviceLayer::InetLayer).SetAddressType(kIPAddressType_IPv6).SetInterfaceId(NULL),
+                        UdpListenParameters(&DeviceLayer::InetLayer).SetAddressType(kIPAddressType_IPv6).SetInterfaceId(DeviceLayer::Internal::ESP32Utils::GetStationNetif()),
                         UdpListenParameters(&DeviceLayer::InetLayer).SetAddressType(kIPAddressType_IPv4));
     SuccessOrExit(err);
 

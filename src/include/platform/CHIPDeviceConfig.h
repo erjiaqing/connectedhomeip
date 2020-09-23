@@ -250,7 +250,7 @@
  * Name of the WiFi station interface
  */
 #ifndef CHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME
-#define CHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME "wlan0"
+#define CHIP_DEVICE_CONFIG_WIFI_STATION_IF_NAME "wlp2s0"
 #endif
 
 // -------------------- WiFi AP Configuration --------------------

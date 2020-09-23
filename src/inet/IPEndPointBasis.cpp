@@ -303,6 +303,7 @@ static INET_ERROR SocketsIPv6JoinLeaveMulticastGroup(int aSocket, InterfaceId aI
     INET_ERROR lRetval          = INET_NO_ERROR;
     const unsigned int lIfIndex = static_cast<unsigned int>(aInterfaceId);
     struct ipv6_mreq lMulticastRequest;
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
 
     // Check whether that cast we did was actually safe.  We can't VerifyOrExit
     // before declaring variables, and can't reassign lIfIndex without making it
@@ -326,6 +327,7 @@ exit:
 static INET_ERROR SocketsIPv6JoinMulticastGroup(int aSocket, InterfaceId aInterfaceId, const IPAddress & aAddress)
 {
 #if INET_IPV6_ADD_MEMBERSHIP
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
     return SocketsIPv6JoinLeaveMulticastGroup(aSocket, aInterfaceId, aAddress, INET_IPV6_ADD_MEMBERSHIP);
 #else
     return INET_ERROR_NOT_SUPPORTED;
@@ -459,10 +461,14 @@ INET_ERROR IPEndPointBasis::JoinMulticastGroup(InterfaceId aInterfaceId, const I
 {
     INET_ERROR lRetval = INET_ERROR_NOT_IMPLEMENTED;
 
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
+
 #if CHIP_SYSTEM_CONFIG_USE_LWIP || CHIP_SYSTEM_CONFIG_USE_SOCKETS
     const IPAddressType lAddrType = aAddress.Type();
     lRetval                       = CheckMulticastGroupArgs(aInterfaceId, aAddress);
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
     SuccessOrExit(lRetval);
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
 
     switch (lAddrType)
     {
@@ -472,6 +478,7 @@ INET_ERROR IPEndPointBasis::JoinMulticastGroup(InterfaceId aInterfaceId, const I
 #if CHIP_SYSTEM_CONFIG_USE_LWIP
 #if LWIP_IPV4 && LWIP_IGMP
         lRetval = LwIPIPv4JoinLeaveMulticastGroup(aInterfaceId, aAddress, igmp_joingroup_netif);
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
 #else  // LWIP_IPV4 && LWIP_IGMP
         lRetval = INET_ERROR_NOT_SUPPORTED;
 #endif // LWIP_IPV4 && LWIP_IGMP
@@ -480,6 +487,7 @@ INET_ERROR IPEndPointBasis::JoinMulticastGroup(InterfaceId aInterfaceId, const I
 
 #if CHIP_SYSTEM_CONFIG_USE_SOCKETS
         lRetval = SocketsIPv4JoinLeaveMulticastGroup(mSocket, aInterfaceId, aAddress, IP_ADD_MEMBERSHIP);
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
         SuccessOrExit(lRetval);
 #endif // CHIP_SYSTEM_CONFIG_USE_SOCKETS
     }
@@ -488,8 +496,10 @@ INET_ERROR IPEndPointBasis::JoinMulticastGroup(InterfaceId aInterfaceId, const I
 
     case kIPAddressType_IPv6: {
 #if CHIP_SYSTEM_CONFIG_USE_LWIP
+    ChipLogError(Inet, "LWIP IPV6 MLD %d / ND %d / IPV6 %d", LWIP_IPV6_MLD, LWIP_IPV6_ND, LWIP_IPV6);
 #if LWIP_IPV6_MLD && LWIP_IPV6_ND && LWIP_IPV6
         lRetval = LwIPIPv6JoinLeaveMulticastGroup(aInterfaceId, aAddress, mld6_joingroup_netif);
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
 #else  // LWIP_IPV6_MLD && LWIP_IPV6_ND && LWIP_IPV6
         lRetval = INET_ERROR_NOT_SUPPORTED;
 #endif // LWIP_IPV6_MLD && LWIP_IPV6_ND && LWIP_IPV6
@@ -498,6 +508,7 @@ INET_ERROR IPEndPointBasis::JoinMulticastGroup(InterfaceId aInterfaceId, const I
 
 #if CHIP_SYSTEM_CONFIG_USE_SOCKETS
         lRetval = SocketsIPv6JoinMulticastGroup(mSocket, aInterfaceId, aAddress);
+    ChipLogError(Inet, "%s : %d", __FUNCTION__, __LINE__);
         SuccessOrExit(lRetval);
 #endif // CHIP_SYSTEM_CONFIG_USE_SOCKETS
     }

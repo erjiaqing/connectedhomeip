@@ -481,7 +481,6 @@ extern "C" void app_main()
 
     // Start the Echo Server
     InitDataModelHandler();
-    startServer();
 
     if (isRendezvousBLE())
     {
@@ -565,6 +564,9 @@ extern "C" void app_main()
     }
 
 #endif // CONFIG_HAVE_DISPLAY
+
+    vTaskDelay(5000 / portTICK_PERIOD_MS);
+    startServer();
 
     // Run the UI Loop
     while (true)
