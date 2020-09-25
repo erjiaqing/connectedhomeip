@@ -402,7 +402,7 @@ CHIP_ERROR ConnectivityManagerImpl::_Init()
     SuccessOrExit(err);
 
     // If there is no persistent station provision...
-    if (!IsWiFiStationProvisioned())
+    if (true || !IsWiFiStationProvisioned())
     {
         // If the code has been compiled with a default WiFi station provision, configure that now.
         if (CONFIG_DEFAULT_WIFI_SSID[0] != 0)
