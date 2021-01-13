@@ -1535,6 +1535,334 @@ CHIP_ERROR LevelControlCluster::ReadAttributeClusterRevision(Callback::Callback<
     return SendCommand(std::move(payload), onCompletion);
 }
 
+// NetworkProvisioning Cluster Commands
+CHIP_ERROR NetworkProvisioningCluster::AddThreadNetwork(Callback::Callback<> * onCompletion, uint8_t * operationalDataset,
+                                                        uint32_t operationalDataset_Len, uint64_t breadcrumb, uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeAddThreadNetworkCommand(
+        mDevice->GetCommandSender(), mEndpoint, 0, operationalDataset, operationalDataset_Len, breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterAddThreadNetworkCommand(mEndpoint, operationalDataset, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::AddThreadNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode,
+                                                            char * debugText)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeAddThreadNetworkRespCommand(mDevice->GetCommandSender(), mEndpoint, 0, errorCode,
+                                                                               debugText);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterAddThreadNetworkRespCommand(mEndpoint, errorCode, debugText);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::AddWiFiNetwork(Callback::Callback<> * onCompletion, uint8_t * ssid, uint32_t ssid_Len,
+                                                      uint8_t * credentials, uint32_t credentials_Len, uint64_t breadcrumb,
+                                                      uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeAddWiFiNetworkCommand(mDevice->GetCommandSender(), mEndpoint, 0, ssid, ssid_Len,
+                                                                         credentials, credentials_Len, breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterAddWiFiNetworkCommand(mEndpoint, ssid, credentials, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::AddWiFiNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeAddWiFiNetworkRespCommand(mDevice->GetCommandSender(), mEndpoint, 0, errorCode,
+                                                                             debugText);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload = encodeNetworkProvisioningClusterAddWiFiNetworkRespCommand(mEndpoint, errorCode, debugText);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::DisableNetwork(Callback::Callback<> * onCompletion, uint8_t * networkID,
+                                                      uint32_t networkID_Len, uint64_t breadcrumb, uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeDisableNetworkCommand(mDevice->GetCommandSender(), mEndpoint, 0, networkID,
+                                                                         networkID_Len, breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterDisableNetworkCommand(mEndpoint, networkID, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::DisableNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeDisableNetworkRespCommand(mDevice->GetCommandSender(), mEndpoint, 0, errorCode,
+                                                                             debugText);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload = encodeNetworkProvisioningClusterDisableNetworkRespCommand(mEndpoint, errorCode, debugText);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::EnableNetwork(Callback::Callback<> * onCompletion, uint8_t * networkID,
+                                                     uint32_t networkID_Len, uint64_t breadcrumb, uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeEnableNetworkCommand(mDevice->GetCommandSender(), mEndpoint, 0, networkID,
+                                                                        networkID_Len, breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterEnableNetworkCommand(mEndpoint, networkID, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::EnableNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeEnableNetworkRespCommand(mDevice->GetCommandSender(), mEndpoint, 0, errorCode,
+                                                                            debugText);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload = encodeNetworkProvisioningClusterEnableNetworkRespCommand(mEndpoint, errorCode, debugText);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::GetLastNetworkProvisioningResult(Callback::Callback<> * onCompletion, uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeGetLastNetworkProvisioningResultCommand(mDevice->GetCommandSender(), mEndpoint,
+                                                                                           0, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterGetLastNetworkProvisioningResultCommand(mEndpoint, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::RemoveNetwork(Callback::Callback<> * onCompletion, uint8_t * networkID,
+                                                     uint32_t networkID_Len, uint64_t breadcrumb, uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeRemoveNetworkCommand(mDevice->GetCommandSender(), mEndpoint, 0, networkID,
+                                                                        networkID_Len, breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterRemoveNetworkCommand(mEndpoint, networkID, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::RemoveNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeRemoveNetworkRespCommand(mDevice->GetCommandSender(), mEndpoint, 0, errorCode,
+                                                                            debugText);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload = encodeNetworkProvisioningClusterRemoveNetworkRespCommand(mEndpoint, errorCode, debugText);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::ScanNetworks(Callback::Callback<> * onCompletion, uint8_t * ssid, uint32_t ssid_Len,
+                                                    uint64_t breadcrumb, uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeScanNetworksCommand(mDevice->GetCommandSender(), mEndpoint, 0, ssid, ssid_Len,
+                                                                       breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterScanNetworksCommand(mEndpoint, ssid, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::ScanNetworksResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText,
+                                                        uint8_t security, uint8_t * ssid, uint32_t ssid_Len, uint8_t * bssid,
+                                                        uint32_t bssid_Len, uint8_t channel, uint32_t frequencyBand,
+                                                        uint8_t * discoveryResponse, uint32_t discoveryResponse_Len)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeScanNetworksRespCommand(
+        mDevice->GetCommandSender(), mEndpoint, 0, errorCode, debugText, security, ssid, ssid_Len, bssid, bssid_Len, channel,
+        frequencyBand, discoveryResponse, discoveryResponse_Len);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload = encodeNetworkProvisioningClusterScanNetworksRespCommand(
+        mEndpoint, errorCode, debugText, security, ssid, bssid, channel, frequencyBand, discoveryResponse);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::TestNetwork(Callback::Callback<> * onCompletion, uint8_t * networkID, uint32_t networkID_Len,
+                                                   uint64_t breadcrumb, uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeTestNetworkCommand(mDevice->GetCommandSender(), mEndpoint, 0, networkID,
+                                                                      networkID_Len, breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterTestNetworkCommand(mEndpoint, networkID, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::TestNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeTestNetworkRespCommand(mDevice->GetCommandSender(), mEndpoint, 0, errorCode,
+                                                                          debugText);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload = encodeNetworkProvisioningClusterTestNetworkRespCommand(mEndpoint, errorCode, debugText);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::UpdateThreadNetwork(Callback::Callback<> * onCompletion, uint8_t * operationalDataset,
+                                                           uint32_t operationalDataset_Len, uint64_t breadcrumb, uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeUpdateThreadNetworkCommand(
+        mDevice->GetCommandSender(), mEndpoint, 0, operationalDataset, operationalDataset_Len, breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterUpdateThreadNetworkCommand(mEndpoint, operationalDataset, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::UpdateThreadNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode,
+                                                               char * debugText)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeUpdateThreadNetworkRespCommand(mDevice->GetCommandSender(), mEndpoint, 0,
+                                                                                  errorCode, debugText);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterUpdateThreadNetworkRespCommand(mEndpoint, errorCode, debugText);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::UpdateWiFiNetwork(Callback::Callback<> * onCompletion, uint8_t * ssid, uint32_t ssid_Len,
+                                                         uint8_t * credentials, uint32_t credentials_Len, uint64_t breadcrumb,
+                                                         uint32_t timeoutMs)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeUpdateWiFiNetworkCommand(
+        mDevice->GetCommandSender(), mEndpoint, 0, ssid, ssid_Len, credentials, credentials_Len, breadcrumb, timeoutMs);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterUpdateWiFiNetworkCommand(mEndpoint, ssid, credentials, breadcrumb, timeoutMs);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+CHIP_ERROR NetworkProvisioningCluster::UpdateWiFiNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode,
+                                                             char * debugText)
+{
+#ifdef CHIP_APP_USE_INTERACTION_MODEL
+    VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+    (void) onCompletion;
+    // TODO(@vivien-apple): onCompletion is not used by IM for now.
+    chip::app::cluster::NetworkProvisioning::EncodeUpdateWiFiNetworkRespCommand(mDevice->GetCommandSender(), mEndpoint, 0,
+                                                                                errorCode, debugText);
+    return mDevice->SendCommands();
+#else
+    System::PacketBufferHandle payload =
+        encodeNetworkProvisioningClusterUpdateWiFiNetworkRespCommand(mEndpoint, errorCode, debugText);
+    return SendCommand(std::move(payload), onCompletion);
+#endif
+}
+
+// NetworkProvisioning Cluster Attributes
+CHIP_ERROR NetworkProvisioningCluster::DiscoverAttributes(Callback::Callback<> * onCompletion)
+{
+    return CHIP_ERROR_NOT_IMPLEMENTED;
+}
+CHIP_ERROR NetworkProvisioningCluster::ReadAttributeClusterRevision(Callback::Callback<> * onCompletion)
+{
+    return CHIP_ERROR_NOT_IMPLEMENTED;
+}
+
 // OnOff Cluster Commands
 CHIP_ERROR OnOffCluster::Off(Callback::Callback<> * onCompletion)
 {

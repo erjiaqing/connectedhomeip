@@ -19,6 +19,7 @@
 
 #include <memory>
 #include <thread>
+#include <vector>
 
 #include "platform/internal/CHIPDeviceLayerInternal.h"
 
@@ -48,6 +49,7 @@ public:
     CHIP_ERROR _GetThreadProvision(Internal::DeviceNetworkInfo & netInfo, bool includeCredentials);
 
     CHIP_ERROR _SetThreadProvision(const Internal::DeviceNetworkInfo & netInfo);
+    CHIP_ERROR _SetThreadProvision(const uint8_t * operationalDataset, const uint32_t operationalDatasetLen);
 
     void _ErasePersistentInfo();
 
@@ -104,6 +106,7 @@ private:
     std::unique_ptr<otbr::DBus::ThreadApiDBus> mThreadApi;
     UniqueDBusConnection mConnection;
     Internal::DeviceNetworkInfo mNetworkInfo;
+    std::vector<uint8_t> mOperationalDatasetTlv;
     bool mAttached;
     std::thread mDBusEventLoop;
 };

@@ -299,6 +299,100 @@ class ChipCluster:
                 "StopWithOnOff": {
                 },
             },
+            "NetworkProvisioning": {
+                "AddThreadNetwork": {
+                    "operationalDataset": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "AddThreadNetworkResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                },
+                "AddWiFiNetwork": {
+                    "ssid": "bytes",
+                    "credentials": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "AddWiFiNetworkResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                },
+                "DisableNetwork": {
+                    "networkID": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "DisableNetworkResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                },
+                "EnableNetwork": {
+                    "networkID": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "EnableNetworkResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                },
+                "GetLastNetworkProvisioningResult": {
+                    "timeoutMs": "int",
+                },
+                "RemoveNetwork": {
+                    "networkID": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "RemoveNetworkResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                },
+                "ScanNetworks": {
+                    "ssid": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "ScanNetworksResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                    "security": "int",
+                    "ssid": "bytes",
+                    "bssid": "bytes",
+                    "channel": "int",
+                    "frequencyBand": "int",
+                    "discoveryResponse": "bytes",
+                },
+                "TestNetwork": {
+                    "networkID": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "TestNetworkResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                },
+                "UpdateThreadNetwork": {
+                    "operationalDataset": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "UpdateThreadNetworkResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                },
+                "UpdateWiFiNetwork": {
+                    "ssid": "bytes",
+                    "credentials": "bytes",
+                    "breadcrumb": "int",
+                    "timeoutMs": "int",
+                },
+                "UpdateWiFiNetworkResp": {
+                    "errorCode": "int",
+                    "debugText": "str",
+                },
+            },
             "OnOff": {
                 "Off": {
                 },
@@ -750,6 +844,148 @@ class ChipCluster:
             )
         )
 
+    def ClusterNetworkProvisioning_CommandAddThreadNetwork(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, operationalDataset: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddThreadNetwork(
+                device, ZCLendpoint, ZCLgroupid, operationalDataset, len(operationalDataset), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandAddThreadNetworkResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddThreadNetworkResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandAddWiFiNetwork(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, ssid: bytes, credentials: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddWiFiNetwork(
+                device, ZCLendpoint, ZCLgroupid, ssid, len(ssid), credentials, len(credentials), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandAddWiFiNetworkResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddWiFiNetworkResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandDisableNetwork(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, networkID: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_DisableNetwork(
+                device, ZCLendpoint, ZCLgroupid, networkID, len(networkID), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandDisableNetworkResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_DisableNetworkResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandEnableNetwork(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, networkID: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_EnableNetwork(
+                device, ZCLendpoint, ZCLgroupid, networkID, len(networkID), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandEnableNetworkResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_EnableNetworkResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandGetLastNetworkProvisioningResult(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_GetLastNetworkProvisioningResult(
+                device, ZCLendpoint, ZCLgroupid, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandRemoveNetwork(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, networkID: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_RemoveNetwork(
+                device, ZCLendpoint, ZCLgroupid, networkID, len(networkID), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandRemoveNetworkResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_RemoveNetworkResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandScanNetworks(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, ssid: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_ScanNetworks(
+                device, ZCLendpoint, ZCLgroupid, ssid, len(ssid), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandScanNetworksResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str, security: int, ssid: bytes, bssid: bytes, channel: int, frequencyBand: int, discoveryResponse: bytes):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_ScanNetworksResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText, security, ssid, len(ssid), bssid, len(bssid), channel, frequencyBand, discoveryResponse, len(discoveryResponse)
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandTestNetwork(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, networkID: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_TestNetwork(
+                device, ZCLendpoint, ZCLgroupid, networkID, len(networkID), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandTestNetworkResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_TestNetworkResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandUpdateThreadNetwork(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, operationalDataset: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateThreadNetwork(
+                device, ZCLendpoint, ZCLgroupid, operationalDataset, len(operationalDataset), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandUpdateThreadNetworkResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateThreadNetworkResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandUpdateWiFiNetwork(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, ssid: bytes, credentials: bytes, breadcrumb: int, timeoutMs: int):
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateWiFiNetwork(
+                device, ZCLendpoint, ZCLgroupid, ssid, len(ssid), credentials, len(credentials), breadcrumb, timeoutMs
+            )
+        )
+
+    def ClusterNetworkProvisioning_CommandUpdateWiFiNetworkResp(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int, errorCode: int, debugText: str):
+        debugText = debugText.encode("utf-8") + b'\x00'
+        self._ChipStack.Call(
+            lambda: self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateWiFiNetworkResp(
+                device, ZCLendpoint, ZCLgroupid, errorCode, debugText
+            )
+        )
+
     def ClusterOnOff_CommandOff(self, device: ctypes.c_void_p, ZCLendpoint: int, ZCLgroupid: int):
         self._ChipStack.Call(
             lambda: self._chipLib.chip_ime_AppendCommand_OnOff_Off(
@@ -999,6 +1235,64 @@ class ChipCluster:
         # Cluster LevelControl Command StopWithOnOff
         self._chipLib.chip_ime_AppendCommand_LevelControl_StopWithOnOff.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16]
         self._chipLib.chip_ime_AppendCommand_LevelControl_StopWithOnOff.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning
+        # Cluster NetworkProvisioning Command AddThreadNetwork
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddThreadNetwork.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddThreadNetwork.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command AddThreadNetworkResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddThreadNetworkResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddThreadNetworkResp.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command AddWiFiNetwork
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddWiFiNetwork.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddWiFiNetwork.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command AddWiFiNetworkResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddWiFiNetworkResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_AddWiFiNetworkResp.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command DisableNetwork
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_DisableNetwork.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_DisableNetwork.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command DisableNetworkResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_DisableNetworkResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_DisableNetworkResp.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command EnableNetwork
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_EnableNetwork.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_EnableNetwork.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command EnableNetworkResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_EnableNetworkResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_EnableNetworkResp.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command GetLastNetworkProvisioningResult
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_GetLastNetworkProvisioningResult.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_GetLastNetworkProvisioningResult.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command RemoveNetwork
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_RemoveNetwork.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_RemoveNetwork.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command RemoveNetworkResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_RemoveNetworkResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_RemoveNetworkResp.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command ScanNetworks
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_ScanNetworks.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_ScanNetworks.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command ScanNetworksResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_ScanNetworksResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p, ctypes.c_uint8, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint8, ctypes.c_uint32, ctypes.c_char_p, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_ScanNetworksResp.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command TestNetwork
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_TestNetwork.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_TestNetwork.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command TestNetworkResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_TestNetworkResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_TestNetworkResp.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command UpdateThreadNetwork
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateThreadNetwork.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateThreadNetwork.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command UpdateThreadNetworkResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateThreadNetworkResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateThreadNetworkResp.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command UpdateWiFiNetwork
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateWiFiNetwork.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_char_p, ctypes.c_uint32, ctypes.c_uint64, ctypes.c_uint32]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateWiFiNetwork.restype = ctypes.c_uint32
+        # Cluster NetworkProvisioning Command UpdateWiFiNetworkResp
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateWiFiNetworkResp.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_uint8, ctypes.c_char_p]
+        self._chipLib.chip_ime_AppendCommand_NetworkProvisioning_UpdateWiFiNetworkResp.restype = ctypes.c_uint32
         # Cluster OnOff
         # Cluster OnOff Command Off
         self._chipLib.chip_ime_AppendCommand_OnOff_Off.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16]

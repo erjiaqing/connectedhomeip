@@ -592,6 +592,149 @@ void ShutdownCluster(chip::app::InteractionModelEngine * ime);
 
 } // namespace LevelControl
 
+namespace NetworkProvisioning {
+/*----------------------------------------------------------------------------*\
+| Cluster NetworkProvisioning                                         | 0x9999 |
+|------------------------------------------------------------------------------|
+| Commands:                                                           |        |
+| * AddThreadNetwork                                                  |   0x07 |
+| * AddThreadNetworkResp                                              |   0x08 |
+| * AddWiFiNetwork                                                    |   0x03 |
+| * AddWiFiNetworkResp                                                |   0x04 |
+| * DisableNetwork                                                    |   0x13 |
+| * DisableNetworkResp                                                |   0x14 |
+| * EnableNetwork                                                     |   0x11 |
+| * EnableNetworkResp                                                 |   0x12 |
+| * GetLastNetworkProvisioningResult                                  |   0x17 |
+| * RemoveNetwork                                                     |   0x0F |
+| * RemoveNetworkResp                                                 |   0x10 |
+| * ScanNetworks                                                      |   0x01 |
+| * ScanNetworksResp                                                  |   0x02 |
+| * TestNetwork                                                       |   0x15 |
+| * TestNetworkResp                                                   |   0x16 |
+| * UpdateThreadNetwork                                               |   0x09 |
+| * UpdateThreadNetworkResp                                           |   0x0A |
+| * UpdateWiFiNetwork                                                 |   0x05 |
+| * UpdateWiFiNetworkResp                                             |   0x06 |
+|------------------------------------------------------------------------------|
+| Attributes:                                                         |        |
+| * ClusterRevision                                                   | 0xFFFD |
+\*----------------------------------------------------------------------------*/
+constexpr uint16_t kClusterId                                = 0x9999;
+constexpr uint8_t kAddThreadNetworkCommandId                 = 0x07;
+constexpr uint8_t kAddThreadNetworkRespCommandId             = 0x08;
+constexpr uint8_t kAddWiFiNetworkCommandId                   = 0x03;
+constexpr uint8_t kAddWiFiNetworkRespCommandId               = 0x04;
+constexpr uint8_t kDisableNetworkCommandId                   = 0x13;
+constexpr uint8_t kDisableNetworkRespCommandId               = 0x14;
+constexpr uint8_t kEnableNetworkCommandId                    = 0x11;
+constexpr uint8_t kEnableNetworkRespCommandId                = 0x12;
+constexpr uint8_t kGetLastNetworkProvisioningResultCommandId = 0x17;
+constexpr uint8_t kRemoveNetworkCommandId                    = 0x0F;
+constexpr uint8_t kRemoveNetworkRespCommandId                = 0x10;
+constexpr uint8_t kScanNetworksCommandId                     = 0x01;
+constexpr uint8_t kScanNetworksRespCommandId                 = 0x02;
+constexpr uint8_t kTestNetworkCommandId                      = 0x15;
+constexpr uint8_t kTestNetworkRespCommandId                  = 0x16;
+constexpr uint8_t kUpdateThreadNetworkCommandId              = 0x09;
+constexpr uint8_t kUpdateThreadNetworkRespCommandId          = 0x0A;
+constexpr uint8_t kUpdateWiFiNetworkCommandId                = 0x05;
+constexpr uint8_t kUpdateWiFiNetworkRespCommandId            = 0x06;
+
+void HandleAddThreadNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleAddThreadNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleAddWiFiNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleAddWiFiNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleDisableNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleDisableNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleEnableNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleEnableNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleGetLastNetworkProvisioningResultCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleRemoveNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleRemoveNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleScanNetworksCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleScanNetworksRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleTestNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleTestNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleUpdateThreadNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleUpdateThreadNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleUpdateWiFiNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+void HandleUpdateWiFiNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj);
+
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeAddThreadNetworkCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                         const uint8_t * operationalDataset, uint32_t operationalDataset_Len,
+                                         const uint64_t breadcrumb, const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeAddThreadNetworkRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId,
+                                             chip::GroupId ZCLgroupId, const uint8_t errorCode, const char * debugText);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeAddWiFiNetworkCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                       const uint8_t * ssid, uint32_t ssid_Len, const uint8_t * credentials,
+                                       uint32_t credentials_Len, const uint64_t breadcrumb, const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeAddWiFiNetworkRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId,
+                                           chip::GroupId ZCLgroupId, const uint8_t errorCode, const char * debugText);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeDisableNetworkCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                       const uint8_t * networkID, uint32_t networkID_Len, const uint64_t breadcrumb,
+                                       const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeDisableNetworkRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId,
+                                           chip::GroupId ZCLgroupId, const uint8_t errorCode, const char * debugText);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeEnableNetworkCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                      const uint8_t * networkID, uint32_t networkID_Len, const uint64_t breadcrumb,
+                                      const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeEnableNetworkRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                          const uint8_t errorCode, const char * debugText);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeGetLastNetworkProvisioningResultCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId,
+                                                         chip::GroupId ZCLgroupId, const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeRemoveNetworkCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                      const uint8_t * networkID, uint32_t networkID_Len, const uint64_t breadcrumb,
+                                      const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeRemoveNetworkRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                          const uint8_t errorCode, const char * debugText);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeScanNetworksCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                     const uint8_t * ssid, uint32_t ssid_Len, const uint64_t breadcrumb, const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeScanNetworksRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                         const uint8_t errorCode, const char * debugText, const uint8_t security,
+                                         const uint8_t * ssid, uint32_t ssid_Len, const uint8_t * bssid, uint32_t bssid_Len,
+                                         const uint8_t channel, const uint32_t frequencyBand, const uint8_t * discoveryResponse,
+                                         uint32_t discoveryResponse_Len);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeTestNetworkCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                    const uint8_t * networkID, uint32_t networkID_Len, const uint64_t breadcrumb,
+                                    const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeTestNetworkRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                        const uint8_t errorCode, const char * debugText);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeUpdateThreadNetworkCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId,
+                                            chip::GroupId ZCLgroupId, const uint8_t * operationalDataset,
+                                            uint32_t operationalDataset_Len, const uint64_t breadcrumb, const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeUpdateThreadNetworkRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId,
+                                                chip::GroupId ZCLgroupId, const uint8_t errorCode, const char * debugText);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeUpdateWiFiNetworkCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId, chip::GroupId ZCLgroupId,
+                                          const uint8_t * ssid, uint32_t ssid_Len, const uint8_t * credentials,
+                                          uint32_t credentials_Len, const uint64_t breadcrumb, const uint32_t timeoutMs);
+// The "ZCL" prefix here is used for avoiding duplicate names.
+CHIP_ERROR EncodeUpdateWiFiNetworkRespCommand(chip::app::Command * ZCLcommand, chip::EndpointId ZCLendpointId,
+                                              chip::GroupId ZCLgroupId, const uint8_t errorCode, const char * debugText);
+
+void InitCluster(chip::app::InteractionModelEngine * ime);
+void ShutdownCluster(chip::app::InteractionModelEngine * ime);
+
+} // namespace NetworkProvisioning
+
 namespace OnOff {
 /*----------------------------------------------------------------------------*\
 | Cluster OnOff                                                       | 0x0006 |

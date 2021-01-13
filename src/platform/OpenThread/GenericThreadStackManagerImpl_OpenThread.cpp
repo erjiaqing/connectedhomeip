@@ -264,6 +264,26 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvis
 }
 
 template <class ImplClass>
+CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvision(const uint8_t * operationalDataset,
+                                                                                    const uint32_t operationalDatasetLen)
+{
+    otError otErr = OT_ERROR_FAILED;
+    (void) operationalDatasetLen;
+    // Set the dataset as the active dataset for the node.
+    Impl()->LockThreadStack();
+    otErr = otDatasetSetActiveTlvs(mOTInst, operationalDataset);
+    Impl()->UnlockThreadStack();
+
+    // post an event alerting other subsystems about change in provisioning state
+    ChipDeviceEvent event;
+    event.Type                                           = DeviceEventType::kServiceProvisioningChange;
+    event.ServiceProvisioningChange.IsServiceProvisioned = true;
+    PlatformMgr().PostEvent(&event);
+
+    return MapOpenThreadError(otErr);
+}
+
+template <class ImplClass>
 bool GenericThreadStackManagerImpl_OpenThread<ImplClass>::_IsThreadProvisioned(void)
 {
     bool provisioned;

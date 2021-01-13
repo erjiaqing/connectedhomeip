@@ -105,6 +105,7 @@ class ConnectivityManagerImpl final : public ConnectivityManager,
 
 public:
     CHIP_ERROR ProvisionWiFiNetwork(const char * ssid, const char * key);
+    CHIP_ERROR ProvisionThreadNetwork(const uint8_t * operationalDataset, const uint32_t operationalDatasetLen);
 
 #if CHIP_DEVICE_CONFIG_ENABLE_WPA
     void StartWiFiManagement();

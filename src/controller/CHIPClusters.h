@@ -32,6 +32,7 @@ constexpr ClusterId kGroupsClusterId                 = 0x0004;
 constexpr ClusterId kIasZoneClusterId                = 0x0500;
 constexpr ClusterId kIdentifyClusterId               = 0x0003;
 constexpr ClusterId kLevelControlClusterId           = 0x0008;
+constexpr ClusterId kNetworkProvisioningClusterId    = 0x9999;
 constexpr ClusterId kOnOffClusterId                  = 0x0006;
 constexpr ClusterId kScenesClusterId                 = 0x0005;
 constexpr ClusterId kTemperatureMeasurementClusterId = 0x0402;
@@ -309,6 +310,49 @@ public:
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Callback<> * onCompletion);
     CHIP_ERROR ReportAttributeCurrentLevel(Callback::Callback<> * onCompletion, Callback::Callback<> * onChange,
                                            uint16_t minInterval, uint16_t maxInterval, uint8_t change);
+};
+
+class DLL_EXPORT NetworkProvisioningCluster : public ClusterBase
+{
+public:
+    NetworkProvisioningCluster() : ClusterBase(kNetworkProvisioningClusterId) {}
+    ~NetworkProvisioningCluster() {}
+
+    // Cluster Commands
+    CHIP_ERROR AddThreadNetwork(Callback::Callback<> * onCompletion, uint8_t * operationalDataset, uint32_t operationalDataset_Len,
+                                uint64_t breadcrumb, uint32_t timeoutMs);
+    CHIP_ERROR AddThreadNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText);
+    CHIP_ERROR AddWiFiNetwork(Callback::Callback<> * onCompletion, uint8_t * ssid, uint32_t ssid_Len, uint8_t * credentials,
+                              uint32_t credentials_Len, uint64_t breadcrumb, uint32_t timeoutMs);
+    CHIP_ERROR AddWiFiNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText);
+    CHIP_ERROR DisableNetwork(Callback::Callback<> * onCompletion, uint8_t * networkID, uint32_t networkID_Len, uint64_t breadcrumb,
+                              uint32_t timeoutMs);
+    CHIP_ERROR DisableNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText);
+    CHIP_ERROR EnableNetwork(Callback::Callback<> * onCompletion, uint8_t * networkID, uint32_t networkID_Len, uint64_t breadcrumb,
+                             uint32_t timeoutMs);
+    CHIP_ERROR EnableNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText);
+    CHIP_ERROR GetLastNetworkProvisioningResult(Callback::Callback<> * onCompletion, uint32_t timeoutMs);
+    CHIP_ERROR RemoveNetwork(Callback::Callback<> * onCompletion, uint8_t * networkID, uint32_t networkID_Len, uint64_t breadcrumb,
+                             uint32_t timeoutMs);
+    CHIP_ERROR RemoveNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText);
+    CHIP_ERROR ScanNetworks(Callback::Callback<> * onCompletion, uint8_t * ssid, uint32_t ssid_Len, uint64_t breadcrumb,
+                            uint32_t timeoutMs);
+    CHIP_ERROR ScanNetworksResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText, uint8_t security,
+                                uint8_t * ssid, uint32_t ssid_Len, uint8_t * bssid, uint32_t bssid_Len, uint8_t channel,
+                                uint32_t frequencyBand, uint8_t * discoveryResponse, uint32_t discoveryResponse_Len);
+    CHIP_ERROR TestNetwork(Callback::Callback<> * onCompletion, uint8_t * networkID, uint32_t networkID_Len, uint64_t breadcrumb,
+                           uint32_t timeoutMs);
+    CHIP_ERROR TestNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText);
+    CHIP_ERROR UpdateThreadNetwork(Callback::Callback<> * onCompletion, uint8_t * operationalDataset,
+                                   uint32_t operationalDataset_Len, uint64_t breadcrumb, uint32_t timeoutMs);
+    CHIP_ERROR UpdateThreadNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText);
+    CHIP_ERROR UpdateWiFiNetwork(Callback::Callback<> * onCompletion, uint8_t * ssid, uint32_t ssid_Len, uint8_t * credentials,
+                                 uint32_t credentials_Len, uint64_t breadcrumb, uint32_t timeoutMs);
+    CHIP_ERROR UpdateWiFiNetworkResp(Callback::Callback<> * onCompletion, uint8_t errorCode, char * debugText);
+
+    // Cluster Attributes
+    CHIP_ERROR DiscoverAttributes(Callback::Callback<> * onCompletion);
+    CHIP_ERROR ReadAttributeClusterRevision(Callback::Callback<> * onCompletion);
 };
 
 class DLL_EXPORT OnOffCluster : public ClusterBase
