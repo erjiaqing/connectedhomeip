@@ -293,7 +293,7 @@ void HandleEnableNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::ap
 
     for (networkSeq = 0; networkSeq < kMaxNetworks; networkSeq++)
     {
-        if (sNetworks[networkSeq].mNetworkIDLen == networkIdLen && sNetworks[networkSeq].mNetworkType == NetworkType::kUndefined &&
+        if (sNetworks[networkSeq].mNetworkIDLen == networkIdLen && sNetworks[networkSeq].mNetworkType != NetworkType::kUndefined &&
             memcmp(sNetworks[networkSeq].mNetworkID, networkId, networkIdLen) == 0)
         {
             break;
@@ -302,37 +302,45 @@ void HandleEnableNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::ap
 
     VerifyOrExit(networkSeq != kMaxNetworks, err = CHIP_ERROR_KEY_NOT_FOUND);
 
+    ChipLogDetail(Zcl, "Get network: %" PRIuMAX, networkSeq);
+
     // Just ignore if the network is already enabled
     VerifyOrExit(!sNetworks[networkSeq].mEnabled, err = CHIP_NO_ERROR);
     VerifyOrExit(sDelegate != nullptr, err = CHIP_ERROR_INCORRECT_STATE);
 
+    ChipLogDetail(Zcl, "Enable network");
+
     switch (sNetworks[networkSeq].mNetworkType)
     {
     case NetworkType::kThread:
-        err = sDelegate->ProvisionThread(sNetworks[networkSeq].mData.mThread.mDataset,
-                                         sNetworks[networkSeq].mData.mThread.mDatasetLen);
+        SuccessOrExit(err = sDelegate->ProvisionThread(sNetworks[networkSeq].mData.mThread.mDataset,
+                                                       sNetworks[networkSeq].mData.mThread.mDatasetLen));
         break;
     case NetworkType::kWiFi:
-        err = sDelegate->ProvisionWiFi(reinterpret_cast<const char *>(sNetworks[networkSeq].mData.mWiFi.mSSID),
-                                       reinterpret_cast<const char *>(sNetworks[networkSeq].mData.mWiFi.mCredentials));
+        SuccessOrExit(err =
+                          sDelegate->ProvisionWiFi(reinterpret_cast<const char *>(sNetworks[networkSeq].mData.mWiFi.mSSID),
+                                                   reinterpret_cast<const char *>(sNetworks[networkSeq].mData.mWiFi.mCredentials)));
         break;
     default:
-        err = CHIP_ERROR_NOT_IMPLEMENTED;
+        ExitNow(err = CHIP_ERROR_NOT_IMPLEMENTED);
     }
+
+    sNetworks[networkSeq].mEnabled = true;
 
 exit:
     // TODO: This does not match spec, it should be fixed when fabric provisioning is ready.
     switch (err)
     {
     case CHIP_NO_ERROR:
-        EncodeAddWiFiNetworkRespCommand(apCommandObj, 1, 0, 0, "CHIP_NO_ERROR");
+        EncodeEnableNetworkRespCommand(apCommandObj, 1, 0, 0, "CHIP_NO_ERROR");
         break;
     case CHIP_ERROR_KEY_NOT_FOUND:
         EncodeEnableNetworkRespCommand(apCommandObj, 1, 0, uint8_t(NetworkProvisioningError::kNetworkIDNotFound),
                                        "NetworkIDNetFound");
         break;
     default:
-        EncodeAddWiFiNetworkRespCommand(apCommandObj, 1, 0, 19, chip::ErrorStr(err));
+        EncodeEnableNetworkRespCommand(apCommandObj, 1, 0, 19, chip::ErrorStr(err));
+        break;
     }
     ChipLogFunctError(err);
 }
