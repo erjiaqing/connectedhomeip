@@ -15,10 +15,12 @@
  *    limitations under the License.
  */
 
-#include <support/ErrorStr.h>
-#include <support/logging/CHIPLogging.h>
-
 #include "DeviceNetworkProvisioningDelegateImpl.h"
+
+#include <platform/ThreadStackManager.h>
+#include <support/ErrorStr.h>
+#include <support/ReturnMacros.h>
+#include <support/logging/CHIPLogging.h>
 
 namespace chip {
 namespace DeviceLayer {
@@ -37,6 +39,13 @@ CHIP_ERROR DeviceNetworkProvisioningDelegateImpl::_ProvisionWiFiNetwork(const ch
     }
 
     return err;
+}
+
+CHIP_ERROR DeviceNetworkProvisioningDelegateImpl::_ProvisionThreadNetwork(const uint8_t * operationalDataset, const uint32_t operationalDatasetLen)
+{
+    ReturnErrorOnFailure(ThreadStackMgr().SetThreadProvision(operationalDataset, operationalDatasetLen));
+    ReturnErrorOnFailure(ThreadStackMgr().SetThreadEnabled(true));
+    return CHIP_NO_ERROR;
 }
 
 } // namespace DeviceLayer

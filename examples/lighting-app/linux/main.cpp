@@ -23,11 +23,13 @@
 #include "gen/attribute-id.h"
 #include "gen/cluster-id.h"
 #include <app/chip-zcl-zpro-codec.h>
+#include <app/clusters/network-provisioning/network-provisioning.h>
 #include <app/im-encoder.h>
 #include <app/util/af-types.h>
 #include <app/util/attribute-storage.h>
 #include <app/util/util.h>
 #include <core/CHIPError.h>
+#include <platform/Linux/DeviceNetworkProvisioningDelegateImpl.h>
 #include <setup_payload/QRCodeSetupPayloadGenerator.h>
 #include <setup_payload/SetupPayload.h>
 #include <support/CHIPMem.h>
@@ -46,6 +48,10 @@ using namespace chip::Transport;
 using namespace chip::DeviceLayer;
 
 constexpr uint32_t kDefaultSetupPinCode = 12345678; // TODO: Should be a macro in CHIPProjectConfig.h like other example apps.
+
+namespace {
+chip::DeviceLayer::DeviceNetworkProvisioningDelegateImpl sDeviceNetworkProvisioningDelegate;
+}
 
 void emberAfPostAttributeChangeCallback(EndpointId endpoint, ClusterId clusterId, AttributeId attributeId, uint8_t mask,
                                         uint16_t manufacturerCode, uint8_t type, uint8_t size, uint8_t * value)
@@ -191,7 +197,10 @@ int main(int argc, char * argv[])
     InitServer();
 
 #ifdef CHIP_APP_USE_INTERACTION_MODEL
+    // TODO: cluster initialization code should be generated
     chip::app::cluster::OnOff::InitCluster(chip::app::InteractionModelEngine::GetInstance());
+    chip::app::cluster::NetworkProvisioning::InitCluster(chip::app::InteractionModelEngine::GetInstance());
+    chip::app::cluster::NetworkProvisioning::SetDeviceNetworkProvisioningDelegate(&sDeviceNetworkProvisioningDelegate);
 #endif
 
     chip::DeviceLayer::PlatformMgr().RunEventLoop();

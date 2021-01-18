@@ -47,7 +47,14 @@ public:
      *   Called to provision Thread credentials in a device
      *
      */
-    virtual CHIP_ERROR ProvisionThread(DeviceLayer::Internal::DeviceNetworkInfo & threadData) = 0;
+    [[deprecated("Available until network provisioning cluster is ready")]] virtual CHIP_ERROR ProvisionThread(DeviceLayer::Internal::DeviceNetworkInfo & threadData) = 0;
+
+    /**
+     * @brief
+     *   Called to provision Thread in a device
+     *
+     */
+    virtual CHIP_ERROR ProvisionThread(const uint8_t * operationalDataset, const uint32_t operationalDatasetLen) = 0;
 
     virtual ~DeviceNetworkProvisioningDelegate() {}
 };

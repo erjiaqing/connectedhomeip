@@ -32,6 +32,7 @@ class GenericDeviceNetworkProvisioningDelegateImpl : public DeviceNetworkProvisi
 {
 public:
     CHIP_ERROR ProvisionWiFi(const char * ssid, const char * passwd) override;
+    CHIP_ERROR ProvisionThread(const uint8_t * operationalDataset, const uint32_t operationalDatasetLen) override;
     CHIP_ERROR ProvisionThread(DeviceLayer::Internal::DeviceNetworkInfo & threadData) override;
 
 private:
@@ -49,6 +50,13 @@ inline CHIP_ERROR
 GenericDeviceNetworkProvisioningDelegateImpl<ImplClass>::ProvisionThread(DeviceLayer::Internal::DeviceNetworkInfo & threadData)
 {
     return Impl()->_ProvisionThreadNetwork(threadData);
+}
+
+template <class ImplClass>
+inline CHIP_ERROR
+GenericDeviceNetworkProvisioningDelegateImpl<ImplClass>::ProvisionThread(const uint8_t * operationalDataset, const uint32_t operationalDatasetLen)
+{
+    return Impl()->_ProvisionThreadNetwork(operationalDataset, operationalDatasetLen);
 }
 
 } // namespace Internal

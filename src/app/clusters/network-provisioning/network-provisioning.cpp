@@ -1,13 +1,25 @@
-#include <app/im-encoder.h>
+#include "network-provisioning.h"
 
 #include <cstring>
 
+#include <app/im-encoder.h>
+#include <platform/CHIPDeviceLayer.h>
 #include <platform/ConnectivityManager.h>
+#include <platform/ThreadStackManager.h>
 
 namespace chip {
 namespace app {
 namespace cluster {
 namespace NetworkProvisioning {
+
+namespace {
+DeviceLayer::Internal::DeviceNetworkProvisioningDelegate * sDelegate = nullptr;
+}
+
+void SetDeviceNetworkProvisioningDelegate(DeviceLayer::Internal::DeviceNetworkProvisioningDelegate * delegate)
+{
+    sDelegate = delegate;
+}
 
 // TODO: Use attribute read / write & store
 
@@ -16,6 +28,30 @@ constexpr uint8_t kMaxThreadDatasetLen   = 128;
 constexpr uint8_t kMaxWiFiSSIDLen        = 32;
 constexpr uint8_t kMaxWiFiCredentialsLen = 64;
 constexpr uint8_t kMaxNetworks           = 4;
+
+enum class NetworkProvisioningError : uint8_t
+{
+    kSuccess                = 0,
+    kOutOfRange             = 1,
+    kBoundsExceeded         = 2,
+    kNetworkIDNotFound      = 3,
+    kDuplicateNetworkID     = 4,
+    kNetworkNotFound        = 5,
+    kRegulatoryError        = 6,
+    kAuthFailure            = 7,
+    kUnsupportedSecurity    = 8,
+    kOtherConnectionFailure = 9,
+    kIPV6Failed             = 10,
+    kIPBindFailed           = 11,
+    kLabel9                 = 12,
+    kLabel10                = 13,
+    kLabel11                = 14,
+    kLabel12                = 15,
+    kLabel13                = 16,
+    kLabel14                = 17,
+    kLabel15                = 18,
+    kUnknownError           = 19,
+};
 
 enum class NetworkType : uint8_t
 {
@@ -115,8 +151,8 @@ void HandleAddThreadNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip:
 
             sNetworks[i].mNetworkType  = NetworkType::kThread;
             sNetworks[i].mEnabled      = false;
-            sNetworks[i].mNetworkId    = i & 0xff;
-            sNetworks[i].mNetworkIdLen = 1;
+            sNetworks[i].mNetworkID[0] = i & 0xff;
+            sNetworks[i].mNetworkIDLen = 1;
 
             err = CHIP_NO_ERROR;
             break;
@@ -186,12 +222,12 @@ void HandleAddWiFiNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::a
     {
         if (sNetworks[i].mNetworkType == NetworkType::kUndefined)
         {
-            strncpy(sNetworks[i].mData.mWiFi.mSSID, ssid, ssidLen);
+            memcpy(sNetworks[i].mData.mWiFi.mSSID, ssid, ssidLen);
             sNetworks[i].mData.mWiFi.mSSIDLen = ssidLen;
             memcpy(sNetworks[i].mData.mWiFi.mCredentials, credentials, credentialsLen);
             sNetworks[i].mData.mWiFi.mCredentialsLen = credentialsLen;
-            strncpy(sNetworks[i].mNetworkId, sNetworks[i].mData.mWiFi.mSSID, ssidLen);
-            sNetworks[i].mNetworkIdLen = ssidLen;
+            memcpy(sNetworks[i].mNetworkID, sNetworks[i].mData.mWiFi.mSSID, ssidLen);
+            sNetworks[i].mNetworkIDLen = ssidLen;
 
             sNetworks[i].mNetworkType = NetworkType::kWiFi;
             sNetworks[i].mEnabled     = false;
@@ -220,7 +256,86 @@ exit:
 
 void HandleDisableNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
 
-void HandleEnableNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleEnableNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    uint8_t networkId[kMaxNetworkIDLen + 1];
+    uint32_t networkIdLen;
+
+    TLV::TLVType containerType;
+    aReader.EnterContainer(containerType);
+    VerifyOrExit(containerType == TLV::TLVType::kTLVType_Structure, err = CHIP_ERROR_INVALID_TLV_TAG);
+    while ((err = aReader.Next()) == CHIP_NO_ERROR)
+    {
+        switch (TLV::TagNumFromTag(aReader.GetTag()))
+        {
+        case 0:
+            VerifyOrExit(aReader.GetType() == TLV::TLVType::kTLVType_ByteString, err = CHIP_ERROR_WRONG_TLV_TYPE);
+            networkIdLen = aReader.GetLength();
+            VerifyOrExit(networkIdLen < sizeof(networkId), err = CHIP_ERROR_MESSAGE_TOO_LONG);
+            SuccessOrExit(err = aReader.GetBytes(networkId, networkIdLen));
+            break;
+        case 1:
+        case 2:
+            break;
+        default:
+            err = CHIP_ERROR_UNKNOWN_IMPLICIT_TLV_TAG;
+            break;
+        }
+        SuccessOrExit(err);
+    }
+    if (err == CHIP_END_OF_TLV)
+    {
+        err = CHIP_NO_ERROR;
+    }
+
+    size_t networkSeq;
+
+    for (networkSeq = 0; networkSeq < kMaxNetworks; networkSeq++)
+    {
+        if (sNetworks[networkSeq].mNetworkIDLen == networkIdLen && sNetworks[networkSeq].mNetworkType == NetworkType::kUndefined &&
+            memcmp(sNetworks[networkSeq].mNetworkID, networkId, networkIdLen) == 0)
+        {
+            break;
+        }
+    }
+
+    VerifyOrExit(networkSeq != kMaxNetworks, err = CHIP_ERROR_KEY_NOT_FOUND);
+
+    // Just ignore if the network is already enabled
+    VerifyOrExit(!sNetworks[networkSeq].mEnabled, err = CHIP_NO_ERROR);
+    VerifyOrExit(sDelegate != nullptr, err = CHIP_ERROR_INCORRECT_STATE);
+
+    switch (sNetworks[networkSeq].mNetworkType)
+    {
+    case NetworkType::kThread:
+        err = sDelegate->ProvisionThread(sNetworks[networkSeq].mData.mThread.mDataset,
+                                         sNetworks[networkSeq].mData.mThread.mDatasetLen);
+        break;
+    case NetworkType::kWiFi:
+        err = sDelegate->ProvisionWiFi(reinterpret_cast<const char *>(sNetworks[networkSeq].mData.mWiFi.mSSID),
+                                       reinterpret_cast<const char *>(sNetworks[networkSeq].mData.mWiFi.mCredentials));
+        break;
+    default:
+        err = CHIP_ERROR_NOT_IMPLEMENTED;
+    }
+
+exit:
+    // TODO: This does not match spec, it should be fixed when fabric provisioning is ready.
+    switch (err)
+    {
+    case CHIP_NO_ERROR:
+        EncodeAddWiFiNetworkRespCommand(apCommandObj, 1, 0, 0, "CHIP_NO_ERROR");
+        break;
+    case CHIP_ERROR_KEY_NOT_FOUND:
+        EncodeEnableNetworkRespCommand(apCommandObj, 1, 0, uint8_t(NetworkProvisioningError::kNetworkIDNotFound),
+                                       "NetworkIDNetFound");
+        break;
+    default:
+        EncodeAddWiFiNetworkRespCommand(apCommandObj, 1, 0, 19, chip::ErrorStr(err));
+    }
+    ChipLogFunctError(err);
+}
 
 void HandleGetLastNetworkProvisioningResultCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
 
@@ -233,6 +348,16 @@ void HandleTestNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app:
 void HandleUpdateThreadNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
 
 void HandleUpdateWiFiNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+
+void HandleAddThreadNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleAddWiFiNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleDisableNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleEnableNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleRemoveNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleScanNetworksRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleTestNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleUpdateThreadNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
+void HandleUpdateWiFiNetworkRespCommandReceived(chip::TLV::TLVReader & aReader, chip::app::Command * apCommandObj) {}
 
 } // namespace NetworkProvisioning
 } // namespace cluster
