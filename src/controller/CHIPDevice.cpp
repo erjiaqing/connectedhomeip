@@ -265,6 +265,10 @@ CHIP_ERROR Device::LoadSecureSessionParameters(ResetTransport resetNeeded)
                 ,
             Transport::UdpListenParameters(mInetLayer).SetAddressType(kIPAddressType_IPv4).SetListenPort(mListenPort)
 #endif
+#if CONFIG_NETWORK_LAYER_BLE
+                ,
+            Transport::BleListenParameters(mBleLayer)
+#endif
         );
         SuccessOrExit(err);
     }

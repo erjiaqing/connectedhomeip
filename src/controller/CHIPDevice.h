@@ -29,6 +29,7 @@
 #include <app/CommandSender.h>
 #include <app/InteractionModelEngine.h>
 #include <app/util/basic-types.h>
+#include <ble/BleLayer.h>
 #include <core/CHIPCallback.h>
 #include <core/CHIPCore.h>
 #include <support/Base64.h>
@@ -38,6 +39,7 @@
 #include <transport/TransportMgr.h>
 #include <transport/raw/MessageHeader.h>
 #include <transport/raw/UDP.h>
+#include <transport/raw/BLE.h>
 
 namespace chip {
 namespace Controller {
@@ -50,6 +52,10 @@ using DeviceTransportMgr = TransportMgr<Transport::UDP /* IPv6 */
 #if INET_CONFIG_ENABLE_IPV4
                                         ,
                                         Transport::UDP /* IPv4 */
+#endif
+#if CONFIG_NETWORK_LAYER_BLE
+                                        ,
+                                        Transport::BLE<4> /* BLE */
 #endif
                                         >;
 
@@ -130,14 +136,22 @@ public:
      * @param[in] transportMgr Transport manager object pointer
      * @param[in] sessionMgr   Secure session manager object pointer
      * @param[in] inetLayer    InetLayer object pointer
+     * @param[in] bleLayer     BleLayer object pointer
      * @param[in] listenPort   Port on which controller is listening (typically CHIP_PORT)
      */
-    void Init(DeviceTransportMgr * transportMgr, SecureSessionMgr * sessionMgr, Inet::InetLayer * inetLayer, uint16_t listenPort)
+    void Init(DeviceTransportMgr * transportMgr, SecureSessionMgr * sessionMgr, Inet::InetLayer * inetLayer
+#if CONFIG_NETWORK_LAYER_BLE
+              ,
+              Ble::BleLayer * bleLayer
+#endif
+              ,
+              uint16_t listenPort)
     {
         mTransportMgr   = transportMgr;
         mSessionManager = sessionMgr;
         mInetLayer      = inetLayer;
         mListenPort     = listenPort;
+        mBleLayer       = bleLayer;
     }
 
     /**
@@ -154,15 +168,27 @@ public:
      * @param[in] transportMgr Transport manager object pointer
      * @param[in] sessionMgr   Secure session manager object pointer
      * @param[in] inetLayer    InetLayer object pointer
+     * @param[in] bleLayer     BleLayer object pointer
      * @param[in] listenPort   Port on which controller is listening (typically CHIP_PORT)
      * @param[in] deviceId     Node ID of the device
      * @param[in] devicePort   Port on which device is listening (typically CHIP_PORT)
      * @param[in] interfaceId  Local Interface ID that should be used to talk to the device
      */
-    void Init(DeviceTransportMgr * transportMgr, SecureSessionMgr * sessionMgr, Inet::InetLayer * inetLayer, uint16_t listenPort,
-              NodeId deviceId, uint16_t devicePort, Inet::InterfaceId interfaceId)
+    void Init(DeviceTransportMgr * transportMgr, SecureSessionMgr * sessionMgr, Inet::InetLayer * inetLayer
+#if CONFIG_NETWORK_LAYER_BLE
+              ,
+              Ble::BleLayer * bleLayer
+#endif
+              ,
+              uint16_t listenPort, NodeId deviceId, uint16_t devicePort, Inet::InterfaceId interfaceId)
     {
-        Init(transportMgr, sessionMgr, inetLayer, mListenPort);
+        Init(transportMgr, sessionMgr, inetLayer
+#if CONFIG_NETWORK_LAYER_BLE
+             ,
+             bleLayer
+#endif
+             ,
+             mListenPort);
         mDeviceId   = deviceId;
         mDevicePort = devicePort;
         mInterface  = interfaceId;
@@ -236,6 +262,7 @@ public:
         mSessionManager = nullptr;
         mStatusDelegate = nullptr;
         mInetLayer      = nullptr;
+        mBleLayer = nullptr;
     }
 
     NodeId GetDeviceId() const { return mDeviceId; }
@@ -281,6 +308,10 @@ private:
     Inet::InterfaceId mInterface;
 
     Inet::InetLayer * mInetLayer;
+
+#if CONFIG_NETWORK_LAYER_BLE
+    Ble::BleLayer * mBleLayer;
+#endif
 
     bool mActive;
     ConnectionState mState;

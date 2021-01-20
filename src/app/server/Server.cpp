@@ -196,12 +196,19 @@ void InitServer(AppDelegate * delegate)
     gRendezvousServer.SetDelegate(delegate);
 
     // Init transport before operations with secure session mgr.
+    err = gTransports.Init(UdpListenParameters(&DeviceLayer::InetLayer).SetAddressType(kIPAddressType_IPv6)
+
 #if INET_CONFIG_ENABLE_IPV4
-    err = gTransports.Init(UdpListenParameters(&DeviceLayer::InetLayer).SetAddressType(kIPAddressType_IPv6),
-                           UdpListenParameters(&DeviceLayer::InetLayer).SetAddressType(kIPAddressType_IPv4));
-#else
-    err = gTransports.Init(UdpListenParameters(&DeviceLayer::InetLayer).SetAddressType(kIPAddressType_IPv6));
+                               ,
+                           UdpListenParameters(&DeviceLayer::InetLayer).SetAddressType(kIPAddressType_IPv4)
 #endif
+#if CONFIG_NETWORK_LAYER_BLE
+                               ,
+                           BleListenParameters(DeviceLayer::ConnectivityMgr().GetBleLayer())
+#endif
+    );
+
+    // DeviceLayer::ConnectivityMgr().GetBleLayer())
     SuccessOrExit(err);
 
     err = gSessions.Init(chip::kTestDeviceNodeId, &DeviceLayer::SystemLayer, &gTransports);
@@ -221,13 +228,7 @@ void InitServer(AppDelegate * delegate)
         uint32_t pinCode;
 
         SuccessOrExit(err = DeviceLayer::ConfigurationMgr().GetSetupPinCode(pinCode));
-#if CONFIG_NETWORK_LAYER_BLE
-        params.SetSetupPINCode(pinCode)
-            .SetBleLayer(DeviceLayer::ConnectivityMgr().GetBleLayer())
-            .SetPeerAddress(Transport::PeerAddress::BLE());
-#else
         params.SetSetupPINCode(pinCode);
-#endif // CONFIG_NETWORK_LAYER_BLE
         SuccessOrExit(err = gRendezvousServer.Init(params, &gTransports));
     }
 

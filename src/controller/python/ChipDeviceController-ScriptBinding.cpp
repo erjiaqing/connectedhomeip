@@ -217,7 +217,15 @@ CHIP_ERROR nl_Chip_DeviceController_NewDeviceController(chip::DeviceController::
     *outDevCtrl = new chip::DeviceController::ChipDeviceController();
     VerifyOrExit(*outDevCtrl != NULL, err = CHIP_ERROR_NO_MEMORY);
 
-    err = (*outDevCtrl)->Init(kLocalDeviceId, &sSystemLayer, &sInetLayer, nullptr, &sStorageDelegate);
+    err = (*outDevCtrl)
+              ->GetDeviceController()
+              ->Init(kLocalDeviceId, &sStorageDelegate, &sSystemLayer, &sInetLayer,
+#if CONFIG_NETWORK_LAYER_BLE
+                     &sBle
+#else
+                     nullptr
+#endif
+              );
     SuccessOrExit(err);
 
 exit:
@@ -269,7 +277,7 @@ CHIP_ERROR nl_Chip_DeviceController_DriveIO(uint32_t sleepTimeMS)
     FD_ZERO(&writeFDs);
     FD_ZERO(&exceptFDs);
 
-    sleepTime.tv_sec  = sleepTimeMS / 1000;
+    sleepTime.tv_sec = sleepTimeMS / 1000;
     sleepTime.tv_usec = (sleepTimeMS % 1000) * 1000;
 
     if (sSystemLayer.State() == chip::System::kLayerState_Initialized)
@@ -548,8 +556,7 @@ CHIP_ERROR nl_Chip_DeviceController_Connect(chip::DeviceController::ChipDeviceCo
                                   chip::RendezvousParameters()
                                       .SetPeerAddress(Transport::PeerAddress(Transport::Type::kBle))
                                       .SetSetupPINCode(setupPINCode)
-                                      .SetConnectionObject(connObj)
-                                      .SetBleLayer(&sBle),
+                                      .SetConnectionObject(connObj),
                                   (void *) devCtrl, onConnect, onMessage, onError);
 }
 
