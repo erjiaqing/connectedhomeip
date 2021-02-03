@@ -307,7 +307,7 @@ bool __attribute__((weak)) emberAfPreMessageSendCallback(EmberAfMessageStruct * 
  * @param status   Ver.: always
  */
 bool __attribute__((weak))
-emberAfMessageSentCallback(EmberOutgoingMessageType type, uint16_t indexOrDestination, EmberApsFrame * apsFrame, uint16_t msgLen,
+emberAfMessageSentCallback(EmberOutgoingMessageType type, uint64_t indexOrDestination, EmberApsFrame * apsFrame, uint16_t msgLen,
                            uint8_t * message, EmberStatus status)
 {
     return false;

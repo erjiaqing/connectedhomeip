@@ -315,7 +315,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
         switch (cmd->commandId)
         {
         case ZCL_ADD_THREAD_NETWORK_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * OperationalDataset;
             uint64_t Breadcrumb;
             uint32_t TimeoutMs;
@@ -325,13 +325,13 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
             OperationalDataset = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(OperationalDataset) + 1u;
+            payloadOffset      = static_cast<uint16_t>(payloadOffset + emberAfStringLength(OperationalDataset) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -342,7 +342,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_ADD_WI_FI_NETWORK_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * SSID;
             uint8_t * Credentials;
             uint64_t Breadcrumb;
@@ -352,20 +352,20 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            SSID = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(SSID) + 1u;
+            SSID          = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(SSID) + 1u);
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Credentials = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(Credentials) + 1u;
+            Credentials   = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(Credentials) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -376,7 +376,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_DISABLE_NETWORK_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * NetworkID;
             uint64_t Breadcrumb;
             uint32_t TimeoutMs;
@@ -385,14 +385,14 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            NetworkID = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(NetworkID) + 1u;
+            NetworkID     = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(NetworkID) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -403,7 +403,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_ENABLE_NETWORK_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * NetworkID;
             uint64_t Breadcrumb;
             uint32_t TimeoutMs;
@@ -412,14 +412,14 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            NetworkID = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(NetworkID) + 1u;
+            NetworkID     = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(NetworkID) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -430,7 +430,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_GET_LAST_NETWORK_PROVISIONING_RESULT_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint32_t TimeoutMs;
 
             if (cmd->bufLen < payloadOffset + 4)
@@ -443,7 +443,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_REMOVE_NETWORK_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * NetworkID;
             uint64_t Breadcrumb;
             uint32_t TimeoutMs;
@@ -452,14 +452,14 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            NetworkID = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(NetworkID) + 1u;
+            NetworkID     = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(NetworkID) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -470,7 +470,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_SCAN_NETWORKS_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * SSID;
             uint64_t Breadcrumb;
             uint32_t TimeoutMs;
@@ -479,14 +479,14 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            SSID = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(SSID) + 1u;
+            SSID          = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(SSID) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -497,7 +497,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_TEST_NETWORK_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * NetworkID;
             uint64_t Breadcrumb;
             uint32_t TimeoutMs;
@@ -506,14 +506,14 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            NetworkID = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(NetworkID) + 1u;
+            NetworkID     = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(NetworkID) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -524,7 +524,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_UPDATE_THREAD_NETWORK_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * OperationalDataset;
             uint64_t Breadcrumb;
             uint32_t TimeoutMs;
@@ -534,13 +534,13 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
             OperationalDataset = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(OperationalDataset) + 1u;
+            payloadOffset      = static_cast<uint16_t>(payloadOffset + emberAfStringLength(OperationalDataset) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -551,7 +551,7 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             break;
         }
         case ZCL_UPDATE_WI_FI_NETWORK_COMMAND_ID: {
-            uint32_t payloadOffset = cmd->payloadStartIndex;
+            uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * SSID;
             uint8_t * Credentials;
             uint64_t Breadcrumb;
@@ -561,20 +561,20 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            SSID = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(SSID) + 1u;
+            SSID          = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(SSID) + 1u);
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Credentials = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += emberAfStringLength(Credentials) + 1u;
+            Credentials   = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(Credentials) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Breadcrumb = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset += 8;
+            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;

@@ -27,6 +27,8 @@
  * @param timeoutMs
  */
 
+#include <cinttypes>
+
 bool emberAfNetworkProvisioningClusterAddThreadNetworkCallback(uint8_t * OperationalDataset, uint64_t Breadcrumb,
                                                                uint32_t TimeoutMs)
 {

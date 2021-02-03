@@ -121,7 +121,8 @@ NetworkInfo sNetworks[kMaxNetworks];
 }
 
 void HandleAddThreadNetworkCommandReceived(app::Command * apCommandObj, chip::EndpointId aEndpoint,
-                                           const uint8_t * operationalDataset, const uint32_t operationalDatasetLen)
+                                           const uint8_t * operationalDataset, const uint32_t operationalDatasetLen,
+                                           uint64_t Breadcrumb, uint32_t TimeoutMs)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
@@ -155,7 +156,8 @@ exit:
 }
 
 void HandleAddWiFiNetworkCommandReceived(app::Command * apCommandObj, chip::EndpointId aEndpoint, const uint8_t * ssid,
-                                         const uint32_t ssidLen, const uint8_t * credentials, const uint32_t credentialsLen)
+                                         const uint32_t ssidLen, const uint8_t * credentials, const uint32_t credentialsLen,
+                                         uint64_t Breadcrumb, uint32_t TimeoutMs)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
@@ -189,7 +191,7 @@ exit:
 }
 
 void HandleEnableNetworkCommandReceived(app::Command * apCommandObj, chip::EndpointId aEndpoint, const uint8_t * networkId,
-                                        const uint32_t networkIdLen)
+                                        const uint32_t networkIdLen, uint64_t Breadcrumb, uint32_t TimeoutMs)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
