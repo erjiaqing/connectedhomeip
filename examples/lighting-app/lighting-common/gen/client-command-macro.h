@@ -5872,31 +5872,6 @@
                                                                                                                                    \
                                   ZCL_DISABLE_NETWORK_RESP_COMMAND_ID, "uu", ErrorCode, DebugText);
 
-/** @brief Command description for TestNetwork
- *
- * Command: TestNetwork
- * @param NetworkID OCTET_STRING
- * @param Breadcrumb INT64U
- * @param TimeoutMs INT32U
- */
-#define emberAfFillCommandNetwork                                                                                                  \
-    ProvisioningClusterTestNetwork(NetworkID, Breadcrumb, TimeoutMs)                                                               \
-        emberAfFillExternalBuffer(mask,                                                                                            \
-                                                                                                                                   \
-                                  ZCL_TEST_NETWORK_COMMAND_ID, "uuu", NetworkID, Breadcrumb, TimeoutMs);
-
-/** @brief Command description for TestNetworkResp
- *
- * Command: TestNetworkResp
- * @param ErrorCode INT8U
- * @param DebugText CHAR_STRING
- */
-#define emberAfFillCommandNetwork                                                                                                  \
-    ProvisioningClusterTestNetworkResp(ErrorCode, DebugText)                                                                       \
-        emberAfFillExternalBuffer(mask,                                                                                            \
-                                                                                                                                   \
-                                  ZCL_TEST_NETWORK_RESP_COMMAND_ID, "uu", ErrorCode, DebugText);
-
 /** @brief Command description for GetLastNetworkProvisioningResult
  *
  * Command: GetLastNetworkProvisioningResult

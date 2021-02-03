@@ -17,7 +17,7 @@
 
 /**
  * @file The network provisioning cluster handlers will be implemented in interaction model API
- * TODO: Implement this.
+ * TODO: ByteString types is missing length, this should be fixed.
  */
 
 /**
@@ -28,11 +28,21 @@
  */
 
 #include <cinttypes>
+#include <cstring>
+
+#include <clusters/network-provisioning/network-provisioning.h>
+#include <core/CHIPError.h>
+
+using namespace chip;
+using namespace chip::app;
+using namespace chip::app::cluster::NetworkProvisioning;
 
 bool emberAfNetworkProvisioningClusterAddThreadNetworkCallback(uint8_t * OperationalDataset, uint64_t Breadcrumb,
                                                                uint32_t TimeoutMs)
 {
-    return false;
+    HandleAddThreadNetworkCommandReceived(nullptr, 1, OperationalDataset, strlen(reinterpret_cast<char *>(OperationalDataset)),
+                                          Breadcrumb, TimeoutMs);
+    return true;
 }
 
 /**
@@ -46,7 +56,9 @@ bool emberAfNetworkProvisioningClusterAddThreadNetworkCallback(uint8_t * Operati
 bool emberAfNetworkProvisioningClusterAddWiFiNetworkCallback(uint8_t * SSID, uint8_t * Credentials, uint64_t Breadcrumb,
                                                              uint32_t TimeoutMs)
 {
-    return false;
+    HandleAddWiFiNetworkCommandReceived(nullptr, 1, SSID, strlen(reinterpret_cast<char *>(SSID)), Credentials,
+                                        strlen(reinterpret_cast<char *>(Credentials)), Breadcrumb, TimeoutMs);
+    return true;
 }
 
 /**
@@ -70,7 +82,8 @@ bool emberAfNetworkProvisioningClusterDisableNetworkCallback(uint8_t * NetworkID
 
 bool emberAfNetworkProvisioningClusterEnableNetworkCallback(uint8_t * NetworkID, uint64_t Breadcrumb, uint32_t TimeoutMs)
 {
-    return false;
+    HandleEnableNetworkCommandReceived(nullptr, 1, NetworkID, strlen(reinterpret_cast<char *>(NetworkID)), Breadcrumb, TimeoutMs);
+    return true;
 }
 
 /**

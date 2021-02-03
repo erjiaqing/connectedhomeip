@@ -411,15 +411,6 @@ bool emberAfNetworkProvisioningClusterRemoveNetworkCallback(uint8_t * NetworkID,
 bool emberAfNetworkProvisioningClusterScanNetworksCallback(uint8_t * SSID, uint64_t Breadcrumb, uint32_t TimeoutMs);
 
 /**
- * @brief Network Provisioning Cluster TestNetwork Command callback
- * @param networkID
- * @param breadcrumb
- * @param timeoutMs
- */
-
-bool emberAfNetworkProvisioningClusterTestNetworkCallback(uint8_t * NetworkID, uint64_t Breadcrumb, uint32_t TimeoutMs);
-
-/**
  * @brief Network Provisioning Cluster UpdateThreadNetwork Command callback
  * @param operationalDataset
  * @param breadcrumb

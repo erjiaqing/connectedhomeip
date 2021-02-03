@@ -22,6 +22,9 @@
 #include <platform/CHIPDeviceLayer.h>
 #include <platform/ConnectivityManager.h>
 #include <platform/ThreadStackManager.h>
+#include <platform/internal/DeviceNetworkProvisioning.h>
+
+using namespace chip::DeviceLayer;
 
 namespace chip {
 namespace app {
@@ -34,7 +37,7 @@ namespace {
 DeviceLayer::Internal::DeviceNetworkProvisioningDelegate * sDelegate = nullptr;
 }
 
-void SetDeviceNetworkProvisioningDelegate(DeviceLayer::Internal::DeviceNetworkProvisioningDelegate * delegate)
+void SetDeviceNetworkProvisioningDelegate(chip::DeviceLayer::Internal::DeviceNetworkProvisioningDelegate * delegate)
 {
     sDelegate = delegate;
 }
@@ -219,8 +222,8 @@ void HandleEnableNetworkCommandReceived(app::Command * apCommandObj, chip::Endpo
     switch (sNetworks[networkSeq].mNetworkType)
     {
     case NetworkType::kThread:
-        SuccessOrExit(err = ThreadStackMgr()->SetThreadProvision(sNetworks[networkSeq].mData.mThread.mDataset,
-                                                                 sNetworks[networkSeq].mData.mThread.mDatasetLen));
+        SuccessOrExit(err = ThreadStackMgr().SetThreadProvision(sNetworks[networkSeq].mData.mThread.mDataset,
+                                                                sNetworks[networkSeq].mData.mThread.mDatasetLen));
         break;
     case NetworkType::kWiFi:
         SuccessOrExit(err =

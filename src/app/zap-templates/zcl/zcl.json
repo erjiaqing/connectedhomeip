@@ -48,7 +48,6 @@
     },
     "defaults": {
         "text": {
-            "manufacturerCodes": "0x1002",
             "defaultResponsePolicy": "always"
         },
         "bool": {

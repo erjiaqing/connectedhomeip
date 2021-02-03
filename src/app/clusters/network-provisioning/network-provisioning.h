@@ -1,7 +1,12 @@
 #pragma once
 
+#include <cinttypes>
+
+#include <app/Command.h>
+#include <app/util/basic-types.h>
 #include <core/CHIPCore.h>
 #include <platform/CHIPDeviceLayer.h>
+#include <platform/internal/DeviceNetworkProvisioning.h>
 
 namespace chip {
 namespace app {

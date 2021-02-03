@@ -96,7 +96,7 @@
               ZAP_CLUSTER_MASK(SERVER) | ZAP_CLUSTER_MASK(INIT_FUNCTION),                                                          \
               chipFuncArrayLevelControlServer }, /* Endpoint: 1, Cluster: Level Control (server) */                                \
             {                                                                                                                      \
-                0x9999, ZAP_ATTRIBUTE_INDEX(4), 1, 2, ZAP_CLUSTER_MASK(SERVER), NULL                                               \
+                0xAAAA, ZAP_ATTRIBUTE_INDEX(4), 1, 2, ZAP_CLUSTER_MASK(SERVER), NULL                                               \
             }, /* Endpoint: 1, Cluster: Network Provisioning (server) */                                                           \
     }
 
@@ -159,7 +159,7 @@
 
 // Array of EmberAfCommandMetadata structs.
 #define ZAP_COMMAND_MASK(mask) COMMAND_MASK_##mask
-#define EMBER_AF_GENERATED_COMMAND_COUNT (30)
+#define EMBER_AF_GENERATED_COMMAND_COUNT (28)
 #define GENERATED_COMMANDS                                                                                                         \
     {                                                                                                                              \
         { 0x0006, 0x00, ZAP_COMMAND_MASK(INCOMING_SERVER) },     /* On/off (server): Off */                                        \
@@ -173,25 +173,23 @@
             { 0x0008, 0x05, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Level Control (server): MoveWithOnOff */                       \
             { 0x0008, 0x06, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Level Control (server): StepWithOnOff */                       \
             { 0x0008, 0x07, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Level Control (server): StopWithOnOff */                       \
-            { 0x9999, 0x01, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): ScanNetworks */                 \
-            { 0x9999, 0x02, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): ScanNetworksResp */             \
-            { 0x9999, 0x03, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): AddWiFiNetwork */               \
-            { 0x9999, 0x04, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): AddWiFiNetworkResp */           \
-            { 0x9999, 0x05, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): UpdateWiFiNetwork */            \
-            { 0x9999, 0x06, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): UpdateWiFiNetworkResp */        \
-            { 0x9999, 0x07, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): AddThreadNetwork */             \
-            { 0x9999, 0x08, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): AddThreadNetworkResp */         \
-            { 0x9999, 0x09, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): UpdateThreadNetwork */          \
-            { 0x9999, 0x0A, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): UpdateThreadNetworkResp */      \
-            { 0x9999, 0x0F, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): RemoveNetwork */                \
-            { 0x9999, 0x10, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): RemoveNetworkResp */            \
-            { 0x9999, 0x11, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): EnableNetwork */                \
-            { 0x9999, 0x12, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): EnableNetworkResp */            \
-            { 0x9999, 0x13, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): DisableNetwork */               \
-            { 0x9999, 0x14, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): DisableNetworkResp */           \
-            { 0x9999, 0x15, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): TestNetwork */                  \
-            { 0x9999, 0x16, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): TestNetworkResp */              \
-            { 0x9999, 0x17,                                                                                                        \
+            { 0xAAAA, 0x00, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): ScanNetworks */                 \
+            { 0xAAAA, 0x01, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): ScanNetworksResp */             \
+            { 0xAAAA, 0x02, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): AddWiFiNetwork */               \
+            { 0xAAAA, 0x03, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): AddWiFiNetworkResp */           \
+            { 0xAAAA, 0x04, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): UpdateWiFiNetwork */            \
+            { 0xAAAA, 0x05, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): UpdateWiFiNetworkResp */        \
+            { 0xAAAA, 0x06, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): AddThreadNetwork */             \
+            { 0xAAAA, 0x07, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): AddThreadNetworkResp */         \
+            { 0xAAAA, 0x08, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): UpdateThreadNetwork */          \
+            { 0xAAAA, 0x09, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): UpdateThreadNetworkResp */      \
+            { 0xAAAA, 0x0A, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): RemoveNetwork */                \
+            { 0xAAAA, 0x0B, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): RemoveNetworkResp */            \
+            { 0xAAAA, 0x0C, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): EnableNetwork */                \
+            { 0xAAAA, 0x0D, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): EnableNetworkResp */            \
+            { 0xAAAA, 0x0E, ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): DisableNetwork */               \
+            { 0xAAAA, 0x0F, ZAP_COMMAND_MASK(INCOMING_CLIENT) }, /* Network Provisioning (server): DisableNetworkResp */           \
+            { 0xAAAA, 0x10,                                                                                                        \
               ZAP_COMMAND_MASK(INCOMING_SERVER) }, /* Network Provisioning (server): GetLastNetworkProvisioningResult */           \
     }
 

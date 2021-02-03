@@ -496,33 +496,6 @@ EmberAfStatus emberAfNetworkProvisioningClusterServerCommandParse(EmberAfCluster
             wasHandled = emberAfNetworkProvisioningClusterScanNetworksCallback(SSID, Breadcrumb, TimeoutMs);
             break;
         }
-        case ZCL_TEST_NETWORK_COMMAND_ID: {
-            uint16_t payloadOffset = cmd->payloadStartIndex;
-            uint8_t * NetworkID;
-            uint64_t Breadcrumb;
-            uint32_t TimeoutMs;
-
-            if (cmd->bufLen < payloadOffset + 1u)
-            {
-                return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
-            }
-            NetworkID     = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(NetworkID) + 1u);
-            if (cmd->bufLen < payloadOffset + 8)
-            {
-                return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
-            }
-            Breadcrumb    = emberAfGetInt64u(cmd->buffer, payloadOffset, cmd->bufLen);
-            payloadOffset = static_cast<uint16_t>(payloadOffset + 8);
-            if (cmd->bufLen < payloadOffset + 4)
-            {
-                return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
-            }
-            TimeoutMs = emberAfGetInt32u(cmd->buffer, payloadOffset, cmd->bufLen);
-
-            wasHandled = emberAfNetworkProvisioningClusterTestNetworkCallback(NetworkID, Breadcrumb, TimeoutMs);
-            break;
-        }
         case ZCL_UPDATE_THREAD_NETWORK_COMMAND_ID: {
             uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t * OperationalDataset;
