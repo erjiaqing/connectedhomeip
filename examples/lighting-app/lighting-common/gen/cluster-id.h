@@ -332,6 +332,9 @@
 // Definitions for cluster: ZLL Commissioning
 #define ZCL_ZLL_COMMISSIONING_CLUSTER_ID (0x1000)
 
+// Definitions for cluster: Network Provisioning
+#define ZCL_NWPROV_CLUSTER_ID (0x9999)
+
 // Definitions for cluster: Binding
 #define ZCL_BINDING_CLUSTER_ID (0xF000)
 

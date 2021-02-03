@@ -30,6 +30,9 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
     case ZCL_LEVEL_CONTROL_CLUSTER_ID:
         emberAfLevelControlClusterInitCallback(endpoint);
         break;
+    case ZCL_NWPROV_CLUSTER_ID:
+        emberAfNetworkProvisioningClusterInitCallback(endpoint);
+        break;
     case ZCL_ON_OFF_CLUSTER_ID:
         emberAfOnOffClusterInitCallback(endpoint);
         break;
@@ -40,6 +43,11 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 }
 
 void __attribute__((weak)) emberAfLevelControlClusterInitCallback(EndpointId endpoint)
+{
+    // To prevent warning
+    (void) endpoint;
+}
+void __attribute__((weak)) emberAfNetworkProvisioningClusterInitCallback(EndpointId endpoint)
 {
     // To prevent warning
     (void) endpoint;
@@ -299,7 +307,7 @@ bool __attribute__((weak)) emberAfPreMessageSendCallback(EmberAfMessageStruct * 
  * @param status   Ver.: always
  */
 bool __attribute__((weak))
-emberAfMessageSentCallback(EmberOutgoingMessageType type, uint64_t indexOrDestination, EmberApsFrame * apsFrame, uint16_t msgLen,
+emberAfMessageSentCallback(EmberOutgoingMessageType type, uint16_t indexOrDestination, EmberApsFrame * apsFrame, uint16_t msgLen,
                            uint8_t * message, EmberStatus status)
 {
     return false;

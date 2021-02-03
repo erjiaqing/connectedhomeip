@@ -30,6 +30,7 @@
 
 /**** Cluster endpoint counts ****/
 #define EMBER_AF_LEVEL_CONTROL_CLUSTER_SERVER_ENDPOINT_COUNT (1)
+#define EMBER_AF_NWPROV_CLUSTER_SERVER_ENDPOINT_COUNT (1)
 #define EMBER_AF_ON_OFF_CLUSTER_SERVER_ENDPOINT_COUNT (1)
 
 /**** Cluster Plugins ****/
@@ -42,6 +43,11 @@
 #define EMBER_AF_PLUGIN_LEVEL_CONTROL_MAXIMUM_LEVEL 255
 #define EMBER_AF_PLUGIN_LEVEL_CONTROL_MINIMUM_LEVEL 0
 #define EMBER_AF_PLUGIN_LEVEL_CONTROL_RATE 0
+
+// Use this macro to check if the server side of the Network Provisioning cluster is included
+#define ZCL_USING_NWPROV_CLUSTER_SERVER
+#define EMBER_AF_PLUGIN_NETWORK_PROVISIONING_SERVER
+#define EMBER_AF_PLUGIN_NETWORK_PROVISIONING
 
 // Use this macro to check if the server side of the On/off cluster is included
 #define ZCL_USING_ON_OFF_CLUSTER_SERVER

@@ -45,6 +45,14 @@ void emberAfClusterInitCallback(chip::EndpointId endpoint, chip::ClusterId clust
  */
 void emberAfLevelControlClusterInitCallback(chip::EndpointId endpoint);
 
+/** @brief Network Provisioning Cluster Init
+ *
+ * Cluster Init
+ *
+ * @param endpoint    Endpoint that is being initialized
+ */
+void emberAfNetworkProvisioningClusterInitCallback(chip::EndpointId endpoint);
+
 /** @brief On/off Cluster Init
  *
  * Cluster Init
@@ -124,6 +132,77 @@ EmberAfStatus emberAfLevelControlClusterServerPreAttributeChangedCallback(chip::
  * @param endpoint  Endpoint that is being served
  */
 void emberAfLevelControlClusterServerTickCallback(chip::EndpointId endpoint);
+
+//
+// Network Provisioning Cluster server
+//
+
+/** @brief Network Provisioning Cluster Server Init
+ *
+ * Server Init
+ *
+ * @param endpoint    Endpoint that is being initialized
+ */
+void emberAfNetworkProvisioningClusterServerInitCallback(chip::EndpointId endpoint);
+
+/** @brief Network Provisioning Cluster Server Attribute Changed
+ *
+ * Server Attribute Changed
+ *
+ * @param endpoint    Endpoint that is being initialized
+ * @param attributeId Attribute that changed
+ */
+void emberAfNetworkProvisioningClusterServerAttributeChangedCallback(chip::EndpointId endpoint, chip::AttributeId attributeId);
+
+/** @brief Network Provisioning Cluster Server Manufacturer Specific Attribute Changed
+ *
+ * Server Manufacturer Specific Attribute Changed
+ *
+ * @param endpoint          Endpoint that is being initialized
+ * @param attributeId       Attribute that changed
+ * @param manufacturerCode  Manufacturer Code of the attribute that changed
+ */
+void emberAfNetworkProvisioningClusterServerManufacturerSpecificAttributeChangedCallback(chip::EndpointId endpoint,
+                                                                                         chip::AttributeId attributeId,
+                                                                                         uint16_t manufacturerCode);
+
+/** @brief Network Provisioning Cluster Server Message Sent
+ *
+ * Server Message Sent
+ *
+ * @param type               The type of message sent
+ * @param indexOrDestination The destination or address to which the message was sent
+ * @param apsFrame           The APS frame for the message
+ * @param msgLen             The length of the message
+ * @param message            The message that was sent
+ * @param status             The status of the sent message
+ */
+void emberAfNetworkProvisioningClusterServerMessageSentCallback(EmberOutgoingMessageType type, uint64_t indexOrDestination,
+                                                                EmberApsFrame * apsFrame, uint16_t msgLen, uint8_t * message,
+                                                                EmberStatus status);
+
+/** @brief Network Provisioning Cluster Server Pre Attribute Changed
+ *
+ * server Pre Attribute Changed
+ *
+ * @param endpoint      Endpoint that is being initialized
+ * @param attributeId   Attribute to be changed
+ * @param attributeType Attribute type
+ * @param size          Attribute size
+ * @param value         Attribute value
+ */
+EmberAfStatus emberAfNetworkProvisioningClusterServerPreAttributeChangedCallback(chip::EndpointId endpoint,
+                                                                                 chip::AttributeId attributeId,
+                                                                                 EmberAfAttributeType attributeType, uint8_t size,
+                                                                                 uint8_t * value);
+
+/** @brief Network Provisioning Cluster Server Tick
+ *
+ * server Tick
+ *
+ * @param endpoint  Endpoint that is being served
+ */
+void emberAfNetworkProvisioningClusterServerTickCallback(chip::EndpointId endpoint);
 
 //
 // On/off Cluster server
@@ -266,6 +345,100 @@ bool emberAfLevelControlClusterStopCallback(uint8_t optionMask, uint8_t optionOv
  */
 
 bool emberAfLevelControlClusterStopWithOnOffCallback();
+
+/**
+ * @brief Network Provisioning Cluster AddThreadNetwork Command callback
+ * @param operationalDataset
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterAddThreadNetworkCallback(uint8_t * OperationalDataset, uint64_t Breadcrumb,
+                                                               uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster AddWiFiNetwork Command callback
+ * @param ssid
+ * @param credentials
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterAddWiFiNetworkCallback(uint8_t * SSID, uint8_t * Credentials, uint64_t Breadcrumb,
+                                                             uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster DisableNetwork Command callback
+ * @param networkID
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterDisableNetworkCallback(uint8_t * NetworkID, uint64_t Breadcrumb, uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster EnableNetwork Command callback
+ * @param networkID
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterEnableNetworkCallback(uint8_t * NetworkID, uint64_t Breadcrumb, uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster GetLastNetworkProvisioningResult Command callback
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterGetLastNetworkProvisioningResultCallback(uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster RemoveNetwork Command callback
+ * @param networkID
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterRemoveNetworkCallback(uint8_t * NetworkID, uint64_t Breadcrumb, uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster ScanNetworks Command callback
+ * @param ssid
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterScanNetworksCallback(uint8_t * SSID, uint64_t Breadcrumb, uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster TestNetwork Command callback
+ * @param networkID
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterTestNetworkCallback(uint8_t * NetworkID, uint64_t Breadcrumb, uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster UpdateThreadNetwork Command callback
+ * @param operationalDataset
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterUpdateThreadNetworkCallback(uint8_t * OperationalDataset, uint64_t Breadcrumb,
+                                                                  uint32_t TimeoutMs);
+
+/**
+ * @brief Network Provisioning Cluster UpdateWiFiNetwork Command callback
+ * @param ssid
+ * @param credentials
+ * @param breadcrumb
+ * @param timeoutMs
+ */
+
+bool emberAfNetworkProvisioningClusterUpdateWiFiNetworkCallback(uint8_t * SSID, uint8_t * Credentials, uint64_t Breadcrumb,
+                                                                uint32_t TimeoutMs);
 
 /**
  * @brief On/off Cluster Off Command callback
