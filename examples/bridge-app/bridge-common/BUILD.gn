@@ -44,6 +44,7 @@ source_set("bridge-common") {
     "${chip_root}/src/app/util/util.cpp",
     "gen/call-command-handler.cpp",
     "gen/callback-stub.cpp",
+    "gen/im-command-handler.cpp",
   ]
 
   deps = [ "${chip_root}/src/lib" ]

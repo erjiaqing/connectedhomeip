@@ -27,6 +27,23 @@
 // ================================================================================
 // Main Code
 // ================================================================================
+
+namespace chip {
+namespace app {
+
+void DispatchSingleClusterCommand(chip::ClusterId aClusterId, chip::CommandId aCommandId, chip::EndpointId aEndPointId,
+                                  chip::TLV::TLVReader & aReader, Command * apCommandObj)
+{
+    ChipLogDetail(DataManagement, "Received Cluster Command: Cluster=%" PRIx16 " Command=%" PRIx8 " Endpoint=%" PRIx8, aClusterId,
+                  aCommandId, aEndPointId);
+    ChipLogError(
+        DataManagement,
+        "Default DispatchSingleClusterCommand is called, this should be replaced by actual dispatched for cluster commands");
+}
+
+} // namespace app
+} // namespace chip
+
 int main(int argc, char * argv[])
 {
     Commands commands;

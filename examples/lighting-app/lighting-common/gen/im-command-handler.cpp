@@ -17,8 +17,8 @@ namespace app {
 namespace cluster {
 namespace NetworkProvisioning {
 
-CHIP_ERROR ProcessServerSideAddWiFiNetworkCommand(chip::EndpointId aEndPointId, chip::GroupId aGroupId,
-                                                  chip::TLV::TLVReader & aReader, Command * apCommandObj)
+CHIP_ERROR ProcessServerSideAddWiFiNetworkCommand(chip::EndpointId aEndPointId, chip::TLV::TLVReader & aReader,
+                                                  Command * apCommandObj)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     const uint8_t * ssid;
@@ -73,8 +73,8 @@ exit:
     return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR ProcessServerSideAddThreadNetworkCommand(chip::EndpointId aEndPointId, chip::GroupId aGroupId,
-                                                    chip::TLV::TLVReader & aReader, Command * apCommandObj)
+CHIP_ERROR ProcessServerSideAddThreadNetworkCommand(chip::EndpointId aEndPointId, chip::TLV::TLVReader & aReader,
+                                                    Command * apCommandObj)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     const uint8_t * operationalDataset;
@@ -123,8 +123,8 @@ exit:
     return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR ProcessServerSideEnableNetworkCommand(chip::EndpointId aEndPointId, chip::GroupId aGroupId,
-                                                 chip::TLV::TLVReader & aReader, Command * apCommandObj)
+CHIP_ERROR ProcessServerSideEnableNetworkCommand(chip::EndpointId aEndPointId, chip::TLV::TLVReader & aReader,
+                                                 Command * apCommandObj)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     const uint8_t * networkId;
@@ -165,17 +165,17 @@ exit:
     return CHIP_NO_ERROR;
 }
 
-CHIP_ERROR DispatchServerSideCommand(chip::CommandId aCommandId, chip::EndpointId aEndPointId, chip::GroupId aGroupId,
-                                     chip::TLV::TLVReader & aReader, Command * apCommandObj)
+CHIP_ERROR DispatchServerSideCommand(chip::CommandId aCommandId, chip::EndpointId aEndPointId, chip::TLV::TLVReader & aReader,
+                                     Command * apCommandObj)
 {
     switch (aCommandId)
     {
     case ZCL_ADD_WI_FI_NETWORK_COMMAND_ID:
-        return ProcessServerSideAddWiFiNetworkCommand(aEndPointId, aGroupId, aReader, apCommandObj);
+        return ProcessServerSideAddWiFiNetworkCommand(aEndPointId, aReader, apCommandObj);
     case ZCL_ADD_THREAD_NETWORK_COMMAND_ID:
-        return ProcessServerSideAddThreadNetworkCommand(aEndPointId, aGroupId, aReader, apCommandObj);
+        return ProcessServerSideAddThreadNetworkCommand(aEndPointId, aReader, apCommandObj);
     case ZCL_ENABLE_NETWORK_COMMAND_ID:
-        return ProcessServerSideEnableNetworkCommand(aEndPointId, aGroupId, aReader, apCommandObj);
+        return ProcessServerSideEnableNetworkCommand(aEndPointId, aReader, apCommandObj);
     default:
         return CHIP_ERROR_KEY_NOT_FOUND;
     }
@@ -185,7 +185,7 @@ CHIP_ERROR DispatchServerSideCommand(chip::CommandId aCommandId, chip::EndpointI
 } // namespace cluster
 
 void DispatchSingleClusterCommand(chip::ClusterId aClusterId, chip::CommandId aCommandId, chip::EndpointId aEndPointId,
-                                  chip::GroupId aGroupId, chip::TLV::TLVReader & aReader, Command * apCommandObj)
+                                  chip::TLV::TLVReader & aReader, Command * apCommandObj)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     TLV::TLVType outerContainerType;
@@ -195,8 +195,7 @@ void DispatchSingleClusterCommand(chip::ClusterId aClusterId, chip::CommandId aC
     switch (aClusterId)
     {
     case ZCL_NWPROV_CLUSTER_ID:
-        err = chip::app::cluster::NetworkProvisioning::DispatchServerSideCommand(aCommandId, aEndPointId, aGroupId, aReader,
-                                                                                 apCommandObj);
+        err = chip::app::cluster::NetworkProvisioning::DispatchServerSideCommand(aCommandId, aEndPointId, aReader, apCommandObj);
         break;
     default:;
     }
