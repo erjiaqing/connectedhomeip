@@ -24,6 +24,7 @@
 #include "gen/cluster-id.h"
 #include "gen/im-command-handler.h"
 #include <app/chip-zcl-zpro-codec.h>
+#include <app/clusters/network-provisioning/network-provisioning.h>
 #include <app/util/af-types.h>
 #include <app/util/attribute-storage.h>
 #include <app/util/util.h>
@@ -32,6 +33,10 @@
 #include <setup_payload/SetupPayload.h>
 #include <support/CHIPMem.h>
 #include <support/RandUtils.h>
+
+#if CHIP_DEVICE_CONFIG_ENABLE_WPA
+#include <platform/Linux/DeviceNetworkProvisioningDelegateImpl.h>
+#endif
 
 #include "LightingManager.h"
 #include "Options.h"
@@ -44,6 +49,10 @@ using namespace chip;
 using namespace chip::Inet;
 using namespace chip::Transport;
 using namespace chip::DeviceLayer;
+
+namespace {
+chip::DeviceLayer::DeviceNetworkProvisioningDelegateImpl sNetworkProvDelegate;
+}
 
 void emberAfPostAttributeChangeCallback(EndpointId endpoint, ClusterId clusterId, AttributeId attributeId, uint8_t mask,
                                         uint16_t manufacturerCode, uint8_t type, uint8_t size, uint8_t * value)
@@ -181,6 +190,7 @@ int main(int argc, char * argv[])
     InitServer();
 
 #if CHIP_DEVICE_CONFIG_ENABLE_WPA
+    chip::app::cluster::NetworkProvisioning::SetDeviceNetworkProvisioningDelegate(&sNetworkProvDelegate);
     if (LinuxDeviceOptions::GetInstance().mWiFi)
     {
         chip::DeviceLayer::ConnectivityMgrImpl().StartWiFiManagement();
