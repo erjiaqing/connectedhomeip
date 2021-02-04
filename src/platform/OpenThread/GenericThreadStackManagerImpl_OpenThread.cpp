@@ -275,6 +275,7 @@ template <class ImplClass>
 CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvision(const uint8_t * operationalDataset,
                                                                                     uint32_t operationalDatasetLen)
 {
+    otError otErr = OT_ERROR_FAILED;
     otOperationalDatasetTlvs datasetTlv;
 
     VerifyOrReturnError(operationalDatasetLen <= sizeof(datasetTlv.mTlvs), CHIP_ERROR_NO_MEMORY);
