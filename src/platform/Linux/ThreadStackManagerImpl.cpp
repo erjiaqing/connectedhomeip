@@ -40,7 +40,7 @@ using otbr::DBus::NeighborInfo;
 #endif
 
 #define OTBR_TO_CHIP_ERROR(x)                                                                                                      \
-    (x == ClientError::ERROR_NONE ? CHIP_NO_ERROR : _CHIP_ERROR(CHIP_CONFIG_OTBR_CLIENT_ERROR_MIN + static_cast<int>(x)))
+    ((x) == ClientError::ERROR_NONE ? CHIP_NO_ERROR : _CHIP_ERROR(CHIP_CONFIG_OTBR_CLIENT_ERROR_MIN + static_cast<int>(x)))
 
 #define LogClientError(error)                                                                                                      \
     do                                                                                                                             \
@@ -164,6 +164,20 @@ void ThreadStackManagerImpl::_OnPlatformEvent(const ChipDeviceEvent * event)
 CHIP_ERROR ThreadStackManagerImpl::_SetThreadProvision(const Internal::DeviceNetworkInfo & netInfo)
 {
     mNetworkInfo = netInfo;
+    mOperationalDatasetTlv.clear();
+
+    // post an event alerting other subsystems about change in provisioning state
+    ChipDeviceEvent event;
+    event.Type                                           = DeviceEventType::kServiceProvisioningChange;
+    event.ServiceProvisioningChange.IsServiceProvisioned = true;
+    PlatformMgr().PostEvent(&event);
+
+    return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR ThreadStackManagerImpl::_SetThreadProvision(const uint8_t * operationalDataset, uint32_t operationalDatasetLen)
+{
+    mOperationalDatasetTlv = std::vector<uint8_t>(operationalDataset, operationalDataset + operationalDatasetLen);
 
     // post an event alerting other subsystems about change in provisioning state
     ChipDeviceEvent event;
@@ -220,7 +234,17 @@ CHIP_ERROR ThreadStackManagerImpl::_SetThreadEnabled(bool val)
 {
     ClientError error = ClientError::ERROR_NONE;
 
-    if (val)
+    if (!val)
+    {
+        ExitNow(error = mThreadApi->Reset(););
+    }
+
+    if (mOperationalDatasetTlv.size() > 0)
+    {
+        SuccessOrExit(OTBR_TO_CHIP_ERROR(error = mThreadApi->SetActiveDatasetTlvs(mOperationalDatasetTlv)));
+        error = mThreadApi->Attach([](ClientError result) { ChipLogProgress(DeviceLayer, "Thread attach result %d", result); });
+    }
+    else
     {
         std::vector<uint8_t> masterkey(std::begin(mNetworkInfo.ThreadMasterKey), std::end(mNetworkInfo.ThreadMasterKey));
         std::vector<uint8_t> pskc;
@@ -253,12 +277,8 @@ CHIP_ERROR ThreadStackManagerImpl::_SetThreadEnabled(bool val)
             SuccessOrExit(error = mThreadApi->SetMeshLocalPrefix(prefix));
         }
 
-        mThreadApi->Attach(mNetworkInfo.ThreadNetworkName, mNetworkInfo.ThreadPANId, extPanId, masterkey, pskc, channelMask,
-                           [](ClientError result) { ChipLogProgress(DeviceLayer, "Thread attach result %d", result); });
-    }
-    else
-    {
-        mThreadApi->Reset();
+        error = mThreadApi->Attach(mNetworkInfo.ThreadNetworkName, mNetworkInfo.ThreadPANId, extPanId, masterkey, pskc, channelMask,
+                                   [](ClientError result) { ChipLogProgress(DeviceLayer, "Thread attach result %d", result); });
     }
 exit:
     LogClientError(error);

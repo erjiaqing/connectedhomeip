@@ -46,6 +46,7 @@
 #include <platform/internal/CHIPDeviceLayerInternal.h>
 #include <platform/internal/DeviceNetworkInfo.h>
 #include <support/CodeUtils.h>
+#include <support/ReturnMacros.h>
 #include <support/logging/CHIPLogging.h>
 
 extern "C" void otSysProcessDrivers(otInstance * aInstance);
@@ -259,6 +260,30 @@ CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvis
     // Set the dataset as the active dataset for the node.
     Impl()->LockThreadStack();
     otErr = otDatasetSetActive(mOTInst, &newDataset);
+    Impl()->UnlockThreadStack();
+
+    // post an event alerting other subsystems about change in provisioning state
+    ChipDeviceEvent event;
+    event.Type                                           = DeviceEventType::kServiceProvisioningChange;
+    event.ServiceProvisioningChange.IsServiceProvisioned = true;
+    PlatformMgr().PostEvent(&event);
+
+    return MapOpenThreadError(otErr);
+}
+
+template <class ImplClass>
+CHIP_ERROR GenericThreadStackManagerImpl_OpenThread<ImplClass>::_SetThreadProvision(const uint8_t * operationalDataset,
+                                                                                    uint32_t operationalDatasetLen)
+{
+    otOperationalDatasetTlvs datasetTlv;
+
+    VerifyOrReturnError(operationalDatasetLen <= sizeof(datasetTlv.mTlvs), CHIP_ERROR_NO_MEMORY);
+
+    datasetTlv.mLength = static_cast<uint8_t>(operationalDatasetLen); // We have checked the size of dest buffer.
+    memcpy(datasetTlv.mTlvs, operationalDataset, operationalDatasetLen);
+
+    Impl()->LockThreadStack();
+    otErr = otDatasetSetActiveTlvs(mOTInst, &datasetTlv);
     Impl()->UnlockThreadStack();
 
     // post an event alerting other subsystems about change in provisioning state
