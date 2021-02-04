@@ -22,6 +22,7 @@
 #include "af.h"
 #include "gen/attribute-id.h"
 #include "gen/cluster-id.h"
+#include "gen/im-command-handler.h"
 #include <app/chip-zcl-zpro-codec.h>
 #include <app/util/af-types.h>
 #include <app/util/attribute-storage.h>
@@ -43,6 +44,32 @@ using namespace chip;
 using namespace chip::Inet;
 using namespace chip::Transport;
 using namespace chip::DeviceLayer;
+
+namespace chip {
+namespace app {
+
+void DispatchSingleClusterCommand(chip::ClusterId aClusterId, chip::CommandId aCommandId, chip::EndpointId aEndPointId,
+                                  chip::GroupId aGroupId, chip::TLV::TLVReader & aReader, Command * apCommandObj)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    TLV::TLVType outerContainerType;
+
+    SuccessOrExit(err = aReader.EnterContainer(outerContainerType));
+
+    switch (aClusterId)
+    {
+    case ZCL_NWPROV_CLUSTER_ID:
+        err = chip::app::cluster::NetworkProvisioning::DispatchServerSideCommand(aCommandId, aEndPointId, aGroupId, aReader,
+                                                                                 apCommandObj);
+        break;
+    default:;
+    }
+
+    SuccessOrExit(err = aReader.ExitContainer(outerContainerType));
+exit:;
+}
+} // namespace app
+} // namespace chip
 
 void emberAfPostAttributeChangeCallback(EndpointId endpoint, ClusterId clusterId, AttributeId attributeId, uint8_t mask,
                                         uint16_t manufacturerCode, uint8_t type, uint8_t size, uint8_t * value)
