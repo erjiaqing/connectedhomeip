@@ -54,6 +54,9 @@ executable("chip-tool-server") {
     "${chip_root}/src/lib",
   ]
 
+  # To override default implementation of DispatchSingleClusterCommand
+  ldflags = [ "-Wl,--whole-archive" ]
+
   output_dir = root_out_dir
 }
 
