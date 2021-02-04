@@ -35,13 +35,11 @@ CHIP_ERROR ProcessServerSideAddWiFiNetworkCommand(chip::EndpointId aEndPointId, 
         case 0:
             VerifyOrExit(aReader.GetType() == TLV::TLVType::kTLVType_ByteString, err = CHIP_ERROR_WRONG_TLV_TYPE);
             ssidLen = aReader.GetLength();
-            VerifyOrExit(ssidLen < sizeof(ssid), err = CHIP_ERROR_MESSAGE_TOO_LONG);
             SuccessOrExit(err = aReader.GetDataPtr(ssid));
             break;
         case 1:
             VerifyOrExit(aReader.GetType() == TLV::TLVType::kTLVType_ByteString, err = CHIP_ERROR_WRONG_TLV_TYPE);
             credentialsLen = aReader.GetLength();
-            VerifyOrExit(credentialsLen <= sizeof(credentials), err = CHIP_ERROR_MESSAGE_TOO_LONG);
             SuccessOrExit(err = aReader.GetDataPtr(credentials));
             break;
         case 2:
@@ -92,7 +90,6 @@ CHIP_ERROR ProcessServerSideAddThreadNetworkCommand(chip::EndpointId aEndPointId
             elementType = aReader.GetType();
             VerifyOrExit(elementType == TLV::TLVType::kTLVType_ByteString, err = CHIP_ERROR_WRONG_TLV_TYPE);
             operationalDatasetLen = aReader.GetLength();
-            VerifyOrExit(operationalDatasetLen <= sizeof(operationalDataset), err = CHIP_ERROR_MESSAGE_TOO_LONG);
             SuccessOrExit(aReader.GetDataPtr(operationalDataset));
             break;
         case 1:
@@ -139,7 +136,6 @@ CHIP_ERROR ProcessServerSideEnableNetworkCommand(chip::EndpointId aEndPointId, c
         case 0:
             VerifyOrExit(aReader.GetType() == TLV::TLVType::kTLVType_ByteString, err = CHIP_ERROR_WRONG_TLV_TYPE);
             networkIdLen = aReader.GetLength();
-            VerifyOrExit(networkIdLen < sizeof(networkId), err = CHIP_ERROR_MESSAGE_TOO_LONG);
             SuccessOrExit(err = aReader.GetDataPtr(networkId));
             break;
         case 1:
@@ -199,6 +195,8 @@ void DispatchSingleClusterCommand(chip::ClusterId aClusterId, chip::CommandId aC
         break;
     default:;
     }
+
+    ChipLogFunctError(err);
 
     SuccessOrExit(err = aReader.ExitContainer(outerContainerType));
 exit:;
