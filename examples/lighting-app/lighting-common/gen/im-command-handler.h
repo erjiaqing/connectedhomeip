@@ -25,5 +25,8 @@ void HandleEnableNetworkCommandReceived(app::Command * apCommandObj, chip::Endpo
 
 } // namespace NetworkProvisioning
 } // namespace cluster
+
+void linkLineMine();
+
 } // namespace app
 } // namespace chip

@@ -184,5 +184,28 @@ CHIP_ERROR DispatchServerSideCommand(chip::CommandId aCommandId, chip::EndpointI
 } // namespace NetworkProvisioning
 } // namespace cluster
 
+void DispatchSingleClusterCommand(chip::ClusterId aClusterId, chip::CommandId aCommandId, chip::EndpointId aEndPointId,
+                                  chip::GroupId aGroupId, chip::TLV::TLVReader & aReader, Command * apCommandObj)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    TLV::TLVType outerContainerType;
+
+    SuccessOrExit(err = aReader.EnterContainer(outerContainerType));
+
+    switch (aClusterId)
+    {
+    case ZCL_NWPROV_CLUSTER_ID:
+        err = chip::app::cluster::NetworkProvisioning::DispatchServerSideCommand(aCommandId, aEndPointId, aGroupId, aReader,
+                                                                                 apCommandObj);
+        break;
+    default:;
+    }
+
+    SuccessOrExit(err = aReader.ExitContainer(outerContainerType));
+exit:;
+}
+
+void linkLineMine() {}
+
 } // namespace app
 } // namespace chip
