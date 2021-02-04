@@ -40,6 +40,7 @@ target_sources(app PRIVATE
                main/ZclCallbacks.cpp
                ${LIGHTING_COMMON}/gen/call-command-handler.cpp
                ${LIGHTING_COMMON}/gen/callback-stub.cpp
+               ${LIGHTING_COMMON}/gen/im-command-handler.cpp
                ${NRFCONNECT_COMMON}/util/LEDWidget.cpp
                ${NRFCONNECT_COMMON}/util/NFCWidget.cpp
                ${NRFCONNECT_COMMON}/util/ThreadUtil.cpp
@@ -63,6 +64,8 @@ target_sources(app PRIVATE
                ${CHIP_ROOT}/src/app/clusters/bindings/bindings.cpp
                ${CHIP_ROOT}/src/app/clusters/on-off-server/on-off.cpp
                ${CHIP_ROOT}/src/app/clusters/level-control/level-control.cpp
+               ${CHIP_ROOT}/src/app/clusters/network-provisioning/network-provisioning.cpp
+               ${CHIP_ROOT}/src/app/clusters/network-provisioning/network-provisioning-ember.cpp
                )
 
 if (CONFIG_CHIP_PW_RPC)
