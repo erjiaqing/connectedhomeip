@@ -28,6 +28,7 @@ constexpr uint8_t kMaxThreadDatasetLen   = 128;
 constexpr uint8_t kMaxWiFiSSIDLen        = 32;
 constexpr uint8_t kMaxWiFiCredentialsLen = 64;
 constexpr uint8_t kMaxNetworks           = 4;
+constexpr char kThreadNetworkName[]      = "tmp-thread-network";
 
 enum class NetworkProvisioningError : uint8_t
 {
@@ -109,7 +110,7 @@ void HandleAddThreadNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip:
     uint32_t operationalDatasetLen;
     TLV::TLVType containerType;
 
-    VerifyOrExit(DeviceLayer::ConnectivityMgr().IsThreadApplicationControlled(), err = CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE);
+    // VerifyOrExit(DeviceLayer::ConnectivityMgr().IsThreadApplicationControlled(), err = CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE);
 
     aReader.EnterContainer(containerType);
     VerifyOrExit(containerType == TLV::TLVType::kTLVType_Structure, err = CHIP_ERROR_INVALID_TLV_TAG);
@@ -149,10 +150,11 @@ void HandleAddThreadNetworkCommandReceived(chip::TLV::TLVReader & aReader, chip:
             memcpy(sNetworks[i].mData.mThread.mDataset, operationalDataset, operationalDatasetLen);
             sNetworks[i].mData.mThread.mDatasetLen = operationalDatasetLen;
 
-            sNetworks[i].mNetworkType  = NetworkType::kThread;
-            sNetworks[i].mEnabled      = false;
-            sNetworks[i].mNetworkID[0] = i & 0xff;
-            sNetworks[i].mNetworkIDLen = 1;
+            sNetworks[i].mNetworkType = NetworkType::kThread;
+            sNetworks[i].mEnabled     = false;
+
+            memcpy(sNetworks[i].mNetworkID, kThreadNetworkName, sizeof(kThreadNetworkName));
+            sNetworks[i].mNetworkIDLen = sizeof(kThreadNetworkName);
 
             err = CHIP_NO_ERROR;
             break;
