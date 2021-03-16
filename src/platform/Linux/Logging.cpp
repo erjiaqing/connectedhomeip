@@ -1,7 +1,10 @@
 /* See Project CHIP LICENSE file for licensing information. */
 
 #include <platform/logging/LogV.h>
+#include <system/SystemClock.h>
 
+#include <cinttypes>
+#include <cstdint>
 #include <stdio.h>
 
 namespace chip {
@@ -25,7 +28,9 @@ namespace Platform {
  */
 void LogV(const char * module, uint8_t category, const char * msg, va_list v)
 {
-    fprintf(stderr, "CHIP:%s: ", module);
+    uint64_t current = 0;
+    System::Platform::Layer::GetClock_RealTimeMS(current);
+    fprintf(stderr, "%10" PRIu64 " CHIP:%s: ", current, module);
     vfprintf(stderr, msg, v);
     fprintf(stderr, "\n");
 
