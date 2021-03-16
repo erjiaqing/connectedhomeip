@@ -23,12 +23,6 @@ RUN apt-get update \
   && ./script/bootstrap \
   && ./script/setup \
   && chmod 644 /etc/bind/named.conf.options \
-  && mv ./script /tmp \
-  && mv ./etc /tmp \
-  && find . -delete \
-  && rm -rf /usr/include \
-  && mv /tmp/script . \
-  && mv /tmp/etc . \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false git ca-certificates \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false apt-utils build-essential psmisc ninja-build cmake wget ca-certificates \
                           libreadline-dev libncurses-dev libcpputest-dev libdbus-1-dev libavahi-common-dev \
