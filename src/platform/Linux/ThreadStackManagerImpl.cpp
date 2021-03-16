@@ -79,10 +79,11 @@ CHIP_ERROR ThreadStackManagerImpl::_InitThreadStack()
 
     dispatchConnection = mConnection.get();
     mDBusEventLoop     = std::thread([dispatchConnection]() {
-        while (true)
+        while (dbus_connection_read_write_dispatch(dispatchConnection, -1))
         {
-            dbus_connection_read_write_dispatch(dispatchConnection, -1);
+            ChipLogDetail(DeviceLayer, "DBusEventLoop fired");
         }
+        ChipLogDetail(DeviceLayer, "DBusEventLoop exited");
     });
     mDBusEventLoop.detach();
 exit:
