@@ -61,7 +61,7 @@ set -ex
 [[ -n $VERSION ]] || die "version cannot be empty"
 
 if [[ ${*/--try-download//} != "${*}" ]]; then
-    if [[ $(docker pull "$ORG"/"$IMAGE":"$VERSION") -eq 0 ]]; then
+    if docker pull "$ORG"/"$IMAGE":"$VERSION"; then
         # tag it as latest for this version, note: this should only be used on CI
         [[ ${*/--latest//} != "${*}" ]] && {
             docker tag "$ORG"/"$IMAGE":"$VERSION" "$ORG"/"$IMAGE":latest
