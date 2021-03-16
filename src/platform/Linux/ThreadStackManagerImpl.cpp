@@ -96,6 +96,8 @@ void ThreadStackManagerImpl::_ThreadDevcieRoleChangedHandler(DeviceRole role)
     bool attached         = (role != DeviceRole::OTBR_DEVICE_ROLE_DETACHED && role != DeviceRole::OTBR_DEVICE_ROLE_DISABLED);
     ChipDeviceEvent event = ChipDeviceEvent{};
 
+    ChipLogDetail(DeviceLayer, "_ThreadDevcieRoleChangedHandler %d", static_cast<int>(role));
+
     if (attached != mAttached)
     {
         event.Type = DeviceEventType::kThreadConnectivityChange;
