@@ -70,6 +70,8 @@ class TestPythonController(CHIPVirtualHome):
         req_ids = [device['id'] for device in self.non_ap_devices
                    if device['type'] == 'MobileDevice']
 
+        time.sleep(5)
+
         for device_id in server_ids:
             # Clear default Thread network commissioning data
             reply = self.execute_device_cmd(device_id, 'ot-ctl factoryreset')
