@@ -25,9 +25,9 @@ namespace Platform {
  */
 void LogV(const char * module, uint8_t category, const char * msg, va_list v)
 {
-    printf("CHIP:%s: ", module);
-    vprintf(msg, v);
-    printf("\n");
+    fprintf(stderr, "CHIP:%s: ", module);
+    vfprintf(stderr, msg, v);
+    fprintf(stderr, "\n");
 
     // Let the application know that a log message has been emitted.
     DeviceLayer::OnLogOutput();
