@@ -32,6 +32,7 @@
 #include <core/CHIPError.h>
 #include <support/BufferReader.h>
 #include <support/CodeUtils.h>
+#include <support/logging/CHIPLogging.h>
 
 /**********************************************
  * Header format (little endian):
@@ -161,6 +162,8 @@ CHIP_ERROR PacketHeader::Decode(const uint8_t * const data, uint16_t size, uint1
     mEncryptionType = static_cast<Header::EncryptionType>((header & kEncryptionTypeMask) >> kEncryptionTypeShift);
     mFlags.SetRaw(header & Header::kFlagsMask);
 
+    ChipLogDetail(Inet, "Decoded header flags: %04x", header);
+
     err = reader.Read32(&mMessageId).StatusCode();
     SuccessOrExit(err);
 
@@ -285,6 +288,8 @@ CHIP_ERROR PacketHeader::Encode(uint8_t * data, uint16_t size, uint16_t * encode
     }
 
     header |= (static_cast<uint16_t>(static_cast<uint16_t>(mEncryptionType) << kEncryptionTypeShift) & kEncryptionTypeMask);
+
+    ChipLogDetail(Inet, "Encoded header flags: %04x", header);
 
     LittleEndian::Write16(p, header);
     LittleEndian::Write32(p, mMessageId);
