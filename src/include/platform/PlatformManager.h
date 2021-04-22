@@ -169,8 +169,8 @@ extern PlatformManagerImpl & PlatformMgrImpl();
 class CHIPPlatformLock
 {
 public:
-    CHIPPlatformLock() { PlatformMgr()::LockChipStack(); }
-    ~CHIPPlatformLock() { PlatformMgr()::UnlockChipStack(); }
+    CHIPPlatformLock() { PlatformMgr().LockChipStack(); }
+    ~CHIPPlatformLock() { PlatformMgr().UnlockChipStack(); }
 
 private:
     // No copy, move or assignment.
