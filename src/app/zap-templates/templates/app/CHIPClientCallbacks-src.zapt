@@ -3,6 +3,8 @@
 {{#if (chip_has_client_clusters)}}
 #include "gen/CHIPClientCallbacks.h"
 
+#include <cinttypes>
+
 #include "gen/enums.h"
 #include <app/Command.h>
 #include <app/util/af.h>
@@ -216,6 +218,27 @@ bool emberAfDefaultResponseCallback(ClusterId clusterId, CommandId commandId, Em
     LogStatus(status);
 
     GET_RESPONSE_CALLBACKS("emberAfDefaultResponseCallback");
+    if (status == EMBER_ZCL_STATUS_SUCCESS)
+    {
+        Callback::Callback<DefaultSuccessCallback> * cb = Callback::Callback<DefaultSuccessCallback>::FromCancelable(onSuccessCallback);
+        cb->mCall(cb->mContext);
+    }
+    else
+    {
+        Callback::Callback<DefaultFailureCallback> * cb = Callback::Callback<DefaultFailureCallback>::FromCancelable(onFailureCallback);
+        cb->mCall(cb->mContext, static_cast<uint8_t>(status));
+    }
+
+    return true;
+}
+
+bool IMDefaultResponseCallback(const chip::app::Command * commandObj, EmberAfStatus status)
+{
+    ChipLogProgress(Zcl, "DefaultResponse:");
+    ChipLogProgress(Zcl, "  Transaction: %p", commandObj);
+    LogStatus(status);
+
+    GET_CLUSTER_RESPONSE_CALLBACKS("emberAfDefaultResponseCallback");
     if (status == EMBER_ZCL_STATUS_SUCCESS)
     {
         Callback::Callback<DefaultSuccessCallback> * cb = Callback::Callback<DefaultSuccessCallback>::FromCancelable(onSuccessCallback);
