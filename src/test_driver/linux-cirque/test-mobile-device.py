@@ -35,14 +35,16 @@ DEVICE_CONFIG = {
     'device0': {
         'type': 'MobileDevice',
         'base_image': 'chip_mobile_device',
-        'capability': ['Interactive'],
+        'capability': ['Interactive', 'NetworkSimulation'],
         'rcp_mode': True,
+        'latency': 10,
     },
     'device1': {
         'type': 'CHIPEndDevice',
         'base_image': 'chip_server',
-        'capability': ['Thread', 'Interactive'],
+        'capability': ['Thread', 'NetworkSimulation', 'Interactive'],
         'rcp_mode': True,
+        'latency': 10,
     }
 }
 

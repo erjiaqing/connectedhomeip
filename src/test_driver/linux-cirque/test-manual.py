@@ -34,14 +34,16 @@ DEVICE_CONFIG = {
     'device0': {
         'type': 'CHIP-Server',
         'base_image': 'chip_server',
-        'capability': ['Thread', 'Interactive'],
+        'capability': ['Thread', 'Interactive', 'NetworkSimulation'],
         'rcp_mode': True,
+        'latency': 10,
     },
     'device1': {
         'type': 'CHIP-Tool',
         'base_image': 'chip_tool',
-        'capability': ['Thread', 'Interactive'],
+        'capability': ['Thread', 'Interactive', 'NetworkSimulation'],
         'rcp_mode': True,
+        'latency': 10,
     }
 }
 
