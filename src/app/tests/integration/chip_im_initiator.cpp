@@ -364,10 +364,6 @@ int main(int argc, char * argv[])
         }
     }
 
-    gpCommandSender->Shutdown();
-    chip::app::InteractionModelEngine::GetInstance()->Shutdown();
-    ShutdownChip();
-
 exit:
     if (err != CHIP_NO_ERROR || (gCommandRespCount != kMaxCommandMessageCount))
     {
