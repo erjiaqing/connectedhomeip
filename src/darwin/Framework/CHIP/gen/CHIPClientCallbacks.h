@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <app/Command.h>
+#include <app/util/af-enums.h>
 #include <gen/af-structs.h>
 #include <inttypes.h>
 #include <lib/support/Span.h>
@@ -38,6 +40,8 @@ typedef void (*Int64sAttributeCallback)(void * context, int64_t value);
 typedef void (*StringAttributeCallback)(void * context, const chip::ByteSpan value);
 typedef void (*ReadReportingConfigurationReportedCallback)(void * context, uint16_t minInterval, uint16_t maxInterval);
 typedef void (*ReadReportingConfigurationReceivedCallback)(void * context, uint16_t timeout);
+
+bool IMDefaultResponseCallback(const chip::app::Command * commandObj, EmberAfStatus status);
 
 // Cluster Specific Response Callbacks
 typedef void (*DoorLockClusterClearAllPinsResponseCallback)(void * context);
