@@ -218,13 +218,13 @@ uint8_t emberAfGetSourceRouteOverheadCallback(chip::NodeId destination)
     return 0;
 }
 
-bool emberAfGroupsClusterAddGroupCallback(uint16_t groupId, uint8_t * groupName)
+bool emberAfGroupsClusterAddGroupCallback(uint16_t groupId, chip::ByteSpan groupName)
 {
     ChipLogProgress(Zcl, "%s: %d", __FUNCTION__, groupId);
     return false;
 }
 
-bool emberAfGroupsClusterAddGroupIfIdentifyingCallback(uint16_t groupId, uint8_t * groupName)
+bool emberAfGroupsClusterAddGroupIfIdentifyingCallback(uint16_t groupId, chip::ByteSpan groupName)
 {
     ChipLogProgress(Zcl, "%s: %d", __FUNCTION__, groupId);
     return false;

@@ -58,7 +58,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
         {
         case ZCL_GET_SETUP_PIN_COMMAND_ID: {
             expectArgumentCount = 1;
-            const uint8_t * tempAccountIdentifier;
+            chip::ByteSpan tempAccountIdentifier;
             bool argExists[1];
 
             memset(argExists, 0, sizeof argExists);
@@ -88,10 +88,12 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 }
                 switch (currentDecodeTagId)
                 {
-                case 0:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(tempAccountIdentifier);
-                    break;
+                case 0: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    tempAccountIdentifier   = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 default:
                     // Unsupported tag, ignore it.
                     ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
@@ -112,15 +114,14 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 1 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled =
-                    emberAfAccountLoginClusterGetSetupPINCallback(apCommandObj, const_cast<uint8_t *>(tempAccountIdentifier));
+                wasHandled = emberAfAccountLoginClusterGetSetupPINCallback(apCommandObj, tempAccountIdentifier);
             }
             break;
         }
         case ZCL_LOGIN_COMMAND_ID: {
             expectArgumentCount = 2;
-            const uint8_t * tempAccountIdentifier;
-            const uint8_t * setupPIN;
+            chip::ByteSpan tempAccountIdentifier;
+            chip::ByteSpan setupPIN;
             bool argExists[2];
 
             memset(argExists, 0, sizeof argExists);
@@ -150,14 +151,18 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 }
                 switch (currentDecodeTagId)
                 {
-                case 0:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(tempAccountIdentifier);
-                    break;
-                case 1:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(setupPIN);
-                    break;
+                case 0: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    tempAccountIdentifier   = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
+                case 1: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    setupPIN                = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 default:
                     // Unsupported tag, ignore it.
                     ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
@@ -178,8 +183,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 2 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled = emberAfAccountLoginClusterLoginCallback(apCommandObj, const_cast<uint8_t *>(tempAccountIdentifier),
-                                                                     const_cast<uint8_t *>(setupPIN));
+                wasHandled = emberAfAccountLoginClusterLoginCallback(apCommandObj, tempAccountIdentifier, setupPIN);
             }
             break;
         }
@@ -233,7 +237,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
         {
         case ZCL_LAUNCH_APP_COMMAND_ID: {
             expectArgumentCount = 2;
-            const uint8_t * data;
+            chip::ByteSpan data;
             /* TYPE WARNING: array array defaults to */ uint8_t * application;
             bool argExists[2];
 
@@ -264,10 +268,12 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 }
                 switch (currentDecodeTagId)
                 {
-                case 0:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(data);
-                    break;
+                case 0: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    data                    = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 case 1:
                     // Just for compatibility, we will add array type support in IM later.
                     TLVUnpackError = aDataTlv.GetDataPtr(const_cast<const uint8_t *&>(application));
@@ -292,8 +298,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 2 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled =
-                    emberAfApplicationLauncherClusterLaunchAppCallback(apCommandObj, const_cast<uint8_t *>(data), application);
+                wasHandled = emberAfApplicationLauncherClusterLaunchAppCallback(apCommandObj, data, application);
             }
             break;
         }
@@ -348,7 +353,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
         case ZCL_RENAME_OUTPUT_COMMAND_ID: {
             expectArgumentCount = 2;
             uint8_t index;
-            const uint8_t * name;
+            chip::ByteSpan name;
             bool argExists[2];
 
             memset(argExists, 0, sizeof argExists);
@@ -381,10 +386,12 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 case 0:
                     TLVUnpackError = aDataTlv.Get(index);
                     break;
-                case 1:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(name);
-                    break;
+                case 1: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    name                    = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 default:
                     // Unsupported tag, ignore it.
                     ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
@@ -405,7 +412,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 2 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled = emberAfAudioOutputClusterRenameOutputCallback(apCommandObj, index, const_cast<uint8_t *>(name));
+                wasHandled = emberAfAudioOutputClusterRenameOutputCallback(apCommandObj, index, name);
             }
             break;
         }
@@ -519,7 +526,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
         case ZCL_LAUNCH_CONTENT_COMMAND_ID: {
             expectArgumentCount = 2;
             uint8_t autoPlay;
-            const uint8_t * data;
+            chip::ByteSpan data;
             bool argExists[2];
 
             memset(argExists, 0, sizeof argExists);
@@ -552,10 +559,12 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 case 0:
                     TLVUnpackError = aDataTlv.Get(autoPlay);
                     break;
-                case 1:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(data);
-                    break;
+                case 1: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    data                    = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 default:
                     // Unsupported tag, ignore it.
                     ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
@@ -576,14 +585,14 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 2 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled = emberAfContentLaunchClusterLaunchContentCallback(apCommandObj, autoPlay, const_cast<uint8_t *>(data));
+                wasHandled = emberAfContentLaunchClusterLaunchContentCallback(apCommandObj, autoPlay, data);
             }
             break;
         }
         case ZCL_LAUNCH_URL_COMMAND_ID: {
             expectArgumentCount = 2;
-            const uint8_t * contentURL;
-            const uint8_t * displayString;
+            chip::ByteSpan contentURL;
+            chip::ByteSpan displayString;
             bool argExists[2];
 
             memset(argExists, 0, sizeof argExists);
@@ -613,14 +622,18 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 }
                 switch (currentDecodeTagId)
                 {
-                case 0:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(contentURL);
-                    break;
-                case 1:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(displayString);
-                    break;
+                case 0: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    contentURL              = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
+                case 1: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    displayString           = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 default:
                     // Unsupported tag, ignore it.
                     ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
@@ -641,8 +654,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 2 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled = emberAfContentLaunchClusterLaunchURLCallback(apCommandObj, const_cast<uint8_t *>(contentURL),
-                                                                          const_cast<uint8_t *>(displayString));
+                wasHandled = emberAfContentLaunchClusterLaunchURLCallback(apCommandObj, contentURL, displayString);
             }
             break;
         }
@@ -771,7 +783,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
         case ZCL_SET_REGULATORY_CONFIG_COMMAND_ID: {
             expectArgumentCount = 4;
             uint8_t location;
-            const uint8_t * countryCode;
+            chip::ByteSpan countryCode;
             uint64_t breadcrumb;
             uint32_t timeoutMs;
             bool argExists[4];
@@ -806,10 +818,12 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 case 0:
                     TLVUnpackError = aDataTlv.Get(location);
                     break;
-                case 1:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(countryCode);
-                    break;
+                case 1: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    countryCode             = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 case 2:
                     TLVUnpackError = aDataTlv.Get(breadcrumb);
                     break;
@@ -836,8 +850,8 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 4 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled = emberAfGeneralCommissioningClusterSetRegulatoryConfigCallback(
-                    apCommandObj, location, const_cast<uint8_t *>(countryCode), breadcrumb, timeoutMs);
+                wasHandled = emberAfGeneralCommissioningClusterSetRegulatoryConfigCallback(apCommandObj, location, countryCode,
+                                                                                           breadcrumb, timeoutMs);
             }
             break;
         }
@@ -1588,7 +1602,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
         case ZCL_RENAME_INPUT_COMMAND_ID: {
             expectArgumentCount = 2;
             uint8_t index;
-            const uint8_t * name;
+            chip::ByteSpan name;
             bool argExists[2];
 
             memset(argExists, 0, sizeof argExists);
@@ -1621,10 +1635,12 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 case 0:
                     TLVUnpackError = aDataTlv.Get(index);
                     break;
-                case 1:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(name);
-                    break;
+                case 1: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    name                    = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 default:
                     // Unsupported tag, ignore it.
                     ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
@@ -1645,7 +1661,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 2 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled = emberAfMediaInputClusterRenameInputCallback(apCommandObj, index, const_cast<uint8_t *>(name));
+                wasHandled = emberAfMediaInputClusterRenameInputCallback(apCommandObj, index, name);
             }
             break;
         }
@@ -2103,7 +2119,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
         {
         case ZCL_CHANGE_CHANNEL_COMMAND_ID: {
             expectArgumentCount = 1;
-            const uint8_t * match;
+            chip::ByteSpan match;
             bool argExists[1];
 
             memset(argExists, 0, sizeof argExists);
@@ -2133,10 +2149,12 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 }
                 switch (currentDecodeTagId)
                 {
-                case 0:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(match);
-                    break;
+                case 0: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    match                   = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 default:
                     // Unsupported tag, ignore it.
                     ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
@@ -2157,7 +2175,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 1 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled = emberAfTvChannelClusterChangeChannelCallback(apCommandObj, const_cast<uint8_t *>(match));
+                wasHandled = emberAfTvChannelClusterChangeChannelCallback(apCommandObj, match);
             }
             break;
         }
@@ -2334,7 +2352,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
         case ZCL_NAVIGATE_TARGET_COMMAND_ID: {
             expectArgumentCount = 2;
             uint8_t target;
-            const uint8_t * data;
+            chip::ByteSpan data;
             bool argExists[2];
 
             memset(argExists, 0, sizeof argExists);
@@ -2367,10 +2385,12 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
                 case 0:
                     TLVUnpackError = aDataTlv.Get(target);
                     break;
-                case 1:
-                    // TODO(#5542): The cluster handlers should accept a ByteSpan for all string types.
-                    TLVUnpackError = aDataTlv.GetDataPtr(data);
-                    break;
+                case 1: {
+                    const uint8_t * rawData = nullptr;
+                    TLVUnpackError          = aDataTlv.GetDataPtr(rawData);
+                    data                    = chip::ByteSpan(rawData, aDataTlv.GetLength());
+                }
+                break;
                 default:
                     // Unsupported tag, ignore it.
                     ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
@@ -2391,7 +2411,7 @@ void DispatchServerCommand(app::Command * apCommandObj, CommandId aCommandId, En
             if (CHIP_NO_ERROR == TLVError && CHIP_NO_ERROR == TLVUnpackError && 2 == validArgumentCount)
             {
                 // TODO(#5098) We should pass the Command Object and EndpointId to the cluster callbacks.
-                wasHandled = emberAfTargetNavigatorClusterNavigateTargetCallback(apCommandObj, target, const_cast<uint8_t *>(data));
+                wasHandled = emberAfTargetNavigatorClusterNavigateTargetCallback(apCommandObj, target, data);
             }
             break;
         }

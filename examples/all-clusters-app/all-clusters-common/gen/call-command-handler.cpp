@@ -1099,13 +1099,16 @@ EmberAfStatus emberAfDoorLockClusterServerCommandParse(EmberAfClusterCommand * c
         }
         case ZCL_LOCK_DOOR_COMMAND_ID: {
             uint16_t payloadOffset = cmd->payloadStartIndex;
-            uint8_t * PIN;
+            chip::ByteSpan PIN;
 
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            PIN = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                PIN               = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
 
             wasHandled = emberAfDoorLockClusterLockDoorCallback(nullptr, PIN);
             break;
@@ -1150,7 +1153,7 @@ EmberAfStatus emberAfDoorLockClusterServerCommandParse(EmberAfClusterCommand * c
             uint16_t userId;
             uint8_t userStatus;
             uint8_t userType;
-            uint8_t * pin;
+            chip::ByteSpan pin;
 
             if (cmd->bufLen < payloadOffset + 2)
             {
@@ -1174,7 +1177,10 @@ EmberAfStatus emberAfDoorLockClusterServerCommandParse(EmberAfClusterCommand * c
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            pin = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                pin               = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
 
             wasHandled = emberAfDoorLockClusterSetPinCallback(nullptr, userId, userStatus, userType, pin);
             break;
@@ -1184,7 +1190,7 @@ EmberAfStatus emberAfDoorLockClusterServerCommandParse(EmberAfClusterCommand * c
             uint16_t userId;
             uint8_t userStatus;
             uint8_t userType;
-            uint8_t * id;
+            chip::ByteSpan id;
 
             if (cmd->bufLen < payloadOffset + 2)
             {
@@ -1208,7 +1214,10 @@ EmberAfStatus emberAfDoorLockClusterServerCommandParse(EmberAfClusterCommand * c
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            id = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                id                = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
 
             wasHandled = emberAfDoorLockClusterSetRfidCallback(nullptr, userId, userStatus, userType, id);
             break;
@@ -1326,13 +1335,16 @@ EmberAfStatus emberAfDoorLockClusterServerCommandParse(EmberAfClusterCommand * c
         }
         case ZCL_UNLOCK_DOOR_COMMAND_ID: {
             uint16_t payloadOffset = cmd->payloadStartIndex;
-            uint8_t * PIN;
+            chip::ByteSpan PIN;
 
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            PIN = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                PIN               = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
 
             wasHandled = emberAfDoorLockClusterUnlockDoorCallback(nullptr, PIN);
             break;
@@ -1340,7 +1352,7 @@ EmberAfStatus emberAfDoorLockClusterServerCommandParse(EmberAfClusterCommand * c
         case ZCL_UNLOCK_WITH_TIMEOUT_COMMAND_ID: {
             uint16_t payloadOffset = cmd->payloadStartIndex;
             uint16_t timeoutInSeconds;
-            uint8_t * pin;
+            chip::ByteSpan pin;
 
             if (cmd->bufLen < payloadOffset + 2)
             {
@@ -1352,7 +1364,10 @@ EmberAfStatus emberAfDoorLockClusterServerCommandParse(EmberAfClusterCommand * c
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            pin = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                pin               = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
 
             wasHandled = emberAfDoorLockClusterUnlockWithTimeoutCallback(nullptr, timeoutInSeconds, pin);
             break;
@@ -1407,7 +1422,7 @@ EmberAfStatus emberAfGeneralCommissioningClusterServerCommandParse(EmberAfCluste
         case ZCL_SET_REGULATORY_CONFIG_COMMAND_ID: {
             uint16_t payloadOffset = cmd->payloadStartIndex;
             uint8_t location;
-            uint8_t * countryCode;
+            chip::ByteSpan countryCode;
             uint64_t breadcrumb;
             uint32_t timeoutMs;
 
@@ -1421,7 +1436,10 @@ EmberAfStatus emberAfGeneralCommissioningClusterServerCommandParse(EmberAfCluste
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            countryCode   = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                countryCode       = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
             payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(countryCode) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
@@ -1458,7 +1476,7 @@ EmberAfStatus emberAfGroupsClusterServerCommandParse(EmberAfClusterCommand * cmd
         case ZCL_ADD_GROUP_COMMAND_ID: {
             uint16_t payloadOffset = cmd->payloadStartIndex;
             uint16_t groupId;
-            uint8_t * groupName;
+            chip::ByteSpan groupName;
 
             if (cmd->bufLen < payloadOffset + 2)
             {
@@ -1470,7 +1488,10 @@ EmberAfStatus emberAfGroupsClusterServerCommandParse(EmberAfClusterCommand * cmd
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            groupName = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                groupName         = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
 
             wasHandled = emberAfGroupsClusterAddGroupCallback(nullptr, groupId, groupName);
             break;
@@ -1478,7 +1499,7 @@ EmberAfStatus emberAfGroupsClusterServerCommandParse(EmberAfClusterCommand * cmd
         case ZCL_ADD_GROUP_IF_IDENTIFYING_COMMAND_ID: {
             uint16_t payloadOffset = cmd->payloadStartIndex;
             uint16_t groupId;
-            uint8_t * groupName;
+            chip::ByteSpan groupName;
 
             if (cmd->bufLen < payloadOffset + 2)
             {
@@ -1490,7 +1511,10 @@ EmberAfStatus emberAfGroupsClusterServerCommandParse(EmberAfClusterCommand * cmd
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            groupName = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                groupName         = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
 
             wasHandled = emberAfGroupsClusterAddGroupIfIdentifyingCallback(nullptr, groupId, groupName);
             break;
@@ -1877,7 +1901,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData  = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 operationalDataset = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + operationalDataset.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(operationalDataset) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -1909,7 +1933,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 ssid              = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + ssid.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(ssid) + 1u);
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -1918,7 +1942,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 credentials       = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + credentials.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(credentials) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -1949,7 +1973,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 networkID         = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + networkID.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(networkID) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -1979,7 +2003,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 networkID         = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + networkID.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(networkID) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2022,7 +2046,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 NetworkID         = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + NetworkID.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(NetworkID) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2052,7 +2076,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 ssid              = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + ssid.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(ssid) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2082,7 +2106,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData  = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 operationalDataset = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + operationalDataset.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(operationalDataset) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2114,7 +2138,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 ssid              = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + ssid.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(ssid) + 1u);
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2123,7 +2147,7 @@ EmberAfStatus emberAfNetworkCommissioningClusterServerCommandParse(EmberAfCluste
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 credentials       = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + credentials.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(credentials) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2169,7 +2193,7 @@ EmberAfStatus emberAfOtaSoftwareUpdateServerClusterServerCommandParse(EmberAfClu
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 updateToken       = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + updateToken.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(updateToken) + 1u);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2192,7 +2216,7 @@ EmberAfStatus emberAfOtaSoftwareUpdateServerClusterServerCommandParse(EmberAfClu
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 updateToken       = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + updateToken.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(updateToken) + 1u);
             if (cmd->bufLen < payloadOffset + 4)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2210,7 +2234,7 @@ EmberAfStatus emberAfOtaSoftwareUpdateServerClusterServerCommandParse(EmberAfClu
             uint16_t hardwareVersion;
             uint32_t currentVersion;
             /* TYPE WARNING: array array defaults to */ uint8_t * protocolsSupported;
-            uint8_t * location;
+            chip::ByteSpan location;
             uint8_t clientCanConsent;
             chip::ByteSpan metadataForServer;
 
@@ -2249,7 +2273,10 @@ EmberAfStatus emberAfOtaSoftwareUpdateServerClusterServerCommandParse(EmberAfClu
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            location      = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                location          = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
             payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(location) + 1u);
             if (cmd->bufLen < payloadOffset + 1)
             {
@@ -2331,7 +2358,7 @@ EmberAfStatus emberAfOperationalCredentialsClusterServerCommandParse(EmberAfClus
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 NOC               = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + NOC.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(NOC) + 1u);
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2340,7 +2367,7 @@ EmberAfStatus emberAfOperationalCredentialsClusterServerCommandParse(EmberAfClus
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 ICACertificate    = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + ICACertificate.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(ICACertificate) + 1u);
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2349,7 +2376,7 @@ EmberAfStatus emberAfOperationalCredentialsClusterServerCommandParse(EmberAfClus
                 uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
                 IPKValue          = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
             }
-            payloadOffset = static_cast<uint16_t>(payloadOffset + IPKValue.size() + 1u);
+            payloadOffset = static_cast<uint16_t>(payloadOffset + emberAfStringLength(IPKValue) + 1u);
             if (cmd->bufLen < payloadOffset + 8)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
@@ -2428,13 +2455,16 @@ EmberAfStatus emberAfOperationalCredentialsClusterServerCommandParse(EmberAfClus
         }
         case ZCL_UPDATE_FABRIC_LABEL_COMMAND_ID: {
             uint16_t payloadOffset = cmd->payloadStartIndex;
-            uint8_t * Label;
+            chip::ByteSpan Label;
 
             if (cmd->bufLen < payloadOffset + 1u)
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            Label = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                Label             = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
 
             wasHandled = emberAfOperationalCredentialsClusterUpdateFabricLabelCallback(nullptr, Label);
             break;
@@ -2460,7 +2490,7 @@ EmberAfStatus emberAfScenesClusterServerCommandParse(EmberAfClusterCommand * cmd
             uint16_t groupId;
             uint8_t sceneId;
             uint16_t transitionTime;
-            uint8_t * sceneName;
+            chip::ByteSpan sceneName;
             /* TYPE WARNING: array array defaults to */ uint8_t * extensionFieldSets;
 
             if (cmd->bufLen < payloadOffset + 2)
@@ -2485,7 +2515,10 @@ EmberAfStatus emberAfScenesClusterServerCommandParse(EmberAfClusterCommand * cmd
             {
                 return EMBER_ZCL_STATUS_MALFORMED_COMMAND;
             }
-            sceneName          = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+            {
+                uint8_t * rawData = emberAfGetString(cmd->buffer, payloadOffset, cmd->bufLen);
+                sceneName         = chip::ByteSpan(rawData + 1u, emberAfStringLength(rawData));
+            }
             payloadOffset      = static_cast<uint16_t>(payloadOffset + emberAfStringLength(sceneName) + 1u);
             extensionFieldSets = cmd->buffer + payloadOffset;
 

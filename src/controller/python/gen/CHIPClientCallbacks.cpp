@@ -933,24 +933,25 @@ bool emberAfDiscoverCommandsReceivedResponseCallback(ClusterId clusterId, uint16
     return true;
 }
 
-bool emberAfAccountLoginClusterGetSetupPINResponseCallback(chip::app::Command * commandObj, uint8_t * setupPIN)
+bool emberAfAccountLoginClusterGetSetupPINResponseCallback(chip::app::Command * commandObj, chip::ByteSpan setupPIN)
 {
     ChipLogProgress(Zcl, "GetSetupPINResponse:");
-    ChipLogProgress(Zcl, "  setupPIN: %s", setupPIN);
+    ChipLogProgress(Zcl, "  setupPIN: %s", setupPIN.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("AccountLoginClusterGetSetupPINResponseCallback");
 
     Callback::Callback<AccountLoginClusterGetSetupPINResponseCallback> * cb =
         Callback::Callback<AccountLoginClusterGetSetupPINResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, setupPIN);
+    cb->mCall(cb->mContext, const_cast<uint8_t *>(setupPIN.data()));
     return true;
 }
 
-bool emberAfApplicationLauncherClusterLaunchAppResponseCallback(chip::app::Command * commandObj, uint8_t status, uint8_t * data)
+bool emberAfApplicationLauncherClusterLaunchAppResponseCallback(chip::app::Command * commandObj, uint8_t status,
+                                                                chip::ByteSpan data)
 {
     ChipLogProgress(Zcl, "LaunchAppResponse:");
     LogStatus(status);
-    ChipLogProgress(Zcl, "  data: %s", data);
+    ChipLogProgress(Zcl, "  data: %s", data.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("ApplicationLauncherClusterLaunchAppResponseCallback");
 
@@ -964,37 +965,46 @@ bool emberAfApplicationLauncherClusterLaunchAppResponseCallback(chip::app::Comma
 
     Callback::Callback<ApplicationLauncherClusterLaunchAppResponseCallback> * cb =
         Callback::Callback<ApplicationLauncherClusterLaunchAppResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, data);
+    cb->mCall(cb->mContext
+
+              ,
+              const_cast<uint8_t *>(data.data()));
     return true;
 }
 
-bool emberAfContentLaunchClusterLaunchContentResponseCallback(chip::app::Command * commandObj, uint8_t * data,
+bool emberAfContentLaunchClusterLaunchContentResponseCallback(chip::app::Command * commandObj, chip::ByteSpan data,
                                                               uint8_t contentLaunchStatus)
 {
     ChipLogProgress(Zcl, "LaunchContentResponse:");
-    ChipLogProgress(Zcl, "  data: %s", data);
+    ChipLogProgress(Zcl, "  data: %s", data.data());
     ChipLogProgress(Zcl, "  contentLaunchStatus: %" PRIu8 "", contentLaunchStatus);
 
     GET_CLUSTER_RESPONSE_CALLBACKS("ContentLaunchClusterLaunchContentResponseCallback");
 
     Callback::Callback<ContentLaunchClusterLaunchContentResponseCallback> * cb =
         Callback::Callback<ContentLaunchClusterLaunchContentResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, data, contentLaunchStatus);
+    cb->mCall(cb->mContext, const_cast<uint8_t *>(data.data())
+
+                                ,
+              contentLaunchStatus);
     return true;
 }
 
-bool emberAfContentLaunchClusterLaunchURLResponseCallback(chip::app::Command * commandObj, uint8_t * data,
+bool emberAfContentLaunchClusterLaunchURLResponseCallback(chip::app::Command * commandObj, chip::ByteSpan data,
                                                           uint8_t contentLaunchStatus)
 {
     ChipLogProgress(Zcl, "LaunchURLResponse:");
-    ChipLogProgress(Zcl, "  data: %s", data);
+    ChipLogProgress(Zcl, "  data: %s", data.data());
     ChipLogProgress(Zcl, "  contentLaunchStatus: %" PRIu8 "", contentLaunchStatus);
 
     GET_CLUSTER_RESPONSE_CALLBACKS("ContentLaunchClusterLaunchURLResponseCallback");
 
     Callback::Callback<ContentLaunchClusterLaunchURLResponseCallback> * cb =
         Callback::Callback<ContentLaunchClusterLaunchURLResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, data, contentLaunchStatus);
+    cb->mCall(cb->mContext, const_cast<uint8_t *>(data.data())
+
+                                ,
+              contentLaunchStatus);
     return true;
 }
 
@@ -1168,13 +1178,22 @@ bool emberAfDoorLockClusterGetHolidayScheduleResponseCallback(chip::app::Command
 
     Callback::Callback<DoorLockClusterGetHolidayScheduleResponseCallback> * cb =
         Callback::Callback<DoorLockClusterGetHolidayScheduleResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, scheduleId, localStartTime, localEndTime, operatingModeDuringHoliday);
+    cb->mCall(cb->mContext, scheduleId
+
+              ,
+              localStartTime
+
+              ,
+              localEndTime
+
+              ,
+              operatingModeDuringHoliday);
     return true;
 }
 
 bool emberAfDoorLockClusterGetLogRecordResponseCallback(chip::app::Command * commandObj, uint16_t logEntryId, uint32_t timestamp,
                                                         uint8_t eventType, uint8_t source, uint8_t eventIdOrAlarmCode,
-                                                        uint16_t userId, uint8_t * pin)
+                                                        uint16_t userId, chip::ByteSpan pin)
 {
     ChipLogProgress(Zcl, "GetLogRecordResponse:");
     ChipLogProgress(Zcl, "  logEntryId: %" PRIu16 "", logEntryId);
@@ -1183,47 +1202,83 @@ bool emberAfDoorLockClusterGetLogRecordResponseCallback(chip::app::Command * com
     ChipLogProgress(Zcl, "  source: %" PRIu8 "", source);
     ChipLogProgress(Zcl, "  eventIdOrAlarmCode: %" PRIu8 "", eventIdOrAlarmCode);
     ChipLogProgress(Zcl, "  userId: %" PRIu16 "", userId);
-    ChipLogProgress(Zcl, "  pin: %s", pin);
+    ChipLogProgress(Zcl, "  pin: %s", pin.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("DoorLockClusterGetLogRecordResponseCallback");
 
     Callback::Callback<DoorLockClusterGetLogRecordResponseCallback> * cb =
         Callback::Callback<DoorLockClusterGetLogRecordResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, logEntryId, timestamp, eventType, source, eventIdOrAlarmCode, userId, pin);
+    cb->mCall(cb->mContext, logEntryId
+
+              ,
+              timestamp
+
+              ,
+              eventType
+
+              ,
+              source
+
+              ,
+              eventIdOrAlarmCode
+
+              ,
+              userId
+
+              ,
+              const_cast<uint8_t *>(pin.data()));
     return true;
 }
 
 bool emberAfDoorLockClusterGetPinResponseCallback(chip::app::Command * commandObj, uint16_t userId, uint8_t userStatus,
-                                                  uint8_t userType, uint8_t * pin)
+                                                  uint8_t userType, chip::ByteSpan pin)
 {
     ChipLogProgress(Zcl, "GetPinResponse:");
     ChipLogProgress(Zcl, "  userId: %" PRIu16 "", userId);
     ChipLogProgress(Zcl, "  userStatus: %" PRIu8 "", userStatus);
     ChipLogProgress(Zcl, "  userType: %" PRIu8 "", userType);
-    ChipLogProgress(Zcl, "  pin: %s", pin);
+    ChipLogProgress(Zcl, "  pin: %s", pin.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("DoorLockClusterGetPinResponseCallback");
 
     Callback::Callback<DoorLockClusterGetPinResponseCallback> * cb =
         Callback::Callback<DoorLockClusterGetPinResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, userId, userStatus, userType, pin);
+    cb->mCall(cb->mContext, userId
+
+              ,
+              userStatus
+
+              ,
+              userType
+
+              ,
+              const_cast<uint8_t *>(pin.data()));
     return true;
 }
 
 bool emberAfDoorLockClusterGetRfidResponseCallback(chip::app::Command * commandObj, uint16_t userId, uint8_t userStatus,
-                                                   uint8_t userType, uint8_t * rfid)
+                                                   uint8_t userType, chip::ByteSpan rfid)
 {
     ChipLogProgress(Zcl, "GetRfidResponse:");
     ChipLogProgress(Zcl, "  userId: %" PRIu16 "", userId);
     ChipLogProgress(Zcl, "  userStatus: %" PRIu8 "", userStatus);
     ChipLogProgress(Zcl, "  userType: %" PRIu8 "", userType);
-    ChipLogProgress(Zcl, "  rfid: %s", rfid);
+    ChipLogProgress(Zcl, "  rfid: %s", rfid.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("DoorLockClusterGetRfidResponseCallback");
 
     Callback::Callback<DoorLockClusterGetRfidResponseCallback> * cb =
         Callback::Callback<DoorLockClusterGetRfidResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, userId, userStatus, userType, rfid);
+    cb->mCall(cb->mContext, userId
+
+              ,
+              userStatus
+
+              ,
+              userType
+
+              ,
+              const_cast<uint8_t *>(rfid.data()));
     return true;
 }
 
@@ -1237,7 +1292,10 @@ bool emberAfDoorLockClusterGetUserTypeResponseCallback(chip::app::Command * comm
 
     Callback::Callback<DoorLockClusterGetUserTypeResponseCallback> * cb =
         Callback::Callback<DoorLockClusterGetUserTypeResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, userId, userType);
+    cb->mCall(cb->mContext, userId
+
+              ,
+              userType);
     return true;
 }
 
@@ -1267,7 +1325,25 @@ bool emberAfDoorLockClusterGetWeekdayScheduleResponseCallback(chip::app::Command
 
     Callback::Callback<DoorLockClusterGetWeekdayScheduleResponseCallback> * cb =
         Callback::Callback<DoorLockClusterGetWeekdayScheduleResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, scheduleId, userId, daysMask, startHour, startMinute, endHour, endMinute);
+    cb->mCall(cb->mContext, scheduleId
+
+              ,
+              userId
+
+              ,
+              daysMask
+
+              ,
+              startHour
+
+              ,
+              startMinute
+
+              ,
+              endHour
+
+              ,
+              endMinute);
     return true;
 }
 
@@ -1293,7 +1369,16 @@ bool emberAfDoorLockClusterGetYeardayScheduleResponseCallback(chip::app::Command
 
     Callback::Callback<DoorLockClusterGetYeardayScheduleResponseCallback> * cb =
         Callback::Callback<DoorLockClusterGetYeardayScheduleResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, scheduleId, userId, localStartTime, localEndTime);
+    cb->mCall(cb->mContext, scheduleId
+
+              ,
+              userId
+
+              ,
+              localStartTime
+
+              ,
+              localEndTime);
     return true;
 }
 
@@ -1487,47 +1572,56 @@ bool emberAfDoorLockClusterUnlockWithTimeoutResponseCallback(chip::app::Command 
 }
 
 bool emberAfGeneralCommissioningClusterArmFailSafeResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                   uint8_t * debugText)
+                                                                   chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "ArmFailSafeResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("GeneralCommissioningClusterArmFailSafeResponseCallback");
 
     Callback::Callback<GeneralCommissioningClusterArmFailSafeResponseCallback> * cb =
         Callback::Callback<GeneralCommissioningClusterArmFailSafeResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
 bool emberAfGeneralCommissioningClusterCommissioningCompleteResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                             uint8_t * debugText)
+                                                                             chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "CommissioningCompleteResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("GeneralCommissioningClusterCommissioningCompleteResponseCallback");
 
     Callback::Callback<GeneralCommissioningClusterCommissioningCompleteResponseCallback> * cb =
         Callback::Callback<GeneralCommissioningClusterCommissioningCompleteResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
 bool emberAfGeneralCommissioningClusterSetRegulatoryConfigResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                           uint8_t * debugText)
+                                                                           chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "SetRegulatoryConfigResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("GeneralCommissioningClusterSetRegulatoryConfigResponseCallback");
 
     Callback::Callback<GeneralCommissioningClusterSetRegulatoryConfigResponseCallback> * cb =
         Callback::Callback<GeneralCommissioningClusterSetRegulatoryConfigResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
@@ -1549,7 +1643,10 @@ bool emberAfGroupsClusterAddGroupResponseCallback(chip::app::Command * commandOb
 
     Callback::Callback<GroupsClusterAddGroupResponseCallback> * cb =
         Callback::Callback<GroupsClusterAddGroupResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, groupId);
+    cb->mCall(cb->mContext
+
+              ,
+              groupId);
     return true;
 }
 
@@ -1565,7 +1662,13 @@ bool emberAfGroupsClusterGetGroupMembershipResponseCallback(chip::app::Command *
 
     Callback::Callback<GroupsClusterGetGroupMembershipResponseCallback> * cb =
         Callback::Callback<GroupsClusterGetGroupMembershipResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, capacity, groupCount, groupList);
+    cb->mCall(cb->mContext, capacity
+
+              ,
+              groupCount
+
+              ,
+              groupList);
     return true;
 }
 
@@ -1587,17 +1690,20 @@ bool emberAfGroupsClusterRemoveGroupResponseCallback(chip::app::Command * comman
 
     Callback::Callback<GroupsClusterRemoveGroupResponseCallback> * cb =
         Callback::Callback<GroupsClusterRemoveGroupResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, groupId);
+    cb->mCall(cb->mContext
+
+              ,
+              groupId);
     return true;
 }
 
 bool emberAfGroupsClusterViewGroupResponseCallback(chip::app::Command * commandObj, uint8_t status, uint16_t groupId,
-                                                   uint8_t * groupName)
+                                                   chip::ByteSpan groupName)
 {
     ChipLogProgress(Zcl, "ViewGroupResponse:");
     LogStatus(status);
     ChipLogProgress(Zcl, "  groupId: %" PRIu16 "", groupId);
-    ChipLogProgress(Zcl, "  groupName: %s", groupName);
+    ChipLogProgress(Zcl, "  groupName: %s", groupName.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("GroupsClusterViewGroupResponseCallback");
 
@@ -1611,7 +1717,13 @@ bool emberAfGroupsClusterViewGroupResponseCallback(chip::app::Command * commandO
 
     Callback::Callback<GroupsClusterViewGroupResponseCallback> * cb =
         Callback::Callback<GroupsClusterViewGroupResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, groupId, groupName);
+    cb->mCall(cb->mContext
+
+              ,
+              groupId
+
+              ,
+              const_cast<uint8_t *>(groupName.data()));
     return true;
 }
 
@@ -1793,88 +1905,103 @@ bool emberAfMediaPlaybackClusterMediaStopResponseCallback(chip::app::Command * c
 }
 
 bool emberAfNetworkCommissioningClusterAddThreadNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                        uint8_t * debugText)
+                                                                        chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "AddThreadNetworkResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("NetworkCommissioningClusterAddThreadNetworkResponseCallback");
 
     Callback::Callback<NetworkCommissioningClusterAddThreadNetworkResponseCallback> * cb =
         Callback::Callback<NetworkCommissioningClusterAddThreadNetworkResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
 bool emberAfNetworkCommissioningClusterAddWiFiNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                      uint8_t * debugText)
+                                                                      chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "AddWiFiNetworkResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("NetworkCommissioningClusterAddWiFiNetworkResponseCallback");
 
     Callback::Callback<NetworkCommissioningClusterAddWiFiNetworkResponseCallback> * cb =
         Callback::Callback<NetworkCommissioningClusterAddWiFiNetworkResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
 bool emberAfNetworkCommissioningClusterDisableNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                      uint8_t * debugText)
+                                                                      chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "DisableNetworkResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("NetworkCommissioningClusterDisableNetworkResponseCallback");
 
     Callback::Callback<NetworkCommissioningClusterDisableNetworkResponseCallback> * cb =
         Callback::Callback<NetworkCommissioningClusterDisableNetworkResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
 bool emberAfNetworkCommissioningClusterEnableNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                     uint8_t * debugText)
+                                                                     chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "EnableNetworkResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("NetworkCommissioningClusterEnableNetworkResponseCallback");
 
     Callback::Callback<NetworkCommissioningClusterEnableNetworkResponseCallback> * cb =
         Callback::Callback<NetworkCommissioningClusterEnableNetworkResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
 bool emberAfNetworkCommissioningClusterRemoveNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                     uint8_t * debugText)
+                                                                     chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "RemoveNetworkResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("NetworkCommissioningClusterRemoveNetworkResponseCallback");
 
     Callback::Callback<NetworkCommissioningClusterRemoveNetworkResponseCallback> * cb =
         Callback::Callback<NetworkCommissioningClusterRemoveNetworkResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
 bool emberAfNetworkCommissioningClusterScanNetworksResponseCallback(
-    chip::app::Command * commandObj, uint8_t errorCode, uint8_t * debugText,
+    chip::app::Command * commandObj, uint8_t errorCode, chip::ByteSpan debugText,
     /* TYPE WARNING: array array defaults to */ uint8_t * wifiScanResults,
     /* TYPE WARNING: array array defaults to */ uint8_t * threadScanResults)
 {
     ChipLogProgress(Zcl, "ScanNetworksResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
     ChipLogProgress(Zcl, "  wifiScanResults: %p", wifiScanResults);
     ChipLogProgress(Zcl, "  threadScanResults: %p", threadScanResults);
 
@@ -1882,75 +2009,114 @@ bool emberAfNetworkCommissioningClusterScanNetworksResponseCallback(
 
     Callback::Callback<NetworkCommissioningClusterScanNetworksResponseCallback> * cb =
         Callback::Callback<NetworkCommissioningClusterScanNetworksResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText, wifiScanResults, threadScanResults);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data())
+
+                  ,
+              wifiScanResults
+
+              ,
+              threadScanResults);
     return true;
 }
 
 bool emberAfNetworkCommissioningClusterUpdateThreadNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                           uint8_t * debugText)
+                                                                           chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "UpdateThreadNetworkResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("NetworkCommissioningClusterUpdateThreadNetworkResponseCallback");
 
     Callback::Callback<NetworkCommissioningClusterUpdateThreadNetworkResponseCallback> * cb =
         Callback::Callback<NetworkCommissioningClusterUpdateThreadNetworkResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
 bool emberAfNetworkCommissioningClusterUpdateWiFiNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                         uint8_t * debugText)
+                                                                         chip::ByteSpan debugText)
 {
     ChipLogProgress(Zcl, "UpdateWiFiNetworkResponse:");
     ChipLogProgress(Zcl, "  errorCode: %" PRIu8 "", errorCode);
-    ChipLogProgress(Zcl, "  debugText: %s", debugText);
+    ChipLogProgress(Zcl, "  debugText: %s", debugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("NetworkCommissioningClusterUpdateWiFiNetworkResponseCallback");
 
     Callback::Callback<NetworkCommissioningClusterUpdateWiFiNetworkResponseCallback> * cb =
         Callback::Callback<NetworkCommissioningClusterUpdateWiFiNetworkResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, errorCode, debugText);
+    cb->mCall(cb->mContext, errorCode
+
+              ,
+              const_cast<uint8_t *>(debugText.data()));
     return true;
 }
 
-bool emberAfOperationalCredentialsClusterOpCSRResponseCallback(chip::app::Command * commandObj, uint8_t * CSR, uint32_t CSRLen,
-                                                               uint8_t * CSRNonce, uint8_t * VendorReserved1,
-                                                               uint8_t * VendorReserved2, uint8_t * VendorReserved3,
-                                                               uint8_t * Signature)
+bool emberAfOperationalCredentialsClusterOpCSRResponseCallback(chip::app::Command * commandObj, chip::ByteSpan CSR, uint32_t CSRLen,
+                                                               chip::ByteSpan CSRNonce, chip::ByteSpan VendorReserved1,
+                                                               chip::ByteSpan VendorReserved2, chip::ByteSpan VendorReserved3,
+                                                               chip::ByteSpan Signature)
 {
     ChipLogProgress(Zcl, "OpCSRResponse:");
-    ChipLogProgress(Zcl, "  CSR: %s", CSR);
+    ChipLogProgress(Zcl, "  CSR: %s", CSR.data());
     ChipLogProgress(Zcl, "  CSRLen: %" PRIu32 "", CSRLen);
-    ChipLogProgress(Zcl, "  CSRNonce: %s", CSRNonce);
-    ChipLogProgress(Zcl, "  VendorReserved1: %s", VendorReserved1);
-    ChipLogProgress(Zcl, "  VendorReserved2: %s", VendorReserved2);
-    ChipLogProgress(Zcl, "  VendorReserved3: %s", VendorReserved3);
-    ChipLogProgress(Zcl, "  Signature: %s", Signature);
+    ChipLogProgress(Zcl, "  CSRNonce: %s", CSRNonce.data());
+    ChipLogProgress(Zcl, "  VendorReserved1: %s", VendorReserved1.data());
+    ChipLogProgress(Zcl, "  VendorReserved2: %s", VendorReserved2.data());
+    ChipLogProgress(Zcl, "  VendorReserved3: %s", VendorReserved3.data());
+    ChipLogProgress(Zcl, "  Signature: %s", Signature.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("OperationalCredentialsClusterOpCSRResponseCallback");
 
     Callback::Callback<OperationalCredentialsClusterOpCSRResponseCallback> * cb =
         Callback::Callback<OperationalCredentialsClusterOpCSRResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, CSR, CSRLen, CSRNonce, VendorReserved1, VendorReserved2, VendorReserved3, Signature);
+    cb->mCall(cb->mContext, const_cast<uint8_t *>(CSR.data())
+
+                                ,
+              CSRLen
+
+              ,
+              const_cast<uint8_t *>(CSRNonce.data())
+
+                  ,
+              const_cast<uint8_t *>(VendorReserved1.data())
+
+                  ,
+              const_cast<uint8_t *>(VendorReserved2.data())
+
+                  ,
+              const_cast<uint8_t *>(VendorReserved3.data())
+
+                  ,
+              const_cast<uint8_t *>(Signature.data()));
     return true;
 }
 
 bool emberAfOperationalCredentialsClusterOpCertResponseCallback(chip::app::Command * commandObj, uint8_t StatusCode,
-                                                                uint64_t FabricIndex, uint8_t * DebugText)
+                                                                uint64_t FabricIndex, chip::ByteSpan DebugText)
 {
     ChipLogProgress(Zcl, "OpCertResponse:");
     ChipLogProgress(Zcl, "  StatusCode: %" PRIu8 "", StatusCode);
     ChipLogProgress(Zcl, "  FabricIndex: %" PRIu64 "", FabricIndex);
-    ChipLogProgress(Zcl, "  DebugText: %s", DebugText);
+    ChipLogProgress(Zcl, "  DebugText: %s", DebugText.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("OperationalCredentialsClusterOpCertResponseCallback");
 
     Callback::Callback<OperationalCredentialsClusterOpCertResponseCallback> * cb =
         Callback::Callback<OperationalCredentialsClusterOpCertResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, StatusCode, FabricIndex, DebugText);
+    cb->mCall(cb->mContext, StatusCode
+
+              ,
+              FabricIndex
+
+              ,
+              const_cast<uint8_t *>(DebugText.data()));
     return true;
 }
 
@@ -1987,7 +2153,13 @@ bool emberAfScenesClusterAddSceneResponseCallback(chip::app::Command * commandOb
 
     Callback::Callback<ScenesClusterAddSceneResponseCallback> * cb =
         Callback::Callback<ScenesClusterAddSceneResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, groupId, sceneId);
+    cb->mCall(cb->mContext
+
+              ,
+              groupId
+
+              ,
+              sceneId);
     return true;
 }
 
@@ -2014,7 +2186,19 @@ bool emberAfScenesClusterGetSceneMembershipResponseCallback(chip::app::Command *
 
     Callback::Callback<ScenesClusterGetSceneMembershipResponseCallback> * cb =
         Callback::Callback<ScenesClusterGetSceneMembershipResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, capacity, groupId, sceneCount, sceneList);
+    cb->mCall(cb->mContext
+
+              ,
+              capacity
+
+              ,
+              groupId
+
+              ,
+              sceneCount
+
+              ,
+              sceneList);
     return true;
 }
 
@@ -2036,7 +2220,10 @@ bool emberAfScenesClusterRemoveAllScenesResponseCallback(chip::app::Command * co
 
     Callback::Callback<ScenesClusterRemoveAllScenesResponseCallback> * cb =
         Callback::Callback<ScenesClusterRemoveAllScenesResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, groupId);
+    cb->mCall(cb->mContext
+
+              ,
+              groupId);
     return true;
 }
 
@@ -2060,7 +2247,13 @@ bool emberAfScenesClusterRemoveSceneResponseCallback(chip::app::Command * comman
 
     Callback::Callback<ScenesClusterRemoveSceneResponseCallback> * cb =
         Callback::Callback<ScenesClusterRemoveSceneResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, groupId, sceneId);
+    cb->mCall(cb->mContext
+
+              ,
+              groupId
+
+              ,
+              sceneId);
     return true;
 }
 
@@ -2084,12 +2277,18 @@ bool emberAfScenesClusterStoreSceneResponseCallback(chip::app::Command * command
 
     Callback::Callback<ScenesClusterStoreSceneResponseCallback> * cb =
         Callback::Callback<ScenesClusterStoreSceneResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, groupId, sceneId);
+    cb->mCall(cb->mContext
+
+              ,
+              groupId
+
+              ,
+              sceneId);
     return true;
 }
 
 bool emberAfScenesClusterViewSceneResponseCallback(chip::app::Command * commandObj, uint8_t status, uint16_t groupId,
-                                                   uint8_t sceneId, uint16_t transitionTime, uint8_t * sceneName,
+                                                   uint8_t sceneId, uint16_t transitionTime, chip::ByteSpan sceneName,
                                                    /* TYPE WARNING: array array defaults to */ uint8_t * extensionFieldSets)
 {
     ChipLogProgress(Zcl, "ViewSceneResponse:");
@@ -2097,7 +2296,7 @@ bool emberAfScenesClusterViewSceneResponseCallback(chip::app::Command * commandO
     ChipLogProgress(Zcl, "  groupId: %" PRIu16 "", groupId);
     ChipLogProgress(Zcl, "  sceneId: %" PRIu8 "", sceneId);
     ChipLogProgress(Zcl, "  transitionTime: %" PRIu16 "", transitionTime);
-    ChipLogProgress(Zcl, "  sceneName: %s", sceneName);
+    ChipLogProgress(Zcl, "  sceneName: %s", sceneName.data());
     ChipLogProgress(Zcl, "  extensionFieldSets: %p", extensionFieldSets);
 
     GET_CLUSTER_RESPONSE_CALLBACKS("ScenesClusterViewSceneResponseCallback");
@@ -2112,7 +2311,22 @@ bool emberAfScenesClusterViewSceneResponseCallback(chip::app::Command * commandO
 
     Callback::Callback<ScenesClusterViewSceneResponseCallback> * cb =
         Callback::Callback<ScenesClusterViewSceneResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, groupId, sceneId, transitionTime, sceneName, extensionFieldSets);
+    cb->mCall(cb->mContext
+
+              ,
+              groupId
+
+              ,
+              sceneId
+
+              ,
+              transitionTime
+
+              ,
+              const_cast<uint8_t *>(sceneName.data())
+
+                  ,
+              extensionFieldSets);
     return true;
 }
 
@@ -2128,15 +2342,19 @@ bool emberAfTvChannelClusterChangeChannelResponseCallback(chip::app::Command * c
 
     Callback::Callback<TvChannelClusterChangeChannelResponseCallback> * cb =
         Callback::Callback<TvChannelClusterChangeChannelResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, ChannelMatch, ErrorType);
+    cb->mCall(cb->mContext, ChannelMatch
+
+              ,
+              ErrorType);
     return true;
 }
 
-bool emberAfTargetNavigatorClusterNavigateTargetResponseCallback(chip::app::Command * commandObj, uint8_t status, uint8_t * data)
+bool emberAfTargetNavigatorClusterNavigateTargetResponseCallback(chip::app::Command * commandObj, uint8_t status,
+                                                                 chip::ByteSpan data)
 {
     ChipLogProgress(Zcl, "NavigateTargetResponse:");
     LogStatus(status);
-    ChipLogProgress(Zcl, "  data: %s", data);
+    ChipLogProgress(Zcl, "  data: %s", data.data());
 
     GET_CLUSTER_RESPONSE_CALLBACKS("TargetNavigatorClusterNavigateTargetResponseCallback");
 
@@ -2150,7 +2368,10 @@ bool emberAfTargetNavigatorClusterNavigateTargetResponseCallback(chip::app::Comm
 
     Callback::Callback<TargetNavigatorClusterNavigateTargetResponseCallback> * cb =
         Callback::Callback<TargetNavigatorClusterNavigateTargetResponseCallback>::FromCancelable(onSuccessCallback);
-    cb->mCall(cb->mContext, data);
+    cb->mCall(cb->mContext
+
+              ,
+              const_cast<uint8_t *>(data.data()));
     return true;
 }
 

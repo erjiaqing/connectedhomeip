@@ -764,7 +764,8 @@ bool emberAfGeneralCommissioningClusterCommissioningCompleteCallback(chip::app::
  */
 
 bool emberAfGeneralCommissioningClusterSetRegulatoryConfigCallback(chip::app::Command * commandObj, uint8_t location,
-                                                                   uint8_t * countryCode, uint64_t breadcrumb, uint32_t timeoutMs);
+                                                                   chip::ByteSpan countryCode, uint64_t breadcrumb,
+                                                                   uint32_t timeoutMs);
 
 /**
  * @brief Groups Cluster AddGroup Command callback
@@ -772,7 +773,7 @@ bool emberAfGeneralCommissioningClusterSetRegulatoryConfigCallback(chip::app::Co
  * @param groupName
  */
 
-bool emberAfGroupsClusterAddGroupCallback(chip::app::Command * commandObj, uint16_t groupId, uint8_t * groupName);
+bool emberAfGroupsClusterAddGroupCallback(chip::app::Command * commandObj, uint16_t groupId, chip::ByteSpan groupName);
 
 /**
  * @brief Groups Cluster AddGroupIfIdentifying Command callback
@@ -780,7 +781,7 @@ bool emberAfGroupsClusterAddGroupCallback(chip::app::Command * commandObj, uint1
  * @param groupName
  */
 
-bool emberAfGroupsClusterAddGroupIfIdentifyingCallback(chip::app::Command * commandObj, uint16_t groupId, uint8_t * groupName);
+bool emberAfGroupsClusterAddGroupIfIdentifyingCallback(chip::app::Command * commandObj, uint16_t groupId, chip::ByteSpan groupName);
 
 /**
  * @brief Groups Cluster GetGroupMembership Command callback
@@ -944,7 +945,7 @@ bool emberAfOnOffClusterToggleCallback(chip::app::Command * commandObj);
  */
 
 bool emberAfScenesClusterAddSceneCallback(chip::app::Command * commandObj, uint16_t groupId, uint8_t sceneId,
-                                          uint16_t transitionTime, uint8_t * sceneName,
+                                          uint16_t transitionTime, chip::ByteSpan sceneName,
                                           /* TYPE WARNING: array array defaults to */ uint8_t * extensionFieldSets);
 
 /**

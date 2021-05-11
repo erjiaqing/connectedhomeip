@@ -2634,7 +2634,7 @@ void emberAfWindowCoveringClusterClientTickCallback(chip::EndpointId endpoint);
  * @param setupPIN
  */
 
-bool emberAfAccountLoginClusterGetSetupPINResponseCallback(chip::app::Command * commandObj, uint8_t * setupPIN);
+bool emberAfAccountLoginClusterGetSetupPINResponseCallback(chip::app::Command * commandObj, chip::ByteSpan setupPIN);
 
 /**
  * @brief Application Launcher Cluster LaunchAppResponse Command callback
@@ -2642,7 +2642,8 @@ bool emberAfAccountLoginClusterGetSetupPINResponseCallback(chip::app::Command * 
  * @param data
  */
 
-bool emberAfApplicationLauncherClusterLaunchAppResponseCallback(chip::app::Command * commandObj, uint8_t status, uint8_t * data);
+bool emberAfApplicationLauncherClusterLaunchAppResponseCallback(chip::app::Command * commandObj, uint8_t status,
+                                                                chip::ByteSpan data);
 
 /**
  * @brief Content Launch Cluster LaunchContentResponse Command callback
@@ -2650,7 +2651,7 @@ bool emberAfApplicationLauncherClusterLaunchAppResponseCallback(chip::app::Comma
  * @param contentLaunchStatus
  */
 
-bool emberAfContentLaunchClusterLaunchContentResponseCallback(chip::app::Command * commandObj, uint8_t * data,
+bool emberAfContentLaunchClusterLaunchContentResponseCallback(chip::app::Command * commandObj, chip::ByteSpan data,
                                                               uint8_t contentLaunchStatus);
 
 /**
@@ -2659,7 +2660,7 @@ bool emberAfContentLaunchClusterLaunchContentResponseCallback(chip::app::Command
  * @param contentLaunchStatus
  */
 
-bool emberAfContentLaunchClusterLaunchURLResponseCallback(chip::app::Command * commandObj, uint8_t * data,
+bool emberAfContentLaunchClusterLaunchURLResponseCallback(chip::app::Command * commandObj, chip::ByteSpan data,
                                                           uint8_t contentLaunchStatus);
 
 /**
@@ -2737,7 +2738,7 @@ bool emberAfDoorLockClusterGetHolidayScheduleResponseCallback(chip::app::Command
 
 bool emberAfDoorLockClusterGetLogRecordResponseCallback(chip::app::Command * commandObj, uint16_t logEntryId, uint32_t timestamp,
                                                         uint8_t eventType, uint8_t source, uint8_t eventIdOrAlarmCode,
-                                                        uint16_t userId, uint8_t * pin);
+                                                        uint16_t userId, chip::ByteSpan pin);
 
 /**
  * @brief Door Lock Cluster GetPinResponse Command callback
@@ -2748,7 +2749,7 @@ bool emberAfDoorLockClusterGetLogRecordResponseCallback(chip::app::Command * com
  */
 
 bool emberAfDoorLockClusterGetPinResponseCallback(chip::app::Command * commandObj, uint16_t userId, uint8_t userStatus,
-                                                  uint8_t userType, uint8_t * pin);
+                                                  uint8_t userType, chip::ByteSpan pin);
 
 /**
  * @brief Door Lock Cluster GetRfidResponse Command callback
@@ -2759,7 +2760,7 @@ bool emberAfDoorLockClusterGetPinResponseCallback(chip::app::Command * commandOb
  */
 
 bool emberAfDoorLockClusterGetRfidResponseCallback(chip::app::Command * commandObj, uint16_t userId, uint8_t userStatus,
-                                                   uint8_t userType, uint8_t * rfid);
+                                                   uint8_t userType, chip::ByteSpan rfid);
 
 /**
  * @brief Door Lock Cluster GetUserTypeResponse Command callback
@@ -2867,7 +2868,7 @@ bool emberAfDoorLockClusterUnlockWithTimeoutResponseCallback(chip::app::Command 
  */
 
 bool emberAfGeneralCommissioningClusterArmFailSafeResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                   uint8_t * debugText);
+                                                                   chip::ByteSpan debugText);
 
 /**
  * @brief General Commissioning Cluster CommissioningCompleteResponse Command callback
@@ -2876,7 +2877,7 @@ bool emberAfGeneralCommissioningClusterArmFailSafeResponseCallback(chip::app::Co
  */
 
 bool emberAfGeneralCommissioningClusterCommissioningCompleteResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                             uint8_t * debugText);
+                                                                             chip::ByteSpan debugText);
 
 /**
  * @brief General Commissioning Cluster SetRegulatoryConfigResponse Command callback
@@ -2885,7 +2886,7 @@ bool emberAfGeneralCommissioningClusterCommissioningCompleteResponseCallback(chi
  */
 
 bool emberAfGeneralCommissioningClusterSetRegulatoryConfigResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                           uint8_t * debugText);
+                                                                           chip::ByteSpan debugText);
 
 /**
  * @brief Groups Cluster AddGroupResponse Command callback
@@ -2921,7 +2922,7 @@ bool emberAfGroupsClusterRemoveGroupResponseCallback(chip::app::Command * comman
  */
 
 bool emberAfGroupsClusterViewGroupResponseCallback(chip::app::Command * commandObj, uint8_t status, uint16_t groupId,
-                                                   uint8_t * groupName);
+                                                   chip::ByteSpan groupName);
 
 /**
  * @brief Identify Cluster IdentifyQueryResponse Command callback
@@ -3021,7 +3022,7 @@ bool emberAfMediaPlaybackClusterMediaStopResponseCallback(chip::app::Command * c
  */
 
 bool emberAfNetworkCommissioningClusterAddThreadNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                        uint8_t * debugText);
+                                                                        chip::ByteSpan debugText);
 
 /**
  * @brief Network Commissioning Cluster AddWiFiNetworkResponse Command callback
@@ -3030,7 +3031,7 @@ bool emberAfNetworkCommissioningClusterAddThreadNetworkResponseCallback(chip::ap
  */
 
 bool emberAfNetworkCommissioningClusterAddWiFiNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                      uint8_t * debugText);
+                                                                      chip::ByteSpan debugText);
 
 /**
  * @brief Network Commissioning Cluster DisableNetworkResponse Command callback
@@ -3039,7 +3040,7 @@ bool emberAfNetworkCommissioningClusterAddWiFiNetworkResponseCallback(chip::app:
  */
 
 bool emberAfNetworkCommissioningClusterDisableNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                      uint8_t * debugText);
+                                                                      chip::ByteSpan debugText);
 
 /**
  * @brief Network Commissioning Cluster EnableNetworkResponse Command callback
@@ -3048,7 +3049,7 @@ bool emberAfNetworkCommissioningClusterDisableNetworkResponseCallback(chip::app:
  */
 
 bool emberAfNetworkCommissioningClusterEnableNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                     uint8_t * debugText);
+                                                                     chip::ByteSpan debugText);
 
 /**
  * @brief Network Commissioning Cluster RemoveNetworkResponse Command callback
@@ -3057,7 +3058,7 @@ bool emberAfNetworkCommissioningClusterEnableNetworkResponseCallback(chip::app::
  */
 
 bool emberAfNetworkCommissioningClusterRemoveNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                     uint8_t * debugText);
+                                                                     chip::ByteSpan debugText);
 
 /**
  * @brief Network Commissioning Cluster ScanNetworksResponse Command callback
@@ -3068,7 +3069,7 @@ bool emberAfNetworkCommissioningClusterRemoveNetworkResponseCallback(chip::app::
  */
 
 bool emberAfNetworkCommissioningClusterScanNetworksResponseCallback(
-    chip::app::Command * commandObj, uint8_t errorCode, uint8_t * debugText,
+    chip::app::Command * commandObj, uint8_t errorCode, chip::ByteSpan debugText,
     /* TYPE WARNING: array array defaults to */ uint8_t * wifiScanResults,
     /* TYPE WARNING: array array defaults to */ uint8_t * threadScanResults);
 
@@ -3079,7 +3080,7 @@ bool emberAfNetworkCommissioningClusterScanNetworksResponseCallback(
  */
 
 bool emberAfNetworkCommissioningClusterUpdateThreadNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                           uint8_t * debugText);
+                                                                           chip::ByteSpan debugText);
 
 /**
  * @brief Network Commissioning Cluster UpdateWiFiNetworkResponse Command callback
@@ -3088,7 +3089,7 @@ bool emberAfNetworkCommissioningClusterUpdateThreadNetworkResponseCallback(chip:
  */
 
 bool emberAfNetworkCommissioningClusterUpdateWiFiNetworkResponseCallback(chip::app::Command * commandObj, uint8_t errorCode,
-                                                                         uint8_t * debugText);
+                                                                         chip::ByteSpan debugText);
 
 /**
  * @brief Operational Credentials Cluster OpCSRResponse Command callback
@@ -3114,7 +3115,7 @@ bool emberAfOperationalCredentialsClusterOpCSRResponseCallback(chip::app::Comman
  */
 
 bool emberAfOperationalCredentialsClusterOpCertResponseCallback(chip::app::Command * commandObj, uint8_t StatusCode,
-                                                                uint64_t FabricIndex, uint8_t * DebugText);
+                                                                uint64_t FabricIndex, chip::ByteSpan DebugText);
 
 /**
  * @brief Operational Credentials Cluster SetFabricResponse Command callback
@@ -3185,7 +3186,7 @@ bool emberAfScenesClusterStoreSceneResponseCallback(chip::app::Command * command
  */
 
 bool emberAfScenesClusterViewSceneResponseCallback(chip::app::Command * commandObj, uint8_t status, uint16_t groupId,
-                                                   uint8_t sceneId, uint16_t transitionTime, uint8_t * sceneName,
+                                                   uint8_t sceneId, uint16_t transitionTime, chip::ByteSpan sceneName,
                                                    /* TYPE WARNING: array array defaults to */ uint8_t * extensionFieldSets);
 
 /**
@@ -3204,7 +3205,8 @@ bool emberAfTvChannelClusterChangeChannelResponseCallback(chip::app::Command * c
  * @param data
  */
 
-bool emberAfTargetNavigatorClusterNavigateTargetResponseCallback(chip::app::Command * commandObj, uint8_t status, uint8_t * data);
+bool emberAfTargetNavigatorClusterNavigateTargetResponseCallback(chip::app::Command * commandObj, uint8_t status,
+                                                                 chip::ByteSpan data);
 
 /**
  * @brief Test Cluster Cluster TestSpecificResponse Command callback
