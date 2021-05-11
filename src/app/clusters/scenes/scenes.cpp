@@ -42,6 +42,7 @@
 #include "app/util/common.h"
 #include <app/Command.h>
 #include <app/util/af.h>
+#include <lib/support/CodeUtils.h>
 
 #include "gen/attribute-id.h"
 #include "gen/attribute-type.h"
@@ -215,8 +216,11 @@ void emAfPluginScenesServerPrintInfo(void)
 }
 
 bool emberAfScenesClusterAddSceneCallback(chip::app::Command * commandObj, GroupId groupId, uint8_t sceneId,
-                                          uint16_t transitionTime, uint8_t * sceneName, uint8_t * extensionFieldSets)
+                                          uint16_t transitionTime, chip::ByteSpan sceneNameSpan, uint8_t * extensionFieldSets)
 {
+    uint8_t sceneName[ZCL_SCENES_CLUSTER_MAXIMUM_NAME_LENGTH + 1];
+    sceneName[0] = chip::min(size_t(ZCL_SCENES_CLUSTER_MAXIMUM_NAME_LENGTH), sceneNameSpan.size());
+    memmove(&sceneName[1], sceneNameSpan.data(), chip::min(size_t(ZCL_SCENES_CLUSTER_MAXIMUM_NAME_LENGTH), sceneNameSpan.size()));
     return emberAfPluginScenesServerParseAddScene(commandObj, emberAfCurrentCommand(), groupId, sceneId, transitionTime, sceneName,
                                                   extensionFieldSets);
 }
@@ -814,7 +818,7 @@ bool emberAfPluginScenesServerParseAddScene(chip::app::Command * commandObj, con
     if (enhanced)
     {
         entry.transitionTime      = transitionTime / 10;
-        entry.transitionTime100ms = (uint8_t)(transitionTime - entry.transitionTime * 10);
+        entry.transitionTime100ms = (uint8_t) (transitionTime - entry.transitionTime * 10);
     }
     else
     {

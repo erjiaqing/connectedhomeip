@@ -312,9 +312,14 @@ bool emAfPluginDoorLockServerSetPinUserType(uint16_t userId, EmberAfDoorLockUser
 // PIN handling
 
 bool emberAfDoorLockClusterSetPinCallback(chip::app::Command * commandObj, uint16_t userId, uint8_t userStatus, uint8_t userType,
-                                          uint8_t * pin)
+                                          chip::ByteSpan pinSpan)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
+
+    uint8_t pin[EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH + 1] = { 0 };
+    pin[0] = chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH, pinSpan.size());
+    memmove(&pin[1], pinSpan.data(), chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH, pinSpan.size()));
+
     // send response
     uint8_t status = setUser(userId, userStatus, userType, pin, pinUserTable, EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_PIN_USER_TABLE_SIZE);
     uint16_t rfProgrammingEventMask = 0xffff; // send event by default
@@ -519,9 +524,14 @@ exit:
 // RFID handling
 
 bool emberAfDoorLockClusterSetRfidCallback(chip::app::Command * commandObj, uint16_t userId, uint8_t userStatus, uint8_t userType,
-                                           uint8_t * rfid)
+                                           chip::ByteSpan rfidSpan)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
+
+    uint8_t rfid[EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_RFID_LENGTH + 1] = { 0 };
+    rfid[0] = chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_RFID_LENGTH, rfidSpan.size());
+    memmove(&rfid[1], rfidSpan.data(), chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_RFID_LENGTH, rfidSpan.size()));
+
     uint8_t status =
         setUser(userId, userStatus, userType, rfid, rfidUserTable, EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_RFID_USER_TABLE_SIZE);
     if (commandObj == nullptr)
@@ -726,9 +736,14 @@ static bool verifyPin(uint8_t * pin, uint8_t * userId)
     return false;
 }
 
-bool emberAfDoorLockClusterLockDoorCallback(chip::app::Command * commandObj, uint8_t * PIN)
+bool emberAfDoorLockClusterLockDoorCallback(chip::app::Command * commandObj, chip::ByteSpan pinSpan)
 {
-    uint8_t userId                = 0;
+    uint8_t userId = 0;
+
+    uint8_t PIN[EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH + 1] = { 0 };
+    PIN[0] = chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH, pinSpan.size());
+    memmove(&PIN[1], pinSpan.data(), chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH, pinSpan.size()));
+
     bool pinVerified              = verifyPin(PIN, &userId);
     bool doorLocked               = false;
     uint8_t lockStateLocked       = 0x01;
@@ -798,9 +813,14 @@ exit:
     return true;
 }
 
-bool emberAfDoorLockClusterUnlockDoorCallback(chip::app::Command * commandObj, uint8_t * pin)
+bool emberAfDoorLockClusterUnlockDoorCallback(chip::app::Command * commandObj, chip::ByteSpan pinSpan)
 {
-    uint8_t userId                = 0;
+    uint8_t userId = 0;
+
+    uint8_t pin[EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH + 1] = { 0 };
+    pin[0] = chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH, pinSpan.size());
+    memmove(&pin[1], pinSpan.data(), chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH, pinSpan.size()));
+
     bool pinVerified              = verifyPin(pin, &userId);
     bool doorUnlocked             = false;
     uint8_t lockStateUnlocked     = 0x02;
@@ -995,11 +1015,15 @@ void emberAfDoorLockClusterServerAttributeChangedCallback(EndpointId endpoint, A
     }
 }
 
-bool emberAfDoorLockClusterUnlockWithTimeoutCallback(chip::app::Command * commandObj, uint16_t timeoutS, uint8_t * pin)
+bool emberAfDoorLockClusterUnlockWithTimeoutCallback(chip::app::Command * commandObj, uint16_t timeoutS, chip::ByteSpan pinSpan)
 {
     uint8_t userId;
     uint8_t status;
     CHIP_ERROR err = CHIP_NO_ERROR;
+
+    uint8_t pin[EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH + 1] = { 0 };
+    pin[0] = chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH, pinSpan.size());
+    memmove(&pin[1], pinSpan.data(), chip::min((size_t) EMBER_AF_PLUGIN_DOOR_LOCK_SERVER_MAX_PIN_LENGTH, pinSpan.size()));
 
     if (verifyPin(pin, &userId))
     {

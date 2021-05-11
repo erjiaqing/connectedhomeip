@@ -47,10 +47,11 @@ bool emberAfGeneralCommissioningClusterCommissioningCompleteCallback(chip::app::
 }
 
 bool emberAfGeneralCommissioningClusterSetRegulatoryConfigCallback(chip::app::Command * commandObj, uint8_t location,
-                                                                   uint8_t * countryCode, uint64_t breadcrumb, uint32_t timeoutMs)
+                                                                   chip::ByteSpan countryCodeSpan, uint64_t breadcrumb,
+                                                                   uint32_t timeoutMs)
 {
     CHIP_ERROR err = DeviceLayer::Internal::DeviceControlServer::DeviceControlSvr().SetRegulatoryConfig(
-        location, reinterpret_cast<const char *>(countryCode), breadcrumb);
+        location, reinterpret_cast<const char *>(countryCodeSpan.data()), breadcrumb);
 
     emberAfSendImmediateDefaultResponse(err == CHIP_NO_ERROR ? EMBER_ZCL_STATUS_SUCCESS : EMBER_ZCL_STATUS_FAILURE);
 

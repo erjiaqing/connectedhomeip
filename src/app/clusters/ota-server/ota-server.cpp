@@ -79,7 +79,7 @@ bool emberAfOtaSoftwareUpdateServerClusterNotifyUpdateAppliedCallback(app::Comma
 bool emberAfOtaSoftwareUpdateServerClusterQueryImageCallback(
     app::Command * commandObj, uint16_t vendorId, uint16_t productId, uint16_t imageType, uint16_t hardwareVersion,
     uint32_t currentVersion,
-    /* TYPE WARNING: array array defaults to */ uint8_t * protocolsSupported, uint8_t * location, uint8_t clientCanConsent,
+    /* TYPE WARNING: array array defaults to */ uint8_t * protocolsSupported, chip::ByteSpan location, uint8_t clientCanConsent,
     chip::ByteSpan metadataForServer)
 {
     return false;

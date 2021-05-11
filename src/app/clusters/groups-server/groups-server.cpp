@@ -49,6 +49,7 @@
 #include <app/Command.h>
 #include <app/util/af.h>
 #include <app/util/binding-table.h>
+#include <lib/support/CodeUtils.h>
 
 #include "gen/att-storage.h"
 #include "gen/attribute-id.h"
@@ -152,10 +153,14 @@ static EmberAfStatus removeEntryFromGroupTable(EndpointId endpoint, GroupId grou
     return EMBER_ZCL_STATUS_NOT_FOUND;
 }
 
-bool emberAfGroupsClusterAddGroupCallback(chip::app::Command * commandObj, GroupId groupId, uint8_t * groupName)
+bool emberAfGroupsClusterAddGroupCallback(chip::app::Command * commandObj, GroupId groupId, chip::ByteSpan groupNameSpan)
 {
     EmberAfStatus status;
     CHIP_ERROR err = CHIP_NO_ERROR;
+
+    uint8_t groupName[ZCL_GROUPS_CLUSTER_MAXIMUM_NAME_LENGTH + 1];
+    groupName[0] = chip::min(size_t(ZCL_GROUPS_CLUSTER_MAXIMUM_NAME_LENGTH), groupNameSpan.size());
+    memmove(&groupName[1], groupNameSpan.data(), chip::min(size_t(ZCL_GROUPS_CLUSTER_MAXIMUM_NAME_LENGTH), groupNameSpan.size()));
 
     emberAfGroupsClusterPrint("RX: AddGroup 0x%2x, \"", groupId);
     emberAfGroupsClusterPrintString(groupName);
@@ -449,10 +454,15 @@ bool emberAfGroupsClusterRemoveAllGroupsCallback(chip::app::Command * commandObj
     return true;
 }
 
-bool emberAfGroupsClusterAddGroupIfIdentifyingCallback(chip::app::Command * commandObj, GroupId groupId, uint8_t * groupName)
+bool emberAfGroupsClusterAddGroupIfIdentifyingCallback(chip::app::Command * commandObj, GroupId groupId,
+                                                       chip::ByteSpan groupNameSpan)
 {
     EmberAfStatus status;
     EmberStatus sendStatus = EMBER_SUCCESS;
+
+    uint8_t groupName[ZCL_GROUPS_CLUSTER_MAXIMUM_NAME_LENGTH + 1];
+    groupName[0] = chip::min(size_t(ZCL_GROUPS_CLUSTER_MAXIMUM_NAME_LENGTH), groupNameSpan.size());
+    memmove(&groupName[1], groupNameSpan.data(), chip::min(size_t(ZCL_GROUPS_CLUSTER_MAXIMUM_NAME_LENGTH), groupNameSpan.size()));
 
     emberAfGroupsClusterPrint("RX: AddGroupIfIdentifying 0x%2x, \"", groupId);
     emberAfGroupsClusterPrintString(groupName);

@@ -43,6 +43,8 @@
 #include <app/util/config.h>
 #include <app/util/util.h>
 
+#include <lib/support/Span.h>
+
 using namespace chip;
 
 //------------------------------------------------------------------------------
@@ -280,6 +282,16 @@ uint16_t emberAfLongStringLength(const uint8_t * buffer)
     // 0xFFFF means the string is invalid and there is no character data.
     uint16_t length = emberAfGetInt16u(buffer, 0, 2);
     return (length == 0xFFFF ? 0 : length);
+}
+
+uint8_t emberAfStringLength(const chip::ByteSpan & buffer)
+{
+    return buffer.size();
+}
+
+uint16_t emberAfLongStringLength(const chip::ByteSpan & buffer)
+{
+    return buffer.size();
 }
 
 uint8_t emberAfGetDate(uint8_t * message, uint16_t currentIndex, uint16_t msgLen, EmberAfDate * destination)

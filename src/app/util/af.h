@@ -568,6 +568,16 @@ uint8_t emberAfStringLength(const uint8_t * buffer);
  *   (where the first two bytes are assumed to be the length).
  */
 uint16_t emberAfLongStringLength(const uint8_t * buffer);
+/*
+ * @brief Function that determines the length of a CHIP ByteSpan for compatiable with
+ * cluster handlers that comes from zigbee.
+ */
+uint8_t emberAfStringLength(const chip::ByteSpan & buffer);
+/*
+ * @brief Function that determines the length of a CHIP ByteSpan for compatiable with
+ * cluster handlers that comes from zigbee.
+ */
+uint16_t emberAfLongStringLength(const chip::ByteSpan & buffer);
 
 /*
  * @brief Function that copies (part of) a ZCL typed list into a buffer. The index parameter
