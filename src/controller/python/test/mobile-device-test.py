@@ -86,7 +86,20 @@ class MobileDeviceTests():
         self.logger.info("Device finished key exchange.")
         return True
 
-    def TestNetworkCommissioning(self, nodeid: int):
+    def TestBLEKeyExchange(self, discriminator: int, setuppin: int, nodeid: int):
+        '''
+        This function is not used for cirque testing, however, it is a example of how to connect to the device via BLE by this script.
+        Call this function with the discriminator of your device.
+        '''
+        self.logger.info("Conducting key exchange with device {}".format(discriminator))
+        if not self.devCtrl.ConnectBLE(discriminator, setuppin, nodeid):
+            self.logger.info(
+                "Failed to finish key exchange with device {}".format(discriminator))
+            return False
+        self.logger.info("Device finished key exchange.")
+        return True
+
+    def TestThreadNetworkCommissioning(self, nodeid: int):
         self.logger.info("Commissioning network to device {}".format(nodeid))
         try:
             self.devCtrl.ZCLSend("NetworkCommissioning", "AddThreadNetwork", nodeid, ENDPOINT_ID, GROUP_ID, {
@@ -100,6 +113,32 @@ class MobileDeviceTests():
         try:
             self.devCtrl.ZCLSend("NetworkCommissioning", "EnableNetwork", nodeid, ENDPOINT_ID, GROUP_ID, {
                 "networkID": bytes.fromhex(TEST_THREAD_NETWORK_ID),
+                "breadcrumb": 0,
+                "timeoutMs": 1000}, blocking=True)
+        except Exception as ex:
+            self.logger.exception("Failed to send EnableNetwork command")
+            return False
+        return True
+
+    def TestWiFiNetworkCommissioning(self, nodeid: int):
+        '''
+        This function is not used for cirque testing, however, it is a example of how to do WiFi network commissioning by this script.
+        Replace <your ssid> and <your password> to your AP's SSID and Password.
+        '''
+        self.logger.info("Commissioning network to device {}".format(nodeid))
+        try:
+            self.devCtrl.ZCLSend("NetworkCommissioning", "AddWiFiNetwork", nodeid, ENDPOINT_ID, GROUP_ID, {
+                "ssid": "<your ssid>".encode("utf-8") + b'\0',
+                "credentials": "<your password>".encode("utf-8") + b'\0',
+                "breadcrumb": 0,
+                "timeoutMs": 1000}, blocking=True)
+        except Exception as ex:
+            self.logger.exception("Failed to send AddThreadNetwork command")
+            return False
+        self.logger.info("Send EnableNetwork command to device {}".format(nodeid))
+        try:
+            self.devCtrl.ZCLSend("NetworkCommissioning", "EnableNetwork", nodeid, ENDPOINT_ID, GROUP_ID, {
+                "networkID": "<your ssid>".encode("utf-8") + b'\0',
                 "breadcrumb": 0,
                 "timeoutMs": 1000}, blocking=True)
         except Exception as ex:
@@ -154,7 +193,7 @@ def main():
 
     FailIfNot(test.TestKeyExchange(options.deviceAddress,
                                    20202021, 1), "Failed to finish key exchange")
-    FailIfNot(test.TestNetworkCommissioning(1), "Failed to finish network commissioning")
+    FailIfNot(test.TestThreadNetworkCommissioning(1), "Failed to finish network commissioning")
     FailIfNot(test.TestOnOffCluster(1), "Failed to test on off cluster")
 
     timeoutTicker.stop()
