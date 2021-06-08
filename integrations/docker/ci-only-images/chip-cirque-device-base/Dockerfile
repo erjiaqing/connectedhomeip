@@ -18,6 +18,7 @@ RUN apt-get update \
   && apt-get install -y libglib2.0 avahi-daemon libavahi-client3 iproute2 \
   && ln -fs /usr/share/zoneinfo/UTC /etc/localtime \
   && git clone https://github.com/openthread/ot-br-posix . \
+  && git fetch origin $OT_BR_POSIX_CHECKOUT \
   && git checkout $OT_BR_POSIX_CHECKOUT \
   && git submodule update --init --depth=1 \
   && ./script/bootstrap \
