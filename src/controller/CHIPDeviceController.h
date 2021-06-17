@@ -170,7 +170,7 @@ public:
 
     void OnReportData(const app::ReadClient * apReadClient, const app::ClusterInfo & aPath, TLV::TLVReader * apData,
                       uint8_t status) override;
-    CHIP_ERROR ReportError(const app::ReadClient * apReadClient, CHIP_ERROR aError) override;
+    void OnReportEnd(const app::ReadClient * apReadClient, CHIP_ERROR aError) override;
 };
 
 /**

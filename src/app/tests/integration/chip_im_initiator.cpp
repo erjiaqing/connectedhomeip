@@ -243,15 +243,12 @@ public:
     {
         return CHIP_NO_ERROR;
     }
-    CHIP_ERROR ReportProcessed(const chip::app::ReadClient * apReadClient) override
+    void OnReportEnd(const chip::app::ReadClient * apReadClient, CHIP_ERROR aError) override
     {
-        HandleReadComplete();
-        return CHIP_NO_ERROR;
-    }
-    CHIP_ERROR ReportError(const chip::app::ReadClient * apReadClient, CHIP_ERROR aError) override
-    {
-        printf("ReportError with err %d", aError);
-        return CHIP_NO_ERROR;
+        if (aError == CHIP_NO_ERROR)
+        {
+            HandleReadComplete();
+        }
     }
     CHIP_ERROR CommandResponseStatus(const chip::app::CommandSender * apCommandSender,
                                      const chip::Protocols::SecureChannel::GeneralStatusCode aGeneralCode,
@@ -303,11 +300,6 @@ namespace app {
 bool ServerClusterCommandExists(chip::ClusterId aClusterId, chip::CommandId aCommandId, chip::EndpointId aEndPointId)
 {
     // Always return true in test.
-    return true;
-}
-
-bool ServerClusterAttributeExists(chip::EndpointId aEndPointId, chip::ClusterId aClusterId, chip::AttributeId aAttributeId)
-{
     return true;
 }
 

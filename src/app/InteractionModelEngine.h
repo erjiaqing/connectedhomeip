@@ -114,13 +114,15 @@ public:
     /**
      *  Creates a new read client and send ReadRequest message to the node using the read client. User should use this method since
      * it takes care of the life cycle of ReadClient.
+     *  InteractionModelDategate::OnReportEnd will be called when response received or other asynchronous error happened if this
+     * function returned with CHIP_NO_ERROR.
      *
      *  @retval #CHIP_ERROR_NO_MEMORY If there is no ReadClient available
      *  @retval #CHIP_NO_ERROR On success.
      */
     CHIP_ERROR SendReadRequest(NodeId aNodeId, Transport::AdminId aAdminId, EventPathParams * apEventPathParamsList,
                                size_t aEventPathParamsListSize, AttributePathParams * apAttributePathParamsList,
-                               size_t aAttributePathParamsListSize, EventNumber aEventNumber, intptr_t aAppIdentifier = 0);
+                               size_t aAttributePathParamsListSize, EventNumber aEventNumber, uint64_t aAppIdentifier = 0);
 
     /**
      *  Get read client index in mReadClients
@@ -162,7 +164,7 @@ private:
      *  @retval #CHIP_ERROR_INCORRECT_STATE If there is no ReadClient available
      *  @retval #CHIP_NO_ERROR On success.
      */
-    CHIP_ERROR NewReadClient(ReadClient ** const apReadClient, intptr_t aAppIdentifier);
+    CHIP_ERROR NewReadClient(ReadClient ** const apReadClient, uint64_t aAppIdentifier);
 
     Messaging::ExchangeManager * mpExchangeMgr = nullptr;
     InteractionModelDelegate * mpDelegate      = nullptr;

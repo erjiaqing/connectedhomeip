@@ -29,7 +29,7 @@ namespace chip {
 namespace app {
 
 CHIP_ERROR ReadClient::Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate,
-                            intptr_t aAppIdentifier)
+                            uint64_t aAppIdentifier)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     // Error if already initialized.
@@ -215,14 +215,7 @@ exit:
 
     if (mpDelegate != nullptr)
     {
-        if (err != CHIP_NO_ERROR)
-        {
-            mpDelegate->ReportError(this, err);
-        }
-        else
-        {
-            mpDelegate->ReportProcessed(this);
-        }
+        mpDelegate->OnReportEnd(this, err);
     }
 
     // TODO(#7521): Should close it after checking moreChunkedMessages flag is not set.
@@ -292,7 +285,10 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
     {
         chip::TLV::TLVReader eventListReader;
         eventList.GetReader(&eventListReader);
-        err = mpDelegate->EventStreamReceived(mpExchangeCtx, &eventListReader);
+        if (mpDelegate != nullptr)
+        {
+            err = mpDelegate->EventStreamReceived(mpExchangeCtx, &eventListReader);
+        }
         SuccessOrExit(err);
     }
 
@@ -328,7 +324,7 @@ void ReadClient::OnResponseTimeout(Messaging::ExchangeContext * apExchangeContex
                     apExchangeContext->GetExchangeId());
     if (nullptr != mpDelegate)
     {
-        mpDelegate->ReportError(this, CHIP_ERROR_TIMEOUT);
+        mpDelegate->OnReportEnd(this, CHIP_ERROR_TIMEOUT);
     }
     Shutdown();
 }
@@ -387,7 +383,10 @@ CHIP_ERROR ReadClient::ProcessAttributeDataList(TLV::TLVReader & aAttributeDataL
         localWriteReader.Init(dataReader);
         err = WriteSingleClusterData(clusterInfo, localWriteReader);
         SuccessOrExit(err);
-        mpDelegate->OnReportData(this, clusterInfo, &dataReader, 0);
+        if (mpDelegate != nullptr)
+        {
+            mpDelegate->OnReportData(this, clusterInfo, &dataReader, 0);
+        }
     }
 
     if (CHIP_END_OF_TLV == err)

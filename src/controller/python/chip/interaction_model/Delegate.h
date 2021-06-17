@@ -35,6 +35,13 @@ struct __attribute__((packed)) CommandStatus
     uint8_t CommandIndex;
 };
 
+struct __attribute__((packed)) ClusterAttributeInfo
+{
+    chip::ClusterId mClusterId;
+    chip::AttributeId mAttributeId;
+    chip::EndpointId mEndpointId;
+};
+
 extern "C" {
 typedef void (*PythonInteractionModelDelegate_OnCommandResponseStatusCodeReceivedFunct)(uint64_t commandSenderPtr,
                                                                                         void * commandStatusBuf,
@@ -42,16 +49,28 @@ typedef void (*PythonInteractionModelDelegate_OnCommandResponseStatusCodeReceive
 typedef void (*PythonInteractionModelDelegate_OnCommandResponseProtocolErrorFunct)(uint64_t commandSenderPtr, uint8_t commandIndex);
 typedef void (*PythonInteractionModelDelegate_OnCommandResponseFunct)(uint64_t commandSenderPtr, uint32_t error);
 
+typedef void (*PythonInteractionModelDelegate_OnReportDataFunct)(uint64_t aApplicationIdentifier,
+                                                                 const void * apClusterAttributeInfoBuf,
+                                                                 size_t aClusterAttributeInfoBufLen, const uint8_t * apDataBuf,
+                                                                 size_t aDataBufLength, uint8_t status);
+typedef void (*PythonInteractionModelDelegate_OnReportEndFunct)(uint64_t aApplicationIdentifier, CHIP_ERROR aError);
+
 void pychip_InteractionModelDelegate_SetCommandResponseStatusCallback(
     PythonInteractionModelDelegate_OnCommandResponseStatusCodeReceivedFunct f);
 void pychip_InteractionModelDelegate_SetCommandResponseProtocolErrorCallback(
     PythonInteractionModelDelegate_OnCommandResponseProtocolErrorFunct f);
 void pychip_InteractionModelDelegate_SetCommandResponseErrorCallback(PythonInteractionModelDelegate_OnCommandResponseFunct f);
+void pychip_InteractionModelDelegate_SetOnReportDataCallback(PythonInteractionModelDelegate_OnReportDataFunct f);
+void pychip_InteractionModelDelegate_SetOnReportEndCallback(PythonInteractionModelDelegate_OnReportEndFunct f);
 }
 
 class PythonInteractionModelDelegate : public chip::Controller::DeviceControllerInteractionModelDelegate
 {
 public:
+    void OnReportData(const app::ReadClient * apReadClient, const app::ClusterInfo & aPath, TLV::TLVReader * apData,
+                      uint8_t status) override;
+    void OnReportEnd(const app::ReadClient * apReadClient, CHIP_ERROR aError) override;
+
     CHIP_ERROR CommandResponseStatus(const app::CommandSender * apCommandSender,
                                      const Protocols::SecureChannel::GeneralStatusCode aGeneralCode, const uint32_t aProtocolId,
                                      const uint16_t aProtocolCode, chip::EndpointId aEndpointId, const chip::ClusterId aClusterId,
@@ -77,10 +96,16 @@ public:
 
     void SetOnCommandResponseCallback(PythonInteractionModelDelegate_OnCommandResponseFunct f) { commandResponseErrorFunct = f; }
 
+    void SetOnReportDataCallback(PythonInteractionModelDelegate_OnReportDataFunct f) { reportDataFunct = f; }
+    void SetOnReportEndCallback(PythonInteractionModelDelegate_OnReportEndFunct f) { reportEndFunct = f; }
+
 private:
     PythonInteractionModelDelegate_OnCommandResponseStatusCodeReceivedFunct commandResponseStatusFunct   = nullptr;
     PythonInteractionModelDelegate_OnCommandResponseProtocolErrorFunct commandResponseProtocolErrorFunct = nullptr;
     PythonInteractionModelDelegate_OnCommandResponseFunct commandResponseErrorFunct                      = nullptr;
+
+    PythonInteractionModelDelegate_OnReportDataFunct reportDataFunct = nullptr;
+    PythonInteractionModelDelegate_OnReportEndFunct reportEndFunct   = nullptr;
 };
 
 } // namespace Controller

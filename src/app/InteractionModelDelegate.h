@@ -78,19 +78,11 @@ public:
      * Notification that the last message for a Report Data action for the given ReadClient has been received and processed.
      * @param[in]  apReadClient   A current readClient which can identify the read to the consumer, particularly during
      *                            multiple read interactions
-     * @retval # CHIP_ERROR_NOT_IMPLEMENTED if not implemented
+     * @param[in]  aError         CHIP_NO_ERROR if the report transaction ended without error.
+     *                            CHIP_ERROR_TIMEOUT when read client fails to receive.
+     *                            Context specific error when failed to process report data.
      */
-    virtual CHIP_ERROR ReportProcessed(const ReadClient * apReadClient) { return CHIP_ERROR_NOT_IMPLEMENTED; }
-
-    /**
-     * Notification that a read attempt encountered an asynchronous failure.
-     * @param[in]  apReadClient   A current readClient which can identify the read to the consumer, particularly during
-     *                            multiple read interactions
-     * @param[in]  aError         A error that could be CHIP_ERROR_TIMEOUT when read client fails to receive, or other error when
-     *                            fail to process report data.
-     * @retval # CHIP_ERROR_NOT_IMPLEMENTED if not implemented
-     */
-    virtual CHIP_ERROR ReportError(const ReadClient * apReadClient, CHIP_ERROR aError) { return CHIP_ERROR_NOT_IMPLEMENTED; }
+    virtual void OnReportEnd(const ReadClient * apReadClient, CHIP_ERROR aError) {}
 
     /**
      * Notification that a Command Send has received an Invoke Command Response containing a status code.

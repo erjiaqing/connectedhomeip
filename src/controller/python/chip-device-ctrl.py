@@ -25,8 +25,11 @@
 
 from __future__ import absolute_import
 from __future__ import print_function
+from typing import Dict
 from chip import ChipDeviceCtrl
 from chip import exceptions
+import chip.interaction_model.delegate
+import chip.interaction_model.read
 import ctypes
 import sys
 import os
@@ -129,6 +132,12 @@ def FormatZCLArguments(args, command):
     return commandArgs
 
 
+def ParseAttributePath(arg) -> Dict:
+    s = arg.split("/")
+    return {"ClusterId": int(s[1]),
+            "AttributeId": int(s[2]),
+            "EndpointId": int(s[0])}
+
 class DeviceMgrCmd(Cmd):
     def __init__(self, rendezvousAddr=None, controllerNodeId=0, bluetoothAdapter=None):
         self.lastNetworkId = None
@@ -189,6 +198,7 @@ class DeviceMgrCmd(Cmd):
         "resolve",
         "zcl",
         "zclread",
+        "imread",
         "zclconfigure",
 
         "discover",
@@ -642,6 +652,27 @@ class DeviceMgrCmd(Cmd):
             print(str(ex))
         except Exception as ex:
             print("An exception occurred during processing input:")
+            print(str(ex))
+
+    def do_imread(self, line):
+        """
+        To read IM attributes:
+        imread <nodeid> <adminid> <path1> [<path2>...]
+        """
+        try:
+            args = shlex.split(line)
+            if len(args) < 3:
+                self.do_help("imread")
+                return
+            nodeid = int(args[0])
+            adminid = int(args[1])
+            pathList = []
+            for v in args[2:]:
+                pathList.append(ParseAttributePath(v))
+            data = chip.interaction_model.read.ReadAttributeSync(nodeid, adminid, pathList)
+            print('Data Read: {}'.format(data))
+        except Exception as ex:
+            print("An exception occurred during reading attribute:")
             print(str(ex))
 
     def do_zclconfigure(self, line):

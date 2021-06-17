@@ -1523,12 +1523,12 @@ void DeviceControllerInteractionModelDelegate::OnReportData(const app::ReadClien
     IMReadReportAttributesResponseCallback(apReadClient, aPath, apData, status);
 }
 
-CHIP_ERROR DeviceControllerInteractionModelDelegate::ReportError(const app::ReadClient * apReadClient, CHIP_ERROR aError)
+void DeviceControllerInteractionModelDelegate::OnReportEnd(const app::ReadClient * apReadClient, CHIP_ERROR aError)
 {
+    VerifyOrReturn(aError != CHIP_NO_ERROR);
     app::ClusterInfo path;
     path.mNodeId = apReadClient->GetExchangeContext()->GetSecureSession().GetPeerNodeId();
     IMReadReportAttributesResponseCallback(apReadClient, path, nullptr, EMBER_ZCL_STATUS_FAILURE);
-    return CHIP_NO_ERROR;
 }
 
 void BasicSuccess(void * context, uint16_t val)

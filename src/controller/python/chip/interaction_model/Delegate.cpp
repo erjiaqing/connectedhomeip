@@ -79,6 +79,44 @@ CHIP_ERROR PythonInteractionModelDelegate::CommandResponseProcessed(const app::C
     return CHIP_NO_ERROR;
 }
 
+void PythonInteractionModelDelegate::OnReportData(const app::ReadClient * apReadClient, const app::ClusterInfo & aPath,
+                                                  TLV::TLVReader * apData, uint8_t status)
+{
+    ClusterAttributeInfo info;
+    info.mAttributeId = aPath.mFieldId;
+    info.mClusterId   = aPath.mClusterId;
+    info.mEndpointId  = aPath.mEndpointId;
+    if (reportDataFunct != nullptr && apReadClient->GetAppIdentifier() > UINT8_MAX)
+    {
+        TLV::TLVWriter writer;
+        CHIP_ERROR err;
+        uint8_t writerBuffer[1536];
+        writer.Init(writerBuffer, sizeof(writerBuffer));
+        err = writer.CopyElement(TLV::AnonymousTag, *apData);
+        if (err != 0)
+        {
+            ChipLogError(Controller, "Failedf to build data: %" PRIu32, err);
+        }
+        reportDataFunct(apReadClient->GetAppIdentifier(), &info, sizeof(info), writerBuffer, writer.GetLengthWritten(), status);
+    }
+    if (apReadClient->GetAppIdentifier() <= UINT8_MAX)
+    {
+        DeviceControllerInteractionModelDelegate::OnReportData(apReadClient, aPath, apData, status);
+    }
+}
+
+void PythonInteractionModelDelegate::OnReportEnd(const app::ReadClient * apReadClient, CHIP_ERROR aError)
+{
+    if (reportEndFunct != nullptr && apReadClient->GetAppIdentifier() > UINT8_MAX)
+    {
+        reportEndFunct(apReadClient->GetAppIdentifier(), aError);
+    }
+    if (apReadClient->GetAppIdentifier() <= UINT8_MAX)
+    {
+        DeviceControllerInteractionModelDelegate::OnReportEnd(apReadClient, aError);
+    }
+}
+
 void pychip_InteractionModelDelegate_SetCommandResponseStatusCallback(
     PythonInteractionModelDelegate_OnCommandResponseStatusCodeReceivedFunct f)
 {
@@ -94,6 +132,16 @@ void pychip_InteractionModelDelegate_SetCommandResponseProtocolErrorCallback(
 void pychip_InteractionModelDelegate_SetCommandResponseErrorCallback(PythonInteractionModelDelegate_OnCommandResponseFunct f)
 {
     gPythonInteractionModelDelegate.SetOnCommandResponseCallback(f);
+}
+
+void pychip_InteractionModelDelegate_SetOnReportDataCallback(PythonInteractionModelDelegate_OnReportDataFunct f)
+{
+    gPythonInteractionModelDelegate.SetOnReportDataCallback(f);
+}
+
+void pychip_InteractionModelDelegate_SetOnReportEndCallback(PythonInteractionModelDelegate_OnReportEndFunct f)
+{
+    gPythonInteractionModelDelegate.SetOnReportEndCallback(f);
 }
 
 PythonInteractionModelDelegate & PythonInteractionModelDelegate::Instance()
