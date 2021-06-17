@@ -312,6 +312,119 @@ bool IMDefaultResponseCallback(const chip::app::Command * commandObj, EmberAfSta
     return true;
 }
 
+bool IMReadReportAttributesResponseCallback(const app::ReadClient * apReadClient, const app::ClusterInfo & aPath,
+                                            TLV::TLVReader * apData, uint8_t status)
+{
+    ChipLogProgress(Zcl, "ReadAttributesResponse:");
+    ChipLogProgress(Zcl, "  ClusterId: 0x%04x", aPath.mClusterId);
+
+    Callback::Cancelable * onSuccessCallback = nullptr;
+    Callback::Cancelable * onFailureCallback = nullptr;
+    NodeId sourceId                          = aPath.mNodeId;
+    // In CHIPClusters.cpp, we are using sequenceNumber as application identifier.
+    uint8_t sequenceNumber = static_cast<uint8_t>(apReadClient->GetAppIdentifier());
+    CHIP_ERROR err         = gCallbacks.GetResponseCallback(sourceId, sequenceNumber, &onSuccessCallback, &onFailureCallback);
+
+    if (CHIP_NO_ERROR != err)
+    {
+        if (onSuccessCallback == nullptr)
+        {
+            ChipLogDetail(Zcl, "%s: Missing success callback", __FUNCTION__);
+        }
+
+        if (onFailureCallback == nullptr)
+        {
+            ChipLogDetail(Zcl, "%s: Missing failure callback", __FUNCTION__);
+        }
+
+        return true;
+    }
+
+    // struct readAttributeResponseRecord[]
+    uint16_t attributeId = aPath.mFieldId; // attribId
+    ChipLogProgress(Zcl, "  attributeId: 0x%04x", attributeId);
+    LogStatus(status);
+
+    if (status == EMBER_ZCL_STATUS_SUCCESS && apData != nullptr)
+    {
+        chip::TLV::TLVType attributeType = apData->GetType();
+        ChipLogProgress(Zcl, "  attributeType: 0x%02x", attributeType);
+
+        switch (attributeType)
+        {
+        case chip::TLV::kTLVType_SignedInteger: {
+            int64_t value;
+            apData->Get(value);
+            ChipLogProgress(Zcl, "  value: %" PRId64, value);
+
+            Callback::Callback<Int64sAttributeCallback> * cb =
+                Callback::Callback<Int64sAttributeCallback>::FromCancelable(onSuccessCallback);
+            cb->mCall(cb->mContext, value);
+            break;
+        }
+        case chip::TLV::kTLVType_UnsignedInteger: {
+            uint64_t value;
+            apData->Get(value);
+            ChipLogProgress(Zcl, "  value: %" PRIu64, value);
+
+            Callback::Callback<Int64uAttributeCallback> * cb =
+                Callback::Callback<Int64uAttributeCallback>::FromCancelable(onSuccessCallback);
+            cb->mCall(cb->mContext, value);
+            break;
+        }
+        case chip::TLV::kTLVType_Boolean: {
+            bool value;
+            apData->Get(value);
+            ChipLogProgress(Zcl, "  value: %s", value ? "True" : "False");
+
+            Callback::Callback<Int64uAttributeCallback> * cb =
+                Callback::Callback<Int64uAttributeCallback>::FromCancelable(onSuccessCallback);
+            cb->mCall(cb->mContext, value);
+            break;
+        }
+
+        case chip::TLV::kTLVType_UTF8String:
+        case chip::TLV::kTLVType_ByteString: {
+            uint8_t length = apData->GetLength();
+            const uint8_t * data;
+            apData->GetDataPtr(data);
+            LogStringAttribute(data, length, attributeType == chip::TLV::kTLVType_UTF8String);
+            Callback::Callback<StringAttributeCallback> * cb =
+                Callback::Callback<StringAttributeCallback>::FromCancelable(onSuccessCallback);
+            cb->mCall(cb->mContext, chip::ByteSpan(data, length));
+            break;
+        }
+        case chip::TLV::kTLVType_Array:
+        case chip::TLV::kTLVType_List: {
+            // TODO: Support for complex types (arrays / structures).
+            switch (aPath.mClusterId)
+            {
+            }
+            break;
+        }
+        case chip::TLV::kTLVType_FloatingPointNumber:
+        case chip::TLV::kTLVType_Null:
+        case chip::TLV::kTLVType_Structure:
+        case chip::TLV::kTLVType_UnknownContainer:
+        case chip::TLV::kTLVType_NotSpecified: {
+            ChipLogError(Zcl, "attributeType 0x%02x is not yet supported", attributeType);
+            Callback::Callback<DefaultFailureCallback> * cb =
+                Callback::Callback<DefaultFailureCallback>::FromCancelable(onFailureCallback);
+            cb->mCall(cb->mContext, EMBER_ZCL_STATUS_INVALID_VALUE);
+            return true;
+        }
+        }
+    }
+    else
+    {
+        Callback::Callback<DefaultFailureCallback> * cb =
+            Callback::Callback<DefaultFailureCallback>::FromCancelable(onFailureCallback);
+        cb->mCall(cb->mContext, status);
+    }
+
+    return true;
+}
+
 bool emberAfReadAttributesResponseCallback(ClusterId clusterId, uint8_t * message, uint16_t messageLen)
 {
     ChipLogProgress(Zcl, "ReadAttributesResponse:");
