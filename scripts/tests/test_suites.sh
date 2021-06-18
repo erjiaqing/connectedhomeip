@@ -77,8 +77,8 @@ for j in "${iter_array[@]}"; do
         (
             stdbuf -o0 out/debug/chip-all-clusters-app &
             echo $! >&3
-        ) 3>/tmp/pid | tee /tmp/all-clusters-log &
-        while ! grep -q "Server Listening" /tmp/all-clusters-log; do
+        ) 3>/tmp/pid | tee /tmp/logs/all-clusters-log &
+        while ! grep -q "Server Listening" /tmp/logs/all-clusters-log; do
             :
         done
         # Now read $background_pid from /tmp/pid; presumably it's

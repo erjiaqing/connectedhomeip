@@ -47,6 +47,7 @@ jobs:
                   apt-get update
                   apt-get -y install --fix-missing rsync
                   mkdir /tmp/cores || true
+                  mkdir -p /tmp/logs || true
                   sysctl -w kernel.core_pattern=/tmp/cores/core.%u.%p.%t || true
                   mkdir objdir-clone || true
             - name: Bootstrap
@@ -84,6 +85,14 @@ jobs:
               with:
                   name: crash-core-linux
                   path: /tmp/cores/
+                  # Cores are big; don't hold on to them too long.
+                  retention-days: 5
+            - name: Uploading log files
+              uses: actions/upload-artifact@v2
+              if: ${{ failure() }}
+              with:
+                  name: crash-core-linux
+                  path: /tmp/logs/
                   # Cores are big; don't hold on to them too long.
                   retention-days: 5
             - name: Uploading objdir for debugging
