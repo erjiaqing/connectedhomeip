@@ -27,6 +27,7 @@
 #include "CommandSender.h"
 #include "InteractionModelEngine.h"
 
+#include <lib/support/Enum.h>
 #include <protocols/secure_channel/Constants.h>
 
 using GeneralStatusCode = chip::Protocols::SecureChannel::GeneralStatusCode;
@@ -145,9 +146,7 @@ CHIP_ERROR CommandHandler::AddStatusCode(const CommandPathParams & aCommandPathP
 
     statusElementBuilder =
         mInvokeCommandBuilder.GetCommandListBuilder().GetCommandDataElementBuilder().CreateStatusElementBuilder();
-    statusElementBuilder
-        .EncodeStatusElement(aGeneralCode, aProtocolId.ToFullyQualifiedSpecForm(),
-                             Protocols::InteractionModel::ToUint16(aProtocolCode))
+    statusElementBuilder.EncodeStatusElement(aGeneralCode, aProtocolId.ToFullyQualifiedSpecForm(), to_underlying(aProtocolCode))
         .EndOfStatusElement();
     err = statusElementBuilder.GetError();
     SuccessOrExit(err);

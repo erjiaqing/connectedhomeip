@@ -21,6 +21,7 @@
 #include <app/MessageDef/EventPath.h>
 #include <app/WriteHandler.h>
 #include <app/reporting/Engine.h>
+#include <support/Enum.h>
 
 namespace chip {
 namespace app {
@@ -256,9 +257,7 @@ CHIP_ERROR WriteHandler::AddAttributeStatusCode(const AttributePathParams & aAtt
     SuccessOrExit(err);
 
     statusElementBuilder = attributeStatusElement.CreateStatusElementBuilder();
-    statusElementBuilder
-        .EncodeStatusElement(aGeneralCode, aProtocolId.ToFullyQualifiedSpecForm(),
-                             Protocols::InteractionModel::ToUint16(aProtocolCode))
+    statusElementBuilder.EncodeStatusElement(aGeneralCode, aProtocolId.ToFullyQualifiedSpecForm(), to_underlying(aProtocolCode))
         .EndOfStatusElement();
     err = statusElementBuilder.GetError();
     SuccessOrExit(err);
