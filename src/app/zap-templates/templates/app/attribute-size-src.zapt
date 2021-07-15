@@ -5,6 +5,7 @@
 #include <app/util/attribute-list-byte-span.h>
 #include <app/util/basic-types.h>
 #include <support/SafeInt.h>
+#include <core/CHIPTLV.h>
 #include <support/logging/CHIPLogging.h>
 
 using namespace chip;
@@ -26,6 +27,96 @@ void copyListMember(uint8_t * dest, uint8_t * src, bool write, uint16_t * offset
     }
 
     *offset = static_cast<uint16_t>(*offset + length);
+}
+
+CHIP_ERROR EmberListToCHIPTLV(ClusterId clusterId, AttributeId attributeId, uint8_t * src, uint16_t len, TLV::TLVWriter & writer, uint64_t tag)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    chip::TLV::TLVType tmpType;
+    size_t count = *reinterpret_cast<uint16_t*>(src);
+    uint16_t entryLength = 0;
+    // Suppress error of unused variable.
+    (void) entryLength;
+    (void) count;
+    SuccessOrExit(err = writer.StartContainer(tag, TLV::TLVType::kTLVType_Array, tmpType));
+    switch (clusterId)
+    {
+ {{#chip_server_clusters}}
+ {{#if (chip_server_has_list_attributes)}}
+    case {{asHex code 4}}: // {{name}} Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        {{#chip_server_cluster_attributes}}
+        {{#if isList}}
+            case {{asHex code 4}}: // {{name}}
+            {
+                for (size_t index = 0; index < count; index++)
+                {
+                {{#unless (isString type)}}
+                entryLength  = {{size}};
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                {{/unless}}
+                {{#if isStruct}}
+                // Struct {{chipType}}
+                {{chipType}} entry;
+                {{#chip_attribute_list_entryTypes}}
+                {{#if (isString type)}}
+                chip::ByteSpan * {{name}}Span = &entry.{{name}}; // {{type}}
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, {{size}}, {{name}}Span)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + {{size}});
+                {{else}}
+                copyListMember((uint8_t *)&(entry.{{name}}), src, false, &entryOffset, sizeof(entry.{{name}})); // {{type}}
+                {{/if}}
+                {{/chip_attribute_list_entryTypes}}
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+                {{else}}
+                {{#if (isString type)}}
+                entryOffset = GetByteSpanOffsetFromIndex(src, len, static_cast<uint16_t>(index));
+                if (entryOffset == 0)
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+
+                chip::ByteSpan {{asCamelCased name}}Span; // {{type}}
+                uint16_t {{asCamelCased name}}RemainingSpace = static_cast<uint16_t>(len - entryOffset);
+                if (CHIP_NO_ERROR != ReadByteSpan(src + entryOffset, {{asCamelCased name}}RemainingSpace, &{{asCamelCased name}}Span))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                writer.Put(TLV::AnonymousTag, {{asCamelCased name}}Span);
+                {{else}}
+                {{chipType}} entry;
+                copyListMember(reinterpret_cast<uint8_t*>(&entry), src, false, &entryOffset, entryLength); // {{type}}
+                writer.Put(TLV::AnonymousTag, entry);
+                {{/if}}
+                {{/if}}
+                }
+                break;
+            }
+        {{/if}}
+        {{/chip_server_cluster_attributes}}
+      }
+      break;
+    }
+{{/if}}
+{{/chip_server_clusters}}
+    }
+exit:
+    err = writer.EndContainer(tmpType);
+    return err;
 }
 
 uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata * am, bool write, uint8_t * dest, uint8_t * src, int32_t index)

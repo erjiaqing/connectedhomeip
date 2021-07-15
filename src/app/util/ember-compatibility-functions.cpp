@@ -43,6 +43,9 @@ using namespace chip;
 using namespace chip::app;
 using namespace chip::app::Compatibility;
 
+CHIP_ERROR EmberListToCHIPTLV(ClusterId clusterId, AttributeId attributeId, uint8_t * src, uint16_t len, TLV::TLVWriter & writer,
+                              uint64_t tag);
+
 namespace chip {
 namespace app {
 namespace Compatibility {
@@ -319,14 +322,8 @@ CHIP_ERROR ReadSingleClusterData(ClusterInfo & aClusterInfo, TLV::TLVWriter * ap
         break;
     }
     case ZCL_ARRAY_ATTRIBUTE_TYPE: {
-        TLV::TLVType containerType;
-        ReturnErrorOnFailure(
-            apWriter->StartContainer(TLV::ContextTag(AttributeDataElement::kCsTag_Data), TLV::kTLVType_List, containerType));
-        // TODO: Encode data in TLV, now raw buffers
-        ReturnErrorOnFailure(
-            apWriter->PutBytes(TLV::AnonymousTag, data,
-                               emberAfAttributeValueSize(aClusterInfo.mClusterId, aClusterInfo.mFieldId, attributeType, data)));
-        ReturnErrorOnFailure(apWriter->EndContainer(containerType));
+        ReturnErrorOnFailure(EmberListToCHIPTLV(aClusterInfo.mClusterId, aClusterInfo.mFieldId, data, sizeof(data), *apWriter,
+                                                TLV::ContextTag(AttributeDataElement::kCsTag_Data)));
         break;
     }
     default:
