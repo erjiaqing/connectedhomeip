@@ -22,6 +22,7 @@
 
 #include "enums.h"
 #include <app/util/basic-types.h>
+#include <core/CHIPTLV.h>
 #include <stdint.h>
 #include <support/Span.h>
 
@@ -29,8 +30,10 @@
 typedef struct _ApplicationLauncherApp
 {
     uint16_t catalogVendorId;
-    uint8_t * applicationId;
+    const uint8_t * applicationId;
 } EmberAfApplicationLauncherApp;
+CHIP_ERROR EncodeStruct(const _ApplicationLauncherApp & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ApplicationLauncherApp & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for AudioOutputInfo
 typedef struct _AudioOutputInfo
@@ -39,12 +42,16 @@ typedef struct _AudioOutputInfo
     uint8_t outputType;
     chip::ByteSpan name;
 } EmberAfAudioOutputInfo;
+CHIP_ERROR EncodeStruct(const _AudioOutputInfo & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_AudioOutputInfo & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for BasicCommissioningInfoType
 typedef struct _BasicCommissioningInfoType
 {
     uint32_t FailSafeExpiryLengthMs;
 } EmberAfBasicCommissioningInfoType;
+CHIP_ERROR EncodeStruct(const _BasicCommissioningInfoType & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_BasicCommissioningInfoType & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ConfigureReportingRecord
 typedef struct _ConfigureReportingRecord
@@ -57,6 +64,8 @@ typedef struct _ConfigureReportingRecord
     uint8_t * reportableChangeLocation;
     uint16_t timeoutPeriod;
 } EmberAfConfigureReportingRecord;
+CHIP_ERROR EncodeStruct(const _ConfigureReportingRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ConfigureReportingRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ConfigureReportingStatusRecord
 typedef struct _ConfigureReportingStatusRecord
@@ -65,48 +74,60 @@ typedef struct _ConfigureReportingStatusRecord
     uint8_t direction;
     chip::AttributeId attributeId;
 } EmberAfConfigureReportingStatusRecord;
+CHIP_ERROR EncodeStruct(const _ConfigureReportingStatusRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ConfigureReportingStatusRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ContentLaunchAdditionalInfo
 typedef struct _ContentLaunchAdditionalInfo
 {
-    uint8_t * name;
-    uint8_t * value;
+    const uint8_t * name;
+    const uint8_t * value;
 } EmberAfContentLaunchAdditionalInfo;
+CHIP_ERROR EncodeStruct(const _ContentLaunchAdditionalInfo & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ContentLaunchAdditionalInfo & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ContentLaunchBrandingInformation
 typedef struct _ContentLaunchBrandingInformation
 {
-    uint8_t * providerName;
+    const uint8_t * providerName;
     uint8_t background;
     uint8_t logo;
     uint8_t progressBar;
     uint8_t splash;
     uint8_t waterMark;
 } EmberAfContentLaunchBrandingInformation;
+CHIP_ERROR EncodeStruct(const _ContentLaunchBrandingInformation & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ContentLaunchBrandingInformation & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ContentLaunchDimension
 typedef struct _ContentLaunchDimension
 {
-    uint8_t * width;
-    uint8_t * height;
+    const uint8_t * width;
+    const uint8_t * height;
     uint8_t metric;
 } EmberAfContentLaunchDimension;
+CHIP_ERROR EncodeStruct(const _ContentLaunchDimension & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ContentLaunchDimension & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ContentLaunchParamater
 typedef struct _ContentLaunchParamater
 {
     uint8_t Type;
-    uint8_t * Value;
-    /* TYPE WARNING: array array defaults to */ uint8_t * ExternalIDList;
+    const uint8_t * Value;
+    const /* TYPE WARNING: array array defaults to */ uint8_t * ExternalIDList;
 } EmberAfContentLaunchParamater;
+CHIP_ERROR EncodeStruct(const _ContentLaunchParamater & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ContentLaunchParamater & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ContentLaunchStyleInformation
 typedef struct _ContentLaunchStyleInformation
 {
-    uint8_t * imageUrl;
-    uint8_t * color;
+    const uint8_t * imageUrl;
+    const uint8_t * color;
     uint8_t size;
 } EmberAfContentLaunchStyleInformation;
+CHIP_ERROR EncodeStruct(const _ContentLaunchStyleInformation & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ContentLaunchStyleInformation & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for DeviceType
 typedef struct _DeviceType
@@ -114,6 +135,8 @@ typedef struct _DeviceType
     chip::DeviceTypeId type;
     uint16_t revision;
 } EmberAfDeviceType;
+CHIP_ERROR EncodeStruct(const _DeviceType & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_DeviceType & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for DiscoverAttributesInfoRecord
 typedef struct _DiscoverAttributesInfoRecord
@@ -121,6 +144,8 @@ typedef struct _DiscoverAttributesInfoRecord
     chip::AttributeId attributeId;
     uint8_t attributeType;
 } EmberAfDiscoverAttributesInfoRecord;
+CHIP_ERROR EncodeStruct(const _DiscoverAttributesInfoRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_DiscoverAttributesInfoRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ExtendedDiscoverAttributesInfoRecord
 typedef struct _ExtendedDiscoverAttributesInfoRecord
@@ -129,6 +154,8 @@ typedef struct _ExtendedDiscoverAttributesInfoRecord
     uint8_t attributeType;
     uint8_t attributeAccessControl;
 } EmberAfExtendedDiscoverAttributesInfoRecord;
+CHIP_ERROR EncodeStruct(const _ExtendedDiscoverAttributesInfoRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ExtendedDiscoverAttributesInfoRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for FabricDescriptor
 typedef struct _FabricDescriptor
@@ -138,6 +165,8 @@ typedef struct _FabricDescriptor
     chip::NodeId NodeId;
     chip::ByteSpan Label;
 } EmberAfFabricDescriptor;
+CHIP_ERROR EncodeStruct(const _FabricDescriptor & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_FabricDescriptor & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for GroupKey
 typedef struct _GroupKey
@@ -148,6 +177,8 @@ typedef struct _GroupKey
     uint64_t GroupKeyEpochStartTime;
     uint8_t GroupKeySecurityPolicy;
 } EmberAfGroupKey;
+CHIP_ERROR EncodeStruct(const _GroupKey & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_GroupKey & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for GroupState
 typedef struct _GroupState
@@ -156,6 +187,8 @@ typedef struct _GroupState
     uint16_t VendorGroupId;
     uint16_t GroupKeySetIndex;
 } EmberAfGroupState;
+CHIP_ERROR EncodeStruct(const _GroupState & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_GroupState & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for IasAceZoneStatusResult
 typedef struct _IasAceZoneStatusResult
@@ -163,6 +196,8 @@ typedef struct _IasAceZoneStatusResult
     uint8_t zoneId;
     uint16_t zoneStatus;
 } EmberAfIasAceZoneStatusResult;
+CHIP_ERROR EncodeStruct(const _IasAceZoneStatusResult & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_IasAceZoneStatusResult & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for LabelStruct
 typedef struct _LabelStruct
@@ -170,6 +205,8 @@ typedef struct _LabelStruct
     chip::ByteSpan label;
     chip::ByteSpan value;
 } EmberAfLabelStruct;
+CHIP_ERROR EncodeStruct(const _LabelStruct & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_LabelStruct & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for MediaInputInfo
 typedef struct _MediaInputInfo
@@ -179,6 +216,8 @@ typedef struct _MediaInputInfo
     chip::ByteSpan name;
     chip::ByteSpan description;
 } EmberAfMediaInputInfo;
+CHIP_ERROR EncodeStruct(const _MediaInputInfo & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_MediaInputInfo & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for MediaPlaybackPosition
 typedef struct _MediaPlaybackPosition
@@ -186,6 +225,8 @@ typedef struct _MediaPlaybackPosition
     uint64_t updatedAt;
     uint64_t position;
 } EmberAfMediaPlaybackPosition;
+CHIP_ERROR EncodeStruct(const _MediaPlaybackPosition & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_MediaPlaybackPosition & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for NavigateTargetTargetInfo
 typedef struct _NavigateTargetTargetInfo
@@ -193,6 +234,8 @@ typedef struct _NavigateTargetTargetInfo
     uint8_t identifier;
     chip::ByteSpan name;
 } EmberAfNavigateTargetTargetInfo;
+CHIP_ERROR EncodeStruct(const _NavigateTargetTargetInfo & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_NavigateTargetTargetInfo & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for NeighborTable
 typedef struct _NeighborTable
@@ -212,6 +255,8 @@ typedef struct _NeighborTable
     uint8_t FullNetworkData;
     uint8_t IsChild;
 } EmberAfNeighborTable;
+CHIP_ERROR EncodeStruct(const _NeighborTable & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_NeighborTable & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for NetworkInterfaceType
 typedef struct _NetworkInterfaceType
@@ -223,6 +268,8 @@ typedef struct _NetworkInterfaceType
     chip::ByteSpan HardwareAddress;
     uint8_t Type;
 } EmberAfNetworkInterfaceType;
+CHIP_ERROR EncodeStruct(const _NetworkInterfaceType & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_NetworkInterfaceType & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for Notification
 typedef struct _Notification
@@ -230,6 +277,8 @@ typedef struct _Notification
     uint16_t contentId;
     uint8_t statusFeedback;
 } EmberAfNotification;
+CHIP_ERROR EncodeStruct(const _Notification & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_Notification & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for OperationalDatasetComponents
 typedef struct _OperationalDatasetComponents
@@ -247,6 +296,8 @@ typedef struct _OperationalDatasetComponents
     uint8_t SecurityPolicyPresent;
     uint8_t ChannelMaskPresent;
 } EmberAfOperationalDatasetComponents;
+CHIP_ERROR EncodeStruct(const _OperationalDatasetComponents & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_OperationalDatasetComponents & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for PowerProfileRecord
 typedef struct _PowerProfileRecord
@@ -256,6 +307,8 @@ typedef struct _PowerProfileRecord
     uint8_t powerProfileRemoteControl;
     uint8_t powerProfileState;
 } EmberAfPowerProfileRecord;
+CHIP_ERROR EncodeStruct(const _PowerProfileRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_PowerProfileRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ReadAttributeStatusRecord
 typedef struct _ReadAttributeStatusRecord
@@ -265,6 +318,8 @@ typedef struct _ReadAttributeStatusRecord
     uint8_t attributeType;
     uint8_t * attributeLocation;
 } EmberAfReadAttributeStatusRecord;
+CHIP_ERROR EncodeStruct(const _ReadAttributeStatusRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ReadAttributeStatusRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ReadReportingConfigurationAttributeRecord
 typedef struct _ReadReportingConfigurationAttributeRecord
@@ -272,6 +327,8 @@ typedef struct _ReadReportingConfigurationAttributeRecord
     uint8_t direction;
     chip::AttributeId attributeId;
 } EmberAfReadReportingConfigurationAttributeRecord;
+CHIP_ERROR EncodeStruct(const _ReadReportingConfigurationAttributeRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ReadReportingConfigurationAttributeRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ReadReportingConfigurationRecord
 typedef struct _ReadReportingConfigurationRecord
@@ -285,6 +342,8 @@ typedef struct _ReadReportingConfigurationRecord
     uint8_t * reportableChangeLocation;
     uint16_t timeoutPeriod;
 } EmberAfReadReportingConfigurationRecord;
+CHIP_ERROR EncodeStruct(const _ReadReportingConfigurationRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ReadReportingConfigurationRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ReadStructuredAttributeRecord
 typedef struct _ReadStructuredAttributeRecord
@@ -293,6 +352,8 @@ typedef struct _ReadStructuredAttributeRecord
     uint8_t indicator;
     uint16_t indicies;
 } EmberAfReadStructuredAttributeRecord;
+CHIP_ERROR EncodeStruct(const _ReadStructuredAttributeRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ReadStructuredAttributeRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ReportAttributeRecord
 typedef struct _ReportAttributeRecord
@@ -301,6 +362,8 @@ typedef struct _ReportAttributeRecord
     uint8_t attributeType;
     uint8_t * attributeLocation;
 } EmberAfReportAttributeRecord;
+CHIP_ERROR EncodeStruct(const _ReportAttributeRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ReportAttributeRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for RouteTable
 typedef struct _RouteTable
@@ -316,6 +379,8 @@ typedef struct _RouteTable
     uint8_t Allocated;
     uint8_t LinkEstablished;
 } EmberAfRouteTable;
+CHIP_ERROR EncodeStruct(const _RouteTable & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_RouteTable & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for SceneExtensionAttributeInfo
 typedef struct _SceneExtensionAttributeInfo
@@ -323,6 +388,8 @@ typedef struct _SceneExtensionAttributeInfo
     uint8_t attributeType;
     uint8_t * attributeLocation;
 } EmberAfSceneExtensionAttributeInfo;
+CHIP_ERROR EncodeStruct(const _SceneExtensionAttributeInfo & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_SceneExtensionAttributeInfo & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for SceneExtensionFieldSet
 typedef struct _SceneExtensionFieldSet
@@ -331,6 +398,8 @@ typedef struct _SceneExtensionFieldSet
     uint8_t length;
     uint8_t value;
 } EmberAfSceneExtensionFieldSet;
+CHIP_ERROR EncodeStruct(const _SceneExtensionFieldSet & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_SceneExtensionFieldSet & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ScheduledPhase
 typedef struct _ScheduledPhase
@@ -338,6 +407,8 @@ typedef struct _ScheduledPhase
     uint8_t energyPhaseId;
     uint16_t scheduledTime;
 } EmberAfScheduledPhase;
+CHIP_ERROR EncodeStruct(const _ScheduledPhase & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ScheduledPhase & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for SecurityPolicy
 typedef struct _SecurityPolicy
@@ -345,6 +416,8 @@ typedef struct _SecurityPolicy
     uint16_t RotationTime;
     uint8_t Flags;
 } EmberAfSecurityPolicy;
+CHIP_ERROR EncodeStruct(const _SecurityPolicy & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_SecurityPolicy & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for TestListStructOctet
 typedef struct _TestListStructOctet
@@ -352,12 +425,16 @@ typedef struct _TestListStructOctet
     uint64_t fabricIndex;
     chip::ByteSpan operationalCert;
 } EmberAfTestListStructOctet;
+CHIP_ERROR EncodeStruct(const _TestListStructOctet & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_TestListStructOctet & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ThreadInterfaceScanResult
 typedef struct _ThreadInterfaceScanResult
 {
     chip::ByteSpan DiscoveryResponse;
 } EmberAfThreadInterfaceScanResult;
+CHIP_ERROR EncodeStruct(const _ThreadInterfaceScanResult & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ThreadInterfaceScanResult & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for ThreadMetrics
 typedef struct _ThreadMetrics
@@ -368,6 +445,8 @@ typedef struct _ThreadMetrics
     uint32_t StackFreeMinimum;
     uint32_t StackSize;
 } EmberAfThreadMetrics;
+CHIP_ERROR EncodeStruct(const _ThreadMetrics & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_ThreadMetrics & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for TransferredPhase
 typedef struct _TransferredPhase
@@ -379,6 +458,8 @@ typedef struct _TransferredPhase
     uint16_t energy;
     uint16_t maxActivationDelay;
 } EmberAfTransferredPhase;
+CHIP_ERROR EncodeStruct(const _TransferredPhase & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_TransferredPhase & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for TvChannelInfo
 typedef struct _TvChannelInfo
@@ -389,15 +470,19 @@ typedef struct _TvChannelInfo
     chip::ByteSpan callSign;
     chip::ByteSpan affiliateCallSign;
 } EmberAfTvChannelInfo;
+CHIP_ERROR EncodeStruct(const _TvChannelInfo & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_TvChannelInfo & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for TvChannelLineupInfo
 typedef struct _TvChannelLineupInfo
 {
-    uint8_t * operatorName;
-    uint8_t * lineupName;
-    uint8_t * postalCode;
+    const uint8_t * operatorName;
+    const uint8_t * lineupName;
+    const uint8_t * postalCode;
     uint8_t lineupInfoType;
 } EmberAfTvChannelLineupInfo;
+CHIP_ERROR EncodeStruct(const _TvChannelLineupInfo & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_TvChannelLineupInfo & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for WiFiInterfaceScanResult
 typedef struct _WiFiInterfaceScanResult
@@ -408,6 +493,8 @@ typedef struct _WiFiInterfaceScanResult
     uint8_t Channel;
     uint32_t FrequencyBand;
 } EmberAfWiFiInterfaceScanResult;
+CHIP_ERROR EncodeStruct(const _WiFiInterfaceScanResult & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_WiFiInterfaceScanResult & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for WriteAttributeRecord
 typedef struct _WriteAttributeRecord
@@ -416,6 +503,8 @@ typedef struct _WriteAttributeRecord
     uint8_t attributeType;
     uint8_t * attributeLocation;
 } EmberAfWriteAttributeRecord;
+CHIP_ERROR EncodeStruct(const _WriteAttributeRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_WriteAttributeRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for WriteAttributeStatusRecord
 typedef struct _WriteAttributeStatusRecord
@@ -423,6 +512,8 @@ typedef struct _WriteAttributeStatusRecord
     uint8_t status;
     chip::AttributeId attributeId;
 } EmberAfWriteAttributeStatusRecord;
+CHIP_ERROR EncodeStruct(const _WriteAttributeStatusRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_WriteAttributeStatusRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for WriteStructuredAttributeRecord
 typedef struct _WriteStructuredAttributeRecord
@@ -433,6 +524,8 @@ typedef struct _WriteStructuredAttributeRecord
     uint8_t attributeType;
     uint8_t * attributeLocation;
 } EmberAfWriteStructuredAttributeRecord;
+CHIP_ERROR EncodeStruct(const _WriteStructuredAttributeRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_WriteStructuredAttributeRecord & aVal, const chip::TLV::TLVReader & aReader);
 
 // Struct for WriteStructuredAttributeStatusRecord
 typedef struct _WriteStructuredAttributeStatusRecord
@@ -442,3 +535,5 @@ typedef struct _WriteStructuredAttributeStatusRecord
     uint8_t indicator;
     uint16_t indicies;
 } EmberAfWriteStructuredAttributeStatusRecord;
+CHIP_ERROR EncodeStruct(const _WriteStructuredAttributeStatusRecord & val, chip::TLV::TLVWriter & writer, uint64_t tag);
+CHIP_ERROR DecodeStruct(_WriteStructuredAttributeStatusRecord & aVal, const chip::TLV::TLVReader & aReader);

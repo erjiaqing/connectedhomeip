@@ -21,6 +21,7 @@
 #include <app/util/af.h>
 #include <app/util/attribute-list-byte-span.h>
 #include <app/util/basic-types.h>
+#include <core/CHIPTLV.h>
 #include <support/SafeInt.h>
 #include <support/logging/CHIPLogging.h>
 
@@ -43,6 +44,731 @@ void copyListMember(uint8_t * dest, uint8_t * src, bool write, uint16_t * offset
     }
 
     *offset = static_cast<uint16_t>(*offset + length);
+}
+
+CHIP_ERROR EmberListToCHIPTLV(ClusterId clusterId, AttributeId attributeId, uint8_t * src, uint16_t len, TLV::TLVWriter & writer,
+                              uint64_t tag)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    chip::TLV::TLVType tmpType;
+    size_t count         = *reinterpret_cast<uint16_t *>(src);
+    uint16_t entryLength = 0;
+    // Suppress error of unused variable.
+    (void) entryLength;
+    (void) count;
+    SuccessOrExit(err = writer.StartContainer(tag, TLV::TLVType::kTLVType_Array, tmpType));
+    switch (clusterId)
+    {
+    case 0x050C: // Application Launcher Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // application launcher list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 2;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                uint16_t entry;
+                copyListMember(reinterpret_cast<uint8_t *>(&entry), src, false, &entryOffset, entryLength); // INT16U
+                writer.Put(TLV::AnonymousTag, entry);
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x050B: // Audio Output Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // audio output list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 36;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _AudioOutputInfo
+                _AudioOutputInfo entry;
+                copyListMember((uint8_t *) &(entry.index), src, false, &entryOffset, sizeof(entry.index)); // INT8U
+                copyListMember((uint8_t *) &(entry.outputType), src, false, &entryOffset,
+                               sizeof(entry.outputType)); // AudioOutputType
+                chip::ByteSpan * nameSpan = &entry.name;  // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, nameSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x050A: // Content Launcher Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // accepts header list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryOffset = GetByteSpanOffsetFromIndex(src, len, static_cast<uint16_t>(index));
+                if (entryOffset == 0)
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+
+                chip::ByteSpan acceptsHeaderListSpan; // OCTET_STRING
+                uint16_t acceptsHeaderListRemainingSpace = static_cast<uint16_t>(len - entryOffset);
+                if (CHIP_NO_ERROR != ReadByteSpan(src + entryOffset, acceptsHeaderListRemainingSpace, &acceptsHeaderListSpan))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                writer.Put(TLV::AnonymousTag, acceptsHeaderListSpan);
+            }
+            break;
+        }
+        case 0x0001: // supported streaming types
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 1;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                uint8_t entry;
+                copyListMember(reinterpret_cast<uint8_t *>(&entry), src, false, &entryOffset,
+                               entryLength); // ContentLaunchStreamingType
+                writer.Put(TLV::AnonymousTag, entry);
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x001D: // Descriptor Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // device list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 6;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _DeviceType
+                _DeviceType entry;
+                copyListMember((uint8_t *) &(entry.type), src, false, &entryOffset, sizeof(entry.type));         // DEVTYPE_ID
+                copyListMember((uint8_t *) &(entry.revision), src, false, &entryOffset, sizeof(entry.revision)); // INT16U
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        case 0x0001: // server list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 4;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                chip::ClusterId entry;
+                copyListMember(reinterpret_cast<uint8_t *>(&entry), src, false, &entryOffset, entryLength); // CLUSTER_ID
+                writer.Put(TLV::AnonymousTag, entry);
+            }
+            break;
+        }
+        case 0x0002: // client list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 4;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                chip::ClusterId entry;
+                copyListMember(reinterpret_cast<uint8_t *>(&entry), src, false, &entryOffset, entryLength); // CLUSTER_ID
+                writer.Put(TLV::AnonymousTag, entry);
+            }
+            break;
+        }
+        case 0x0003: // parts list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 2;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                chip::EndpointId entry;
+                copyListMember(reinterpret_cast<uint8_t *>(&entry), src, false, &entryOffset, entryLength); // ENDPOINT_NO
+                writer.Put(TLV::AnonymousTag, entry);
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x0040: // Fixed Label Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // label list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 36;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _LabelStruct
+                _LabelStruct entry;
+                chip::ByteSpan * labelSpan = &entry.label; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 18, labelSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset                = static_cast<uint16_t>(entryOffset + 18);
+                chip::ByteSpan * valueSpan = &entry.value; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 18, valueSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 18);
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x0033: // General Diagnostics Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // NetworkInterfaces
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 48;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _NetworkInterfaceType
+                _NetworkInterfaceType entry;
+                chip::ByteSpan * NameSpan = &entry.Name; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, NameSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                copyListMember((uint8_t *) &(entry.FabricConnected), src, false, &entryOffset,
+                               sizeof(entry.FabricConnected)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.OffPremiseServicesReachableIPv4), src, false, &entryOffset,
+                               sizeof(entry.OffPremiseServicesReachableIPv4)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.OffPremiseServicesReachableIPv6), src, false, &entryOffset,
+                               sizeof(entry.OffPremiseServicesReachableIPv6)); // BOOLEAN
+                chip::ByteSpan * HardwareAddressSpan = &entry.HardwareAddress; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 10, HardwareAddressSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 10);
+                copyListMember((uint8_t *) &(entry.Type), src, false, &entryOffset, sizeof(entry.Type)); // ENUM8
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0xF004: // Group Key Management Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // groups
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 6;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _GroupState
+                _GroupState entry;
+                copyListMember((uint8_t *) &(entry.VendorId), src, false, &entryOffset, sizeof(entry.VendorId));           // INT16U
+                copyListMember((uint8_t *) &(entry.VendorGroupId), src, false, &entryOffset, sizeof(entry.VendorGroupId)); // INT16U
+                copyListMember((uint8_t *) &(entry.GroupKeySetIndex), src, false, &entryOffset,
+                               sizeof(entry.GroupKeySetIndex)); // INT16U
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        case 0x0001: // group keys
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 31;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _GroupKey
+                _GroupKey entry;
+                copyListMember((uint8_t *) &(entry.VendorId), src, false, &entryOffset, sizeof(entry.VendorId));           // INT16U
+                copyListMember((uint8_t *) &(entry.GroupKeyIndex), src, false, &entryOffset, sizeof(entry.GroupKeyIndex)); // INT16U
+                chip::ByteSpan * GroupKeyRootSpan = &entry.GroupKeyRoot; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 18, GroupKeyRootSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 18);
+                copyListMember((uint8_t *) &(entry.GroupKeyEpochStartTime), src, false, &entryOffset,
+                               sizeof(entry.GroupKeyEpochStartTime)); // INT64U
+                copyListMember((uint8_t *) &(entry.GroupKeySecurityPolicy), src, false, &entryOffset,
+                               sizeof(entry.GroupKeySecurityPolicy)); // GroupKeySecurityPolicy
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x0507: // Media Input Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // media input list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 70;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _MediaInputInfo
+                _MediaInputInfo entry;
+                copyListMember((uint8_t *) &(entry.index), src, false, &entryOffset, sizeof(entry.index));         // INT8U
+                copyListMember((uint8_t *) &(entry.inputType), src, false, &entryOffset, sizeof(entry.inputType)); // MediaInputType
+                chip::ByteSpan * nameSpan = &entry.name;                                                           // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, nameSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset                      = static_cast<uint16_t>(entryOffset + 34);
+                chip::ByteSpan * descriptionSpan = &entry.description; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, descriptionSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x003E: // Operational Credentials Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0001: // fabrics list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 52;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _FabricDescriptor
+                _FabricDescriptor entry;
+                copyListMember((uint8_t *) &(entry.FabricId), src, false, &entryOffset, sizeof(entry.FabricId)); // FABRIC_ID
+                copyListMember((uint8_t *) &(entry.VendorId), src, false, &entryOffset, sizeof(entry.VendorId)); // INT16U
+                copyListMember((uint8_t *) &(entry.NodeId), src, false, &entryOffset, sizeof(entry.NodeId));     // NODE_ID
+                chip::ByteSpan * LabelSpan = &entry.Label;                                                       // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, LabelSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x0504: // TV Channel Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // tv channel list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 106;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _TvChannelInfo
+                _TvChannelInfo entry;
+                copyListMember((uint8_t *) &(entry.majorNumber), src, false, &entryOffset, sizeof(entry.majorNumber)); // INT16U
+                copyListMember((uint8_t *) &(entry.minorNumber), src, false, &entryOffset, sizeof(entry.minorNumber)); // INT16U
+                chip::ByteSpan * nameSpan = &entry.name; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, nameSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset                   = static_cast<uint16_t>(entryOffset + 34);
+                chip::ByteSpan * callSignSpan = &entry.callSign; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, callSignSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset                            = static_cast<uint16_t>(entryOffset + 34);
+                chip::ByteSpan * affiliateCallSignSpan = &entry.affiliateCallSign; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, affiliateCallSignSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x0505: // Target Navigator Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // target navigator list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 35;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _NavigateTargetTargetInfo
+                _NavigateTargetTargetInfo entry;
+                copyListMember((uint8_t *) &(entry.identifier), src, false, &entryOffset, sizeof(entry.identifier)); // INT8U
+                chip::ByteSpan * nameSpan = &entry.name;                                                             // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, nameSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x050F: // Test Cluster Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x001A: // list_int8u
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 1;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                uint8_t entry;
+                copyListMember(reinterpret_cast<uint8_t *>(&entry), src, false, &entryOffset, entryLength); // INT8U
+                writer.Put(TLV::AnonymousTag, entry);
+            }
+            break;
+        }
+        case 0x001B: // list_octet_string
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryOffset = GetByteSpanOffsetFromIndex(src, len, static_cast<uint16_t>(index));
+                if (entryOffset == 0)
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+
+                chip::ByteSpan listOctetStringSpan; // OCTET_STRING
+                uint16_t listOctetStringRemainingSpace = static_cast<uint16_t>(len - entryOffset);
+                if (CHIP_NO_ERROR != ReadByteSpan(src + entryOffset, listOctetStringRemainingSpace, &listOctetStringSpan))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                writer.Put(TLV::AnonymousTag, listOctetStringSpan);
+            }
+            break;
+        }
+        case 0x001C: // list_struct_octet_string
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 42;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _TestListStructOctet
+                _TestListStructOctet entry;
+                copyListMember((uint8_t *) &(entry.fabricIndex), src, false, &entryOffset, sizeof(entry.fabricIndex)); // INT64U
+                chip::ByteSpan * operationalCertSpan = &entry.operationalCert; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, operationalCertSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x0035: // Thread Network Diagnostics Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0007: // NeighborTableList
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 31;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _NeighborTable
+                _NeighborTable entry;
+                copyListMember((uint8_t *) &(entry.ExtAddress), src, false, &entryOffset, sizeof(entry.ExtAddress)); // INT64U
+                copyListMember((uint8_t *) &(entry.Age), src, false, &entryOffset, sizeof(entry.Age));               // INT32U
+                copyListMember((uint8_t *) &(entry.Rloc16), src, false, &entryOffset, sizeof(entry.Rloc16));         // INT16U
+                copyListMember((uint8_t *) &(entry.LinkFrameCounter), src, false, &entryOffset,
+                               sizeof(entry.LinkFrameCounter)); // INT32U
+                copyListMember((uint8_t *) &(entry.MleFrameCounter), src, false, &entryOffset,
+                               sizeof(entry.MleFrameCounter));                                                         // INT32U
+                copyListMember((uint8_t *) &(entry.LQI), src, false, &entryOffset, sizeof(entry.LQI));                 // INT8U
+                copyListMember((uint8_t *) &(entry.AverageRssi), src, false, &entryOffset, sizeof(entry.AverageRssi)); // INT8S
+                copyListMember((uint8_t *) &(entry.LastRssi), src, false, &entryOffset, sizeof(entry.LastRssi));       // INT8S
+                copyListMember((uint8_t *) &(entry.FrameErrorRate), src, false, &entryOffset,
+                               sizeof(entry.FrameErrorRate)); // INT8U
+                copyListMember((uint8_t *) &(entry.MessageErrorRate), src, false, &entryOffset,
+                               sizeof(entry.MessageErrorRate));                                                          // INT8U
+                copyListMember((uint8_t *) &(entry.RxOnWhenIdle), src, false, &entryOffset, sizeof(entry.RxOnWhenIdle)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.FullThreadDevice), src, false, &entryOffset,
+                               sizeof(entry.FullThreadDevice)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.FullNetworkData), src, false, &entryOffset,
+                               sizeof(entry.FullNetworkData));                                                 // BOOLEAN
+                copyListMember((uint8_t *) &(entry.IsChild), src, false, &entryOffset, sizeof(entry.IsChild)); // BOOLEAN
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        case 0x0008: // RouteTableList
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 18;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _RouteTable
+                _RouteTable entry;
+                copyListMember((uint8_t *) &(entry.ExtAddress), src, false, &entryOffset, sizeof(entry.ExtAddress)); // INT64U
+                copyListMember((uint8_t *) &(entry.Rloc16), src, false, &entryOffset, sizeof(entry.Rloc16));         // INT16U
+                copyListMember((uint8_t *) &(entry.RouterId), src, false, &entryOffset, sizeof(entry.RouterId));     // INT8U
+                copyListMember((uint8_t *) &(entry.NextHop), src, false, &entryOffset, sizeof(entry.NextHop));       // INT8U
+                copyListMember((uint8_t *) &(entry.PathCost), src, false, &entryOffset, sizeof(entry.PathCost));     // INT8U
+                copyListMember((uint8_t *) &(entry.LQIIn), src, false, &entryOffset, sizeof(entry.LQIIn));           // INT8U
+                copyListMember((uint8_t *) &(entry.LQIOut), src, false, &entryOffset, sizeof(entry.LQIOut));         // INT8U
+                copyListMember((uint8_t *) &(entry.Age), src, false, &entryOffset, sizeof(entry.Age));               // INT8U
+                copyListMember((uint8_t *) &(entry.Allocated), src, false, &entryOffset, sizeof(entry.Allocated));   // BOOLEAN
+                copyListMember((uint8_t *) &(entry.LinkEstablished), src, false, &entryOffset,
+                               sizeof(entry.LinkEstablished)); // BOOLEAN
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        case 0x003B: // SecurityPolicy
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 3;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _SecurityPolicy
+                _SecurityPolicy entry;
+                copyListMember((uint8_t *) &(entry.RotationTime), src, false, &entryOffset, sizeof(entry.RotationTime)); // INT16U
+                copyListMember((uint8_t *) &(entry.Flags), src, false, &entryOffset, sizeof(entry.Flags));               // INT8U
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        case 0x003D: // OperationalDatasetComponents
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 12;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _OperationalDatasetComponents
+                _OperationalDatasetComponents entry;
+                copyListMember((uint8_t *) &(entry.ActiveTimestampPresent), src, false, &entryOffset,
+                               sizeof(entry.ActiveTimestampPresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.PendingTimestampPresent), src, false, &entryOffset,
+                               sizeof(entry.PendingTimestampPresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.MasterKeyPresent), src, false, &entryOffset,
+                               sizeof(entry.MasterKeyPresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.NetworkNamePresent), src, false, &entryOffset,
+                               sizeof(entry.NetworkNamePresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.ExtendedPanIdPresent), src, false, &entryOffset,
+                               sizeof(entry.ExtendedPanIdPresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.MeshLocalPrefixPresent), src, false, &entryOffset,
+                               sizeof(entry.MeshLocalPrefixPresent));                                                    // BOOLEAN
+                copyListMember((uint8_t *) &(entry.DelayPresent), src, false, &entryOffset, sizeof(entry.DelayPresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.PanIdPresent), src, false, &entryOffset, sizeof(entry.PanIdPresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.ChannelPresent), src, false, &entryOffset,
+                               sizeof(entry.ChannelPresent));                                                          // BOOLEAN
+                copyListMember((uint8_t *) &(entry.PskcPresent), src, false, &entryOffset, sizeof(entry.PskcPresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.SecurityPolicyPresent), src, false, &entryOffset,
+                               sizeof(entry.SecurityPolicyPresent)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.ChannelMaskPresent), src, false, &entryOffset,
+                               sizeof(entry.ChannelMaskPresent)); // BOOLEAN
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        case 0x003E: // ActiveNetworkFaultsList
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 1;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                uint8_t entry;
+                copyListMember(reinterpret_cast<uint8_t *>(&entry), src, false, &entryOffset, entryLength); // NetworkFault
+                writer.Put(TLV::AnonymousTag, entry);
+            }
+            break;
+        }
+        }
+        break;
+    }
+    }
+exit:
+    err = writer.EndContainer(tmpType);
+    return err;
 }
 
 uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata * am, bool write, uint8_t * dest, uint8_t * src,
