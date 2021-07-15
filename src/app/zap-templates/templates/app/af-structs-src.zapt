@@ -1,0 +1,97 @@
+{{> header}}
+
+#include <stdint.h>
+#include <app/util/basic-types.h>
+#include <support/Span.h>
+#include <core/CHIPSafeCasts.h>
+#include <core/CHIPTLV.h>
+#include <support/CodeUtils.h>
+#include <support/logging/CHIPLogging.h>
+#include "enums.h"
+#include "af-structs.h"
+
+// TODO: This still not resolves issue for lists inside struct, however, it resolves lists of structs.
+
+using namespace chip;
+
+{{#zcl_structs}}
+{{#if itemCnt}}
+// Struct for {{label}}
+CHIP_ERROR EncodeStruct(const _{{asType label}} & val, TLV::TLVWriter & writer, uint64_t tag)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    chip::TLV::TLVType tmpType;
+    uint8_t seq = 0;
+    SuccessOrExit(err = writer.StartContainer(tag, TLV::TLVType::kTLVType_Structure, tmpType));
+{{#zcl_struct_items}}
+SuccessOrExit(err =
+    {{#if (isOctetString type) }}
+    writer.Put(TLV::ContextTag(seq++), val.{{asSymbol label}})
+    {{else if (isCharString type) }}
+    writer.PutString(TLV::ContextTag(seq++), chip::Uint8::to_const_char(val.{{asSymbol label}}))
+    {{else if (isList type) }}
+    writer.PutNull(TLV::ContextTag(seq++)) /* TODO: List inside struct is not implemented. */
+    {{else if (isNoData type) }}
+    writer.PutNull(TLV::ContextTag(seq++))
+    {{else}}
+    writer.Put(TLV::ContextTag(seq++), val.{{asSymbol label}})
+    {{/if}}
+);
+{{/zcl_struct_items}}
+exit:
+    err = writer.EndContainer(tmpType);
+    return err;
+}
+
+CHIP_ERROR DecodeStruct(_{{asType label}} & aVal, const TLV::TLVReader & aReader)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    chip::TLV::TLVReader reader;
+    chip::TLV::TLVType tmpType;
+    reader.Init(aReader);
+    VerifyOrReturnError(reader.GetType() == TLV::TLVType::kTLVType_Structure, CHIP_ERROR_INVALID_ARGUMENT);
+    ReturnErrorOnFailure(reader.EnterContainer(tmpType));
+    while ((err = reader.Next()) == CHIP_NO_ERROR)
+    {
+        if (!TLV::IsContextTag(reader.GetTag()))
+        {
+            continue;
+        }
+        uint32_t currentDecodeTagId = TLV::TagNumFromTag(reader.GetTag());
+        switch (currentDecodeTagId)
+        {
+{{#zcl_struct_items}}
+        case {{index}}:
+        {
+{{#if (isOctetString type)}}
+        {
+            const uint8_t * data = nullptr;
+            ReturnErrorOnFailure(reader.GetDataPtr(data));
+            aVal.{{asSymbol label}} = {{asUnderlyingZclType type}}(data, reader.GetLength());
+        }
+{{else if (isString type)}}
+            ReturnErrorOnFailure(reader.GetDataPtr(aVal.{{asSymbol label}}));
+{{else if (isNoData type) }}
+            // Nothing;
+{{else if (isList type) }}
+            ReturnErrorOnFailure(reader.GetDataPtr(aVal.{{asSymbol label}}));
+{{else}}
+            ReturnErrorOnFailure(reader.Get(aVal.{{asSymbol label}}));
+{{/if}}
+            break;
+        }
+{{/zcl_struct_items}}
+        default:
+            // Unsupported tag, ignore it.
+            ChipLogProgress(Zcl, "Unknown TLV tag during processing.");
+        }
+    }
+    if (err == CHIP_END_OF_TLV)
+    {
+        err = CHIP_NO_ERROR;
+    }
+    return err;
+}
+
+{{/if}}
+{{/zcl_structs}}
