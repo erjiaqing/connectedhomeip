@@ -21,6 +21,7 @@
 #include <app/util/af.h>
 #include <app/util/attribute-list-byte-span.h>
 #include <app/util/basic-types.h>
+#include <core/CHIPTLV.h>
 #include <support/SafeInt.h>
 #include <support/logging/CHIPLogging.h>
 
@@ -43,6 +44,25 @@ void copyListMember(uint8_t * dest, uint8_t * src, bool write, uint16_t * offset
     }
 
     *offset = static_cast<uint16_t>(*offset + length);
+}
+
+CHIP_ERROR EmberListToCHIPTLV(ClusterId clusterId, AttributeId attributeId, uint8_t * src, uint16_t len, TLV::TLVWriter & writer,
+                              uint64_t tag)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    chip::TLV::TLVType tmpType;
+    size_t count         = *reinterpret_cast<uint16_t *>(src);
+    uint16_t entryLength = 0;
+    // Suppress error of unused variable.
+    (void) entryLength;
+    (void) count;
+    SuccessOrExit(err = writer.StartContainer(tag, TLV::TLVType::kTLVType_Array, tmpType));
+    switch (clusterId)
+    {
+    }
+exit:
+    err = writer.EndContainer(tmpType);
+    return err;
 }
 
 uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata * am, bool write, uint8_t * dest, uint8_t * src,

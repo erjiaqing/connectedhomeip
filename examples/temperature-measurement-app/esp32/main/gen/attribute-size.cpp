@@ -21,6 +21,7 @@
 #include <app/util/af.h>
 #include <app/util/attribute-list-byte-span.h>
 #include <app/util/basic-types.h>
+#include <core/CHIPTLV.h>
 #include <support/SafeInt.h>
 #include <support/logging/CHIPLogging.h>
 
@@ -43,6 +44,106 @@ void copyListMember(uint8_t * dest, uint8_t * src, bool write, uint16_t * offset
     }
 
     *offset = static_cast<uint16_t>(*offset + length);
+}
+
+CHIP_ERROR EmberListToCHIPTLV(ClusterId clusterId, AttributeId attributeId, uint8_t * src, uint16_t len, TLV::TLVWriter & writer,
+                              uint64_t tag)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    chip::TLV::TLVType tmpType;
+    size_t count         = *reinterpret_cast<uint16_t *>(src);
+    uint16_t entryLength = 0;
+    // Suppress error of unused variable.
+    (void) entryLength;
+    (void) count;
+    SuccessOrExit(err = writer.StartContainer(tag, TLV::TLVType::kTLVType_Array, tmpType));
+    switch (clusterId)
+    {
+    case 0x0033: // General Diagnostics Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0000: // NetworkInterfaces
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 48;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _NetworkInterfaceType
+                _NetworkInterfaceType entry;
+                chip::ByteSpan * NameSpan = &entry.Name; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, NameSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                copyListMember((uint8_t *) &(entry.FabricConnected), src, false, &entryOffset,
+                               sizeof(entry.FabricConnected)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.OffPremiseServicesReachableIPv4), src, false, &entryOffset,
+                               sizeof(entry.OffPremiseServicesReachableIPv4)); // BOOLEAN
+                copyListMember((uint8_t *) &(entry.OffPremiseServicesReachableIPv6), src, false, &entryOffset,
+                               sizeof(entry.OffPremiseServicesReachableIPv6)); // BOOLEAN
+                chip::ByteSpan * HardwareAddressSpan = &entry.HardwareAddress; // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 10, HardwareAddressSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 10);
+                copyListMember((uint8_t *) &(entry.Type), src, false, &entryOffset, sizeof(entry.Type)); // ENUM8
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    case 0x003E: // Operational Credentials Cluster
+    {
+        uint16_t entryOffset = kSizeLengthInBytes;
+        switch (attributeId)
+        {
+        case 0x0001: // fabrics list
+        {
+            for (size_t index = 0; index < count; index++)
+            {
+                entryLength = 52;
+                if ((index * entryLength) > static_cast<size_t>(len - entryLength))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid.", index);
+                    ExitNow(err = CHIP_ERROR_INVALID_ARGUMENT);
+                }
+                entryOffset = static_cast<uint16_t>(kSizeLengthInBytes + (index * entryLength));
+                // Struct _FabricDescriptor
+                _FabricDescriptor entry;
+                copyListMember((uint8_t *) &(entry.FabricId), src, false, &entryOffset, sizeof(entry.FabricId)); // FABRIC_ID
+                copyListMember((uint8_t *) &(entry.VendorId), src, false, &entryOffset, sizeof(entry.VendorId)); // INT16U
+                copyListMember((uint8_t *) &(entry.NodeId), src, false, &entryOffset, sizeof(entry.NodeId));     // NODE_ID
+                chip::ByteSpan * LabelSpan = &entry.Label;                                                       // OCTET_STRING
+                if (CHIP_NO_ERROR != (err = ReadByteSpan(src + entryOffset, 34, LabelSpan)))
+                {
+                    ChipLogError(Zcl, "Index %zu is invalid. Not enough remaining space", index);
+                    ExitNow();
+                }
+                entryOffset = static_cast<uint16_t>(entryOffset + 34);
+                SuccessOrExit(err = writer.PutObject(TLV::AnonymousTag, entry));
+            }
+            break;
+        }
+        }
+        break;
+    }
+    }
+exit:
+    err = writer.EndContainer(tmpType);
+    return err;
 }
 
 uint16_t emberAfCopyList(ClusterId clusterId, EmberAfAttributeMetadata * am, bool write, uint8_t * dest, uint8_t * src,
