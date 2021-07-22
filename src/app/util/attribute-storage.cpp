@@ -42,11 +42,14 @@
 #include "app/util/common.h"
 #include <app/util/af.h>
 #include <app/util/attribute-storage.h>
+#include <lib/core/CHIPTLV.h>
+#include <lib/core/CHIPTLVUtilities.hpp>
 
 #include <app/common/gen/attribute-type.h>
 #include <app/common/gen/callback.h>
 
 using namespace chip;
+using namespace chip::TLV;
 
 //------------------------------------------------------------------------------
 // Globals
@@ -453,6 +456,69 @@ static uint8_t * singletonAttributeLocation(EmberAfAttributeMetadata * am)
         m++;
     }
     return (uint8_t *) (singletonAttributeData + index);
+}
+
+/**
+ * @brief Copies the value from srcTLV to destTLV.
+ * If isWrite, the destTLV will be copied to external buffer since the data might shirnk or expand.
+ */
+static size_t copyTLVList(bool isWrite, uint8_t * destTLV, size_t destSize, uint8_t * srcTLV, size_t srcLen, uint16_t index)
+{
+    static uint8_t bufferSize[ATTRIBUTE_LARGEST];
+    TLVReader reader;
+    TLVWriter writer;
+    size_t count        = 0;
+    size_t currentIndex = 0;
+
+    if (isWrite)
+    {
+        reader.Init(destTLV, destSize);
+    }
+    else
+    {
+        reader.Init(srcTLV, srcLen);
+    }
+
+    if (index == -1)
+    {
+        memmove(destTLV, srcTLV, srcLen);
+        return srcLen;
+    }
+
+    {
+        TLV::TLVType tmpType;
+        reader.EnterContainer(tmpType);
+        Utilities::Count(reader, count, false);
+    }
+
+    if (index == 0)
+    {
+        return count;
+    }
+    index--;
+
+    if (index >= count)
+    {
+        return 0;
+    }
+
+    TLV::TLVType tmpType;
+    CHIP_ERROR tlvError = CHIP_NO_ERROR;
+    writer.Init(bufferSize, min(destSize, sizeof(bufferSize)));
+    writer.StartContainer(TLV::AnonymousTag, TLVType::kTLVType_Array, tmpType);
+
+    while ((tlvError = reader.Next()) == CHIP_NO_ERROR)
+    {
+        if (index == currentIndex)
+        {
+            writer.CopyElement(reader);
+        }
+        currentIndex++;
+    }
+
+    writer.EndContainer(tmpType);
+
+    return count;
 }
 
 // This function does mem copy, but smartly, which means that if the type is a
