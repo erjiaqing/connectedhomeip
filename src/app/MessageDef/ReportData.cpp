@@ -215,6 +215,23 @@ exit:
     return err;
 }
 
+CHIP_ERROR ReportData::Parser::GetEventDataListTLV(TLV::TLVReader * const apEventDataListTlv) const
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+
+    VerifyOrReturnError(apEventDataListTlv != nullptr, err = CHIP_ERROR_INVALID_ARGUMENT);
+
+    err = mReader.FindElementWithTag(chip::TLV::ContextTag(kCsTag_EventDataList), *apEventDataListTlv);
+    SuccessOrExit(err);
+
+    VerifyOrExit(chip::TLV::kTLVType_Array == apEventDataListTlv->GetType(), err = CHIP_ERROR_WRONG_TLV_TYPE);
+    SuccessOrExit(err);
+
+exit:
+    ChipLogIfFalse((CHIP_NO_ERROR == err) || (CHIP_END_OF_TLV == err));
+    return err;
+}
+
 CHIP_ERROR ReportData::Parser::GetMoreChunkedMessages(bool * const apMoreChunkedMessages) const
 {
     return GetSimpleValue(kCsTag_MoreChunkedMessages, chip::TLV::kTLVType_Boolean, apMoreChunkedMessages);

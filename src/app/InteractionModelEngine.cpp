@@ -140,7 +140,7 @@ CHIP_ERROR InteractionModelEngine::NewCommandSender(CommandSender ** const apCom
     return CHIP_ERROR_NO_MEMORY;
 }
 
-CHIP_ERROR InteractionModelEngine::NewReadClient(ReadClient ** const apReadClient, intptr_t aAppIdentifier)
+CHIP_ERROR InteractionModelEngine::NewReadClient(ReadClient ** const apReadClient, uint64_t aAppIdentifier)
 {
     CHIP_ERROR err = CHIP_ERROR_NO_MEMORY;
 
@@ -324,7 +324,7 @@ CHIP_ERROR InteractionModelEngine::SendReadRequest(NodeId aNodeId, FabricIndex a
                                                    EventPathParams * apEventPathParamsList, size_t aEventPathParamsListSize,
                                                    AttributePathParams * apAttributePathParamsList,
                                                    size_t aAttributePathParamsListSize, EventNumber aEventNumber,
-                                                   intptr_t aAppIdentifier)
+                                                   uint64_t aAppIdentifier)
 {
     ReadClient * client = nullptr;
     CHIP_ERROR err      = CHIP_NO_ERROR;

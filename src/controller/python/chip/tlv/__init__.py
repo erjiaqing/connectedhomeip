@@ -526,7 +526,7 @@ class TLVReader(object):
             decoding["Array"] = []
             self._get(tlv, decoding["Array"], decoding["value"])
         elif decoding["type"] == "Path":
-            decoding["value"] = []
+            decoding["value"] = {}
             decoding["Path"] = []
             self._get(tlv, decoding["Path"], decoding["value"])
         elif decoding["type"] == "Null":

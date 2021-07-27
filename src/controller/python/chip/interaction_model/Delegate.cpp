@@ -32,6 +32,40 @@ namespace Controller {
 
 PythonInteractionModelDelegate gPythonInteractionModelDelegate;
 
+CHIP_ERROR PythonInteractionModelDelegate::EventStreamReceived(const ReadClient * apReadClient, TLV::TLVReader * apEventListReader)
+{
+    if (onEventStreamFunct != nullptr)
+    {
+        CHIP_ERROR err = CHIP_NO_ERROR;
+        TLV::TLVWriter writer;
+        uint8_t writerBuffer[CHIP_CONFIG_DEFAULT_UDP_MTU_SIZE];
+        writer.Init(writerBuffer, sizeof(writerBuffer));
+        // When the apData is nullptr, means we did not receive a valid attribute data from server, status will be some error
+        // status.
+        if (apEventListReader != nullptr)
+        {
+            TLV::TLVReader tmpReader;
+            tmpReader.Init(*apEventListReader);
+            // The Copy operation should succeed since:
+            // - We used a buffer that is large enough
+            // - The writer is in a clean state.
+            err = writer.CopyElement(TLV::AnonymousTag, tmpReader);
+        }
+        if (CHIP_NO_ERROR == err)
+        {
+            onEventStreamFunct(apReadClient->GetExchangeContext()->GetSecureSession().GetPeerNodeId(),
+                              apReadClient->GetAppIdentifier(), writerBuffer, writer.GetLengthWritten());
+        }
+        else
+        {
+            // We failed to dump the TLV data to buffer, so we cannot pass valid data to the Python side, this should be a internal
+            // error of the binding.
+            ChipLogError(Controller, "Cannot pass TLV data to python: failed to copy TLV: %s", ErrorStr(err));
+        }
+    }
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR PythonInteractionModelDelegate::CommandResponseStatus(const CommandSender * apCommandSender,
                                                                  const Protocols::SecureChannel::GeneralStatusCode aGeneralCode,
                                                                  const uint32_t aProtocolId, const uint16_t aProtocolCode,
@@ -137,6 +171,11 @@ void pychip_InteractionModelDelegate_SetCommandResponseErrorCallback(PythonInter
 void pychip_InteractionModelDelegate_SetOnReportDataCallback(PythonInteractionModelDelegate_OnReportDataFunct f)
 {
     gPythonInteractionModelDelegate.SetOnReportDataCallback(f);
+}
+
+void pychip_InteractionModelDelegate_SetOnEventStreamCallback(PythonInteractionModelDelegate_OnEventStreamFunct f)
+{
+    gPythonInteractionModelDelegate.SetOnEventStreamCallback(f);
 }
 
 PythonInteractionModelDelegate & PythonInteractionModelDelegate::Instance()

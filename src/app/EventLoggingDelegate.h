@@ -49,11 +49,8 @@ public:
      *  Functions of this type are expected to provide the eventData
      *  element for the event logging subsystem. The functions of this
      *  type are called after the event subsystem has generated all
-     *  required event metadata. The function is called with a
-     *  chip::TLV::TLVWriter object into which it will emit a single TLV element
-     *  tagged kTag_EventData; the value of that element MUST be a
-     *  structure containing the event data. The event data itself must
-     *  be structured using context tags.
+     *  required event metadata.
+     *  The callee is expected to put the event data into the aWriter with given tag.
      *
      *
      *  @param[in,out] aWriter A reference to the chip::TLV::TLVWriter object to be
@@ -66,7 +63,7 @@ public:
      *                          data could not be completed.
      *
      */
-    virtual CHIP_ERROR WriteEvent(chip::TLV::TLVWriter & aWriter) = 0;
+    virtual CHIP_ERROR WriteEvent(chip::TLV::TLVWriter & aWriter, uint64_t tag) = 0;
 };
 } // namespace app
 } // namespace chip

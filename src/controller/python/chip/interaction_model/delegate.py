@@ -21,6 +21,7 @@ import chip.native
 import threading
 import chip.tlv
 import chip.exceptions
+import chip.interaction_model as im
 import typing
 from dataclasses import dataclass
 
@@ -67,14 +68,16 @@ _OnCommandResponseStatusCodeReceivedFunct = CFUNCTYPE(None, c_uint64, c_void_p, 
 _OnCommandResponseProtocolErrorFunct = CFUNCTYPE(None, c_uint64, c_uint8)
 _OnCommandResponseFunct = CFUNCTYPE(None, c_uint64, c_uint32)
 _OnReportDataFunct = CFUNCTYPE(None, c_uint64, c_ssize_t, c_void_p, c_uint32, c_void_p, c_uint32, c_uint16)
+_OnEventStreamFunct = CFUNCTYPE(None, c_uint64, c_ssize_t, c_void_p, c_size_t)
 
 _commandStatusDict = dict()
 _commandIndexStatusDict = dict()
 _commandStatusLock = threading.RLock()
 _commandStatusCV = threading.Condition(_commandStatusLock)
 
-_attributeDict = dict()
-_attributeDictLock = threading.RLock()
+_attributeAndLogDict = dict()
+_attributeAndLogDictLock = threading.RLock()
+_attributeAndLogDictCV = threading.Condition(_attributeAndLogDictLock)
 
 # A placeholder commandHandle, will be removed once we decouple CommandSender with CHIPClusters
 PLACEHOLDER_COMMAND_HANDLE = 1
@@ -131,9 +134,20 @@ def _OnReportData(nodeId: int, appId: int, attrPathBuf, attrPathBufLen: int, tlv
         # For all attribute read requests using CHIPCluster API, appId is filled by CHIPDevice, and should be smaller than 256 (UINT8_MAX).
         appId = DEFAULT_ATTRIBUTEREAD_APPID
 
-    with _attributeDictLock:
-        _attributeDict[appId] = AttributeReadResult(
+    with _attributeAndLogDictLock:
+        _attributeAndLogDict[appId] = AttributeReadResult(
             path, statusCode, tlvData)
+        _attributeAndLogDictCV.notify_all()
+
+@_OnEventStreamFunct
+def _OnEventStream(nodeId: int, appId: int, tlvDataBuf, tlvDataBufLen: int):
+    eventList = []
+    if tlvDataBufLen > 0:
+        tlvBuf = ctypes.string_at(tlvDataBuf, tlvDataBufLen)
+        eventList = [im.EventDataElement().from_dict(v) for v in chip.tlv.TLVReader(tlvBuf).get().get('Any')]
+    with _attributeAndLogDictLock:
+        _attributeAndLogDict[appId] = eventList
+        _attributeAndLogDictCV.notify_all()
 
 def InitIMDelegate():
     handle = chip.native.GetLibraryHandle()
@@ -144,11 +158,13 @@ def InitIMDelegate():
         setter.Set("pychip_InteractionModelDelegate_SetCommandResponseErrorCallback", None, [_OnCommandResponseFunct])
         setter.Set("pychip_InteractionModel_GetCommandSenderHandle", c_uint32, [ctypes.POINTER(c_uint64)])
         setter.Set("pychip_InteractionModelDelegate_SetOnReportDataCallback", None, [_OnReportDataFunct])
+        setter.Set("pychip_InteractionModelDelegate_SetOnEventStreamCallback", None, [_OnEventStreamFunct])
 
         handle.pychip_InteractionModelDelegate_SetCommandResponseStatusCallback(_OnCommandResponseStatusCodeReceived)
         handle.pychip_InteractionModelDelegate_SetCommandResponseProtocolErrorCallback(_OnCommandResponseProtocolError)
         handle.pychip_InteractionModelDelegate_SetCommandResponseErrorCallback(_OnCommandResponse)
         handle.pychip_InteractionModelDelegate_SetOnReportDataCallback(_OnReportData)
+        handle.pychip_InteractionModelDelegate_SetOnEventStreamCallback(_OnEventStream)
 
 def ClearCommandStatus(commandHandle: int):
     """
@@ -198,6 +214,15 @@ def GetCommandSenderHandle()->int:
     ClearCommandStatus(resPointer.value)
     return resPointer.value
 
-def GetAttributeReadResponse(appId: int) -> AttributeReadResult:
-    with _attributeDictLock:
-        return _attributeDict.get(appId, None)
+def CleanReadData(appId: int):
+    with _attributeAndLogDictLock:
+        _attributeAndLogDict[appId] = None
+        del _attributeAndLogDict[appId]
+
+def WaitForReadData(appId: int):
+    with _attributeAndLogDictCV:
+        ret = _attributeAndLogDict.get(appId, None)
+        while ret is None:
+            _attributeAndLogDictCV.wait()
+            ret = _attributeAndLogDict.get(appId, None)
+        return ret

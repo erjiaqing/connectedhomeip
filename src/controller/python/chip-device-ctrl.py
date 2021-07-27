@@ -199,6 +199,7 @@ class DeviceMgrCmd(Cmd):
         "resolve",
         "zcl",
         "zclread",
+        "zclreadevent",
         "zclconfigure",
 
         "discover",
@@ -729,6 +730,32 @@ class DeviceMgrCmd(Cmd):
                 self.do_help("zclread")
         except exceptions.ChipStackException as ex:
             print("An exception occurred during reading ZCL attribute:")
+            print(str(ex))
+        except Exception as ex:
+            print("An exception occurred during processing input:")
+            print(str(ex))
+
+    def do_zclreadevent(self, line):
+        """
+        To read ZCL events:
+        zclreadevent <cluster> <nodeid> <endpoint> <eventid>
+        """
+        try:
+            args = shlex.split(line)
+            all_attrs = self.devCtrl.ZCLAttributeList()
+            if len(args) == 1 and args[0] == '?':
+                print('\n'.join(all_attrs.keys()))
+            elif len(args) == 4:
+                if args[0] not in all_attrs:
+                    raise exceptions.UnknownCluster(args[0])
+                res = self.devCtrl.ZCLReadEvent(args[0], int(args[1]), int(
+                    args[2]), int(args[3]))
+                if res != None:
+                    print(repr(res))
+            else:
+                self.do_help("zclreadevent")
+        except exceptions.ChipStackException as ex:
+            print("An exception occurred during reading ZCL events:")
             print(str(ex))
         except Exception as ex:
             print("An exception occurred during processing input:")

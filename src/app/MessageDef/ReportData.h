@@ -118,6 +118,7 @@ public:
      *          #CHIP_END_OF_TLV if there is no such element
      */
     CHIP_ERROR GetEventDataList(EventList::Parser * const apEventDataList) const;
+    CHIP_ERROR GetEventDataListTLV(TLV::TLVReader * const apEventDataListTlv) const;
 
     /**
      *  @brief Check whether there are more chunked messages in a transaction. Next() must be called before accessing them.

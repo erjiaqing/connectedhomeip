@@ -82,6 +82,23 @@ constexpr bool useTestPairing()
     return isRendezvousBypassed();
 }
 
+uint8_t sDebugEventBuffer[128];
+uint8_t sInfoEventBuffer[128];
+uint8_t sCritEventBuffer[128];
+app::CircularEventBuffer sCircularEventBuffer[3];
+
+void SetupEventManagement(chip::Messaging::ExchangeManager * apExchangeManager)
+{
+    chip::app::LogStorageResources logStorageResources[] = {
+        { &sDebugEventBuffer[0], sizeof(sDebugEventBuffer), nullptr, 0, nullptr, chip::app::PriorityLevel::Debug },
+        { &sInfoEventBuffer[0], sizeof(sInfoEventBuffer), nullptr, 0, nullptr, chip::app::PriorityLevel::Info },
+        { &sCritEventBuffer[0], sizeof(sCritEventBuffer), nullptr, 0, nullptr, chip::app::PriorityLevel::Critical },
+    };
+
+    chip::app::EventManagement::CreateEventManagement(apExchangeManager, ArraySize(logStorageResources), sCircularEventBuffer,
+                                                      logStorageResources);
+}
+
 class ServerStorageDelegate : public PersistentStorageDelegate
 {
     CHIP_ERROR SyncGetKeyValue(const char * key, void * buffer, uint16_t & size) override
@@ -563,6 +580,8 @@ void InitServer(AppDelegate * delegate)
     err = gCASEServer.ListenForSessionEstablishment(&gExchangeMgr, &gTransports, &gSessions, &GetGlobalFabricTable(),
                                                     &gSessionIDAllocator);
     SuccessOrExit(err);
+
+    SetupEventManagement(&gExchangeMgr);
 
 exit:
     if (err != CHIP_NO_ERROR)

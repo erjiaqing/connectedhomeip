@@ -296,10 +296,25 @@ class ChipDeviceController(object):
         if res != 0:
             raise self._ChipStack.ErrorToException(res)
 
+        im.CleanReadData(im.DEFAULT_ATTRIBUTEREAD_APPID)
         # We are not using IM for Attributes.
         res = self._Cluster.ReadAttribute(device, cluster, attribute, endpoint, groupid, False)
         if blocking:
-            return im.GetAttributeReadResponse(im.DEFAULT_ATTRIBUTEREAD_APPID)
+            return im.WaitForReadData(im.DEFAULT_ATTRIBUTEREAD_APPID)
+
+    def ZCLReadEvent(self, cluster, nodeid, endpoint, event, blocking=True):
+        device = c_void_p(None)
+        # We should really use pychip_GetConnectedDeviceByNodeId and do the
+        # read off its callback....
+        res = self._ChipStack.Call(lambda: self._dmLib.pychip_GetDeviceByNodeId(
+            self.devCtrl, nodeid, pointer(device)))
+        if res != 0:
+            raise self._ChipStack.ErrorToException(res)
+        im.CleanReadData(im.DEFAULT_ATTRIBUTEREAD_APPID)
+        res = self._Cluster.ReadEvents(device, cluster, event, endpoint)
+        if blocking:
+            print("Waiting for read data")
+            return im.WaitForReadData(im.DEFAULT_ATTRIBUTEREAD_APPID)
 
     def ZCLWriteAttribute(self, cluster, attribute, nodeid, endpoint, groupid, value, blocking=True):
         device = c_void_p(None)
@@ -332,10 +347,14 @@ class ChipDeviceController(object):
             return im.WaitCommandIndexStatus(commandSenderHandle, 1)
 
     def ZCLCommandList(self):
-        return self._Cluster.ListClusterCommands()
+        return {
+            cluster: {command: info.get("args", {}) for command, info in v.get("commands", {}).items()} for cluster, v in self._Cluster.ListClusterMetadata().items()
+        }
 
     def ZCLAttributeList(self):
-        return self._Cluster.ListClusterAttributes()
+        return {
+            k: v.get("attributes", {}) for k, v in self._Cluster.ListClusterMetadata().items()
+        }
 
     def SetLogFilter(self, category):
         if category < 0 or category > pow(2, 8):

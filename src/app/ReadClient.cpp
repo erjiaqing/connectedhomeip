@@ -30,7 +30,7 @@ namespace chip {
 namespace app {
 
 CHIP_ERROR ReadClient::Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate,
-                            intptr_t aAppIdentifier)
+                            uint64_t aAppIdentifier)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     // Error if already initialized.
@@ -235,7 +235,10 @@ CHIP_ERROR ReadClient::OnMessageReceived(Messaging::ExchangeContext * apExchange
 exit:
     ChipLogFunctError(err);
 
-    MoveToState(ClientState::Initialized);
+    if (!mWaitingMoreChunkedMessages)
+    {
+        MoveToState(ClientState::Initialized);
+    }
 
     if (mpDelegate != nullptr)
     {
@@ -249,8 +252,14 @@ exit:
         }
     }
 
-    // TODO(#7521): Should close it after checking moreChunkedMessages flag is not set.
-    ShutdownInternal();
+    if (!mWaitingMoreChunkedMessages)
+    {
+        ShutdownInternal();
+    }
+    else
+    {
+        // Send
+    }
 
     return err;
 }
@@ -275,7 +284,6 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
     bool isAttributeDataListPresent = false;
     bool suppressResponse           = false;
     bool moreChunkedMessages        = false;
-    EventList::Parser eventList;
     AttributeDataList::Parser attributeDataList;
     System::PacketBufferTLVReader reader;
 
@@ -304,7 +312,8 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
     }
     SuccessOrExit(err);
 
-    err                = report.GetEventDataList(&eventList);
+    TLV::TLVReader eventListTlvReader;
+    err                = report.GetEventDataListTLV(&eventListTlvReader);
     isEventListPresent = (err == CHIP_NO_ERROR);
     if (err == CHIP_END_OF_TLV)
     {
@@ -314,9 +323,7 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
 
     if (isEventListPresent && nullptr != mpDelegate)
     {
-        chip::TLV::TLVReader eventListReader;
-        eventList.GetReader(&eventListReader);
-        err = mpDelegate->EventStreamReceived(mpExchangeCtx, &eventListReader);
+        err = mpDelegate->EventStreamReceived(this, &eventListTlvReader);
         SuccessOrExit(err);
     }
 
@@ -340,6 +347,8 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
         // TODO: Add status report support and correspond handler in ReadHandler, particular for situation when there
         // are multiple reports
     }
+
+    mWaitingMoreChunkedMessages = moreChunkedMessages;
 
 exit:
     ChipLogFunctError(err);

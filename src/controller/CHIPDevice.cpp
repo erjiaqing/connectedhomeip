@@ -36,6 +36,7 @@
 #endif // CHIP_SYSTEM_CONFIG_USE_LWIP
 
 #include <app/CommandSender.h>
+#include <app/InteractionModelEngine.h>
 #include <app/util/DataModelHandler.h>
 #include <core/CHIPCore.h>
 #include <core/CHIPEncoding.h>
@@ -681,6 +682,19 @@ CHIP_ERROR Device::SendReadAttributeRequest(app::AttributePathParams aPath, Call
         CancelResponseHandler(seqNum);
     }
     return err;
+}
+
+CHIP_ERROR Device::SendReadEventRequest(app::EventPathParams aPath, uint64_t aAppIdentifier)
+{
+    bool loadedSecureSession = false;
+    aPath.mNodeId            = GetDeviceId();
+
+    ReturnErrorOnFailure(LoadSecureSessionParametersIfNeeded(loadedSecureSession));
+
+    // The application context is used to identify different requests from client applicaiton the type of it is intptr_t, here we
+    // use the seqNum.
+    return chip::app::InteractionModelEngine::GetInstance()->SendReadRequest(GetDeviceId(), 0, &mSecureSession, &aPath, 1, nullptr,
+                                                                             0, 0 /* event number */, aAppIdentifier);
 }
 
 Device::~Device()

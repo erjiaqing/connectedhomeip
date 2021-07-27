@@ -200,7 +200,7 @@ CHIP_ERROR Engine::BuildSingleReportDataEventList(ReportData::Builder & aReportD
                 err = CHIP_NO_ERROR;
                 break;
             }
-            mMoreChunkedMessages = true;
+            // mMoreChunkedMessages = true;
         }
         else
         {

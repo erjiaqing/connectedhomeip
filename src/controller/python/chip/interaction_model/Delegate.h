@@ -64,6 +64,8 @@ typedef void (*PythonInteractionModelDelegate_OnCommandResponseFunct)(uint64_t c
 typedef void (*PythonInteractionModelDelegate_OnReportDataFunct)(chip::NodeId nodeId, intptr_t readClientAppIdentifier,
                                                                  void * attributePathBuf, size_t attributePathBufLen,
                                                                  uint8_t * readTlvData, size_t readTlvDataLen, uint16_t statusCode);
+typedef void (*PythonInteractionModelDelegate_OnEventStreamFunct)(chip::NodeId nodeId, intptr_t readClientAppIdentifier,
+                                                                  uint8_t * readTlvData, size_t readTlvDataLen);
 
 void pychip_InteractionModelDelegate_SetCommandResponseStatusCallback(
     PythonInteractionModelDelegate_OnCommandResponseStatusCodeReceivedFunct f);
@@ -71,11 +73,13 @@ void pychip_InteractionModelDelegate_SetCommandResponseProtocolErrorCallback(
     PythonInteractionModelDelegate_OnCommandResponseProtocolErrorFunct f);
 void pychip_InteractionModelDelegate_SetCommandResponseErrorCallback(PythonInteractionModelDelegate_OnCommandResponseFunct f);
 void pychip_InteractionModelDelegate_SetOnReportDataCallback(PythonInteractionModelDelegate_OnReportDataFunct f);
+void pychip_InteractionModelDelegate_SetOnEventStreamCallback(PythonInteractionModelDelegate_OnEventStreamFunct f);
 }
 
 class PythonInteractionModelDelegate : public chip::Controller::DeviceControllerInteractionModelDelegate
 {
 public:
+    CHIP_ERROR EventStreamReceived(const app::ReadClient * apReadClient, TLV::TLVReader * apEventListReader) override;
     CHIP_ERROR CommandResponseStatus(const app::CommandSender * apCommandSender,
                                      const Protocols::SecureChannel::GeneralStatusCode aGeneralCode, const uint32_t aProtocolId,
                                      const uint16_t aProtocolCode, chip::EndpointId aEndpointId, const chip::ClusterId aClusterId,
@@ -106,11 +110,14 @@ public:
 
     void SetOnReportDataCallback(PythonInteractionModelDelegate_OnReportDataFunct f) { onReportDataFunct = f; }
 
+    void SetOnEventStreamCallback(PythonInteractionModelDelegate_OnEventStreamFunct f) { onEventStreamFunct = f; }
+
 private:
     PythonInteractionModelDelegate_OnCommandResponseStatusCodeReceivedFunct commandResponseStatusFunct   = nullptr;
     PythonInteractionModelDelegate_OnCommandResponseProtocolErrorFunct commandResponseProtocolErrorFunct = nullptr;
     PythonInteractionModelDelegate_OnCommandResponseFunct commandResponseErrorFunct                      = nullptr;
     PythonInteractionModelDelegate_OnReportDataFunct onReportDataFunct                                   = nullptr;
+    PythonInteractionModelDelegate_OnEventStreamFunct onEventStreamFunct                                 = nullptr;
 };
 
 } // namespace Controller

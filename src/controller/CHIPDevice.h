@@ -148,6 +148,11 @@ public:
                                         Callback::Cancelable * onFailureCallback, app::TLVDataFilter aTlvDataFilter);
 
     /**
+     * EventRead interaction might receive trunked data, so we need a delegate to manage state of response.
+     */
+    CHIP_ERROR SendReadEventRequest(app::EventPathParams aPath, uint64_t aAppIdentifier = 0);
+
+    /**
      * @brief
      *   Send the command in internal command sender.
      */

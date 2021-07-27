@@ -159,6 +159,8 @@ ChipError::StorageType pychip_GetConnectedDeviceByNodeId(chip::Controller::Devic
 uint64_t pychip_GetCommandSenderHandle(chip::Controller::Device * device);
 // CHIP Stack objects
 ChipError::StorageType pychip_BLEMgrImpl_ConfigureBle(uint32_t bluetoothAdapterId);
+chip::ChipError::StorageType pychip_Device_ReadEvent(chip::Controller::Device * device, chip::EndpointId endpointId,
+                                                     chip::ClusterId clusterId, chip::EventId eventId);
 }
 
 ChipError::StorageType pychip_DeviceController_NewDeviceController(chip::Controller::DeviceCommissioner ** outDevCtrl,
@@ -495,6 +497,14 @@ ChipError::StorageType pychip_DeviceCommissioner_CloseBleConnection(chip::Contro
 #else
     return ChipError::AsInteger(CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE);
 #endif
+}
+
+chip::ChipError::StorageType pychip_Device_ReadEvent(chip::Controller::Device * device, chip::EndpointId endpointId,
+                                                     chip::ClusterId clusterId, chip::EventId eventId)
+{
+    VerifyOrReturnError(device != nullptr, ChipError::AsInteger(CHIP_ERROR_INVALID_ARGUMENT));
+    chip::app::EventPathParams eventPath(device->GetDeviceId(), endpointId, clusterId, eventId, false);
+    return ChipError::AsInteger(device->SendReadEventRequest(eventPath, 0));
 }
 
 uint64_t pychip_GetCommandSenderHandle(chip::Controller::Device * device)

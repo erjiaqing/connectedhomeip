@@ -431,7 +431,7 @@ public:
         HandleWriteComplete();
         return CHIP_NO_ERROR;
     }
-    CHIP_ERROR EventStreamReceived(const chip::Messaging::ExchangeContext * apExchangeContext,
+    CHIP_ERROR EventStreamReceived(const chip::app::ReadClient *,
                                    chip::TLV::TLVReader * apEventListReader) override
     {
         return CHIP_NO_ERROR;

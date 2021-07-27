@@ -60,7 +60,6 @@ chip::ClusterId kTestClusterId     = 6;
 chip::EndpointId kTestEndpointId   = 1;
 chip::EventId kTestEventIdDebug    = 1;
 chip::EventId kTestEventIdCritical = 2;
-uint64_t kTestEventTag             = 1;
 using TestContext                  = chip::Test::MessagingContext;
 TestContext sContext;
 
@@ -79,10 +78,10 @@ void InitializeEventLogging(chip::Messaging::ExchangeManager & aExchangeManager)
 class TestEventGenerator : public chip::app::EventLoggingDelegate
 {
 public:
-    CHIP_ERROR WriteEvent(chip::TLV::TLVWriter & aWriter)
+    CHIP_ERROR WriteEvent(chip::TLV::TLVWriter & aWriter, uint64_t tag)
     {
         CHIP_ERROR err = CHIP_NO_ERROR;
-        err            = aWriter.Put(kTestEventTag, mStatus);
+        err            = aWriter.Put(tag, mStatus);
         return err;
     }
 
@@ -118,7 +117,7 @@ void GenerateEvents(nlTestSuite * apSuite, void * apContext)
 class MockInteractionModelApp : public chip::app::InteractionModelDelegate
 {
 public:
-    CHIP_ERROR EventStreamReceived(const chip::Messaging::ExchangeContext * apExchangeContext,
+    CHIP_ERROR EventStreamReceived(const chip::app::ReadClient *,
                                    chip::TLV::TLVReader * apEventListReader) override
     {
         CHIP_ERROR err = CHIP_NO_ERROR;

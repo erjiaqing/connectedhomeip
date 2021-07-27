@@ -58,7 +58,7 @@ public:
      *
      * @retval  # CHIP_ERROR_NOT_IMPLEMENTED if not implemented
      */
-    virtual CHIP_ERROR EventStreamReceived(const Messaging::ExchangeContext * apExchangeContext, TLV::TLVReader * apEventListReader)
+    virtual CHIP_ERROR EventStreamReceived(const ReadClient * apReadClient, TLV::TLVReader * apEventListReader)
     {
         return CHIP_ERROR_NOT_IMPLEMENTED;
     }

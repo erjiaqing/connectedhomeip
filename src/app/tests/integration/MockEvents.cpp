@@ -109,10 +109,10 @@ void LivenessEventGenerator::Generate(void)
     mState = (mState + 1) % mNumStates;
 }
 
-CHIP_ERROR LivenessEventGenerator::WriteEvent(chip::TLV::TLVWriter & aWriter)
+CHIP_ERROR LivenessEventGenerator::WriteEvent(chip::TLV::TLVWriter & aWriter, uint64_t tag)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
-    err            = aWriter.Put(kLivenessDeviceStatus, mStatus);
+    err            = aWriter.Put(tag, mStatus);
     return err;
 }
 

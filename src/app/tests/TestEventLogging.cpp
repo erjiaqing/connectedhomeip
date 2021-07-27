@@ -168,10 +168,10 @@ static void CheckLogReadOut(nlTestSuite * apSuite, chip::app::EventManagement & 
 class TestEventGenerator : public chip::app::EventLoggingDelegate
 {
 public:
-    CHIP_ERROR WriteEvent(chip::TLV::TLVWriter & aWriter)
+    CHIP_ERROR WriteEvent(chip::TLV::TLVWriter & aWriter, uint64_t tag)
     {
         CHIP_ERROR err = CHIP_NO_ERROR;
-        err            = aWriter.Put(kLivenessDeviceStatus, mStatus);
+        err            = aWriter.Put(tag, mStatus);
         return err;
     }
 

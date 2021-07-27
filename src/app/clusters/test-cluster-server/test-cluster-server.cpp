@@ -21,6 +21,8 @@
  ***************************************************************************/
 
 #include <app/CommandHandler.h>
+#include <app/EventLoggingTypes.h>
+#include <app/EventManagement.h>
 #include <app/common/gen/af-structs.h>
 #include <app/common/gen/attribute-id.h>
 #include <app/common/gen/attribute-type.h>
@@ -30,15 +32,38 @@
 #include <app/util/af.h>
 #include <app/util/attribute-storage.h>
 #include <core/CHIPSafeCasts.h>
+#include <core/CHIPTLV.h>
+#include <platform/CHIPDeviceLayer.h>
 #include <support/CodeUtils.h>
 #include <support/logging/CHIPLogging.h>
 
 using namespace chip;
+using namespace chip::app;
 using namespace chip::app::Clusters::TestCluster;
 
 constexpr const char * kErrorStr = "Test Cluster: List Octet cluster (0x%02x) Error setting '%s' attribute: 0x%02x";
 
 namespace {
+constexpr uint32_t kTickEventIntervalMs = 1000;
+constexpr EventId kTickEventId          = 0;
+EndpointId sTickEventEndpointId         = 0;
+
+class TickEventGenerator : public EventLoggingDelegate
+{
+public:
+    CHIP_ERROR WriteEvent(chip::TLV::TLVWriter & aWriter, uint64_t tag) override
+    {
+        TLV::TLVType tmpType;
+        ReturnLogErrorOnFailure(aWriter.StartContainer(tag, chip::TLV::TLVType::kTLVType_Structure, tmpType));
+        ReturnLogErrorOnFailure(aWriter.Put(chip::TLV::ContextTag(0x0), mCounter));
+        ReturnLogErrorOnFailure(aWriter.EndContainer(tmpType));
+        return CHIP_NO_ERROR;
+    }
+
+private:
+    uint32_t mCounter = 0;
+} sTickEventGenerator;
+
 EmberAfStatus writeAttribute(EndpointId endpoint, AttributeId attributeId, uint8_t * buffer, int32_t index = -1)
 {
     EmberAfAttributeSearchRecord record;
@@ -125,6 +150,26 @@ EmberAfStatus writeTestListStructOctetAttribute(EndpointId endpoint)
 }
 } // namespace
 
+void EmitEvent(chip::System::Layer *, void *, CHIP_ERROR)
+{
+    EventNumber generatedEventNumber;
+    EventSchema eventSchema(kPlaceholderNodeId, sTickEventEndpointId, ZCL_TEST_CLUSTER_ID, kTickEventId, PriorityLevel::Info);
+    EventOptions eventOption(Timestamp::UTC(0));
+    eventOption.mpEventSchema = &eventSchema;
+
+    CHIP_ERROR err = EventManagement::GetInstance().LogEvent(&sTickEventGenerator, eventOption, generatedEventNumber);
+    if (err == CHIP_NO_ERROR)
+    {
+        ChipLogDetail(Zcl, "Generated Tick Event, Endpoint=%" PRIu16 " EventNumber=%" PRIu64, sTickEventEndpointId,
+                      generatedEventNumber);
+    }
+    else
+    {
+        ChipLogError(Zcl, "Failed to generate tick event: %s", ErrorStr(err));
+    }
+    DeviceLayer::SystemLayer.StartTimer(kTickEventIntervalMs, EmitEvent, nullptr);
+}
+
 void emberAfPluginTestClusterServerInitCallback(void)
 {
     EmberAfStatus status = EMBER_ZCL_STATUS_SUCCESS;
@@ -145,6 +190,19 @@ void emberAfPluginTestClusterServerInitCallback(void)
 
         status = writeTestListStructOctetAttribute(endpoint);
         VerifyOrReturn(status == EMBER_ZCL_STATUS_SUCCESS, ChipLogError(Zcl, kErrorStr, endpoint, "test list strut octet", status));
+    }
+
+    for (uint8_t endpointIndex = 0; endpointIndex < emberAfEndpointCount(); endpointIndex++)
+    {
+        EndpointId endpoint = emberAfEndpointFromIndex(endpointIndex);
+        if (!emberAfContainsCluster(endpoint, ZCL_TEST_CLUSTER_ID))
+        {
+            continue;
+        }
+        ChipLogDetail(Zcl, "Setting up TestCluster Event Generating on endpoint %" PRIu16, endpoint);
+        sTickEventEndpointId = endpoint;
+        DeviceLayer::SystemLayer.StartTimer(kTickEventIntervalMs, EmitEvent, nullptr);
+        break;
     }
 }
 
