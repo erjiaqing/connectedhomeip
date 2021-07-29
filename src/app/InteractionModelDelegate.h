@@ -23,7 +23,7 @@
 
 #pragma once
 
-#include <app/AttributePathParams.h>
+#include <app/SubscribePrepareParams.h>
 #include <app/ClusterInfo.h>
 #include <core/CHIPCore.h>
 #include <core/CHIPTLV.h>
@@ -34,6 +34,7 @@
 
 namespace chip {
 namespace app {
+class SubscribeClient;
 class ReadClient;
 class WriteClient;
 class CommandSender;
@@ -84,7 +85,7 @@ public:
      *                            multiple read interactions
      * @retval # CHIP_ERROR_NOT_IMPLEMENTED if not implemented
      */
-    virtual CHIP_ERROR ReportProcessed(const ReadClient * apReadClient) { return CHIP_ERROR_NOT_IMPLEMENTED; }
+    virtual CHIP_ERROR ReportProcessed(ReadClient * apReadClient) { return CHIP_ERROR_NOT_IMPLEMENTED; }
 
     /**
      * Notification that a read attempt encountered an asynchronous failure.
@@ -190,6 +191,47 @@ public:
     virtual CHIP_ERROR WriteResponseError(const WriteClient * apWriteClient, CHIP_ERROR aError)
     {
         return CHIP_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Ask application to fill the parameter for subscription creation
+     * @retval # CHIP_ERROR_NOT_IMPLEMENTED if not implemented
+     */
+    virtual CHIP_ERROR SubscriptionPrepareNeeded(SubscribePrepareParams & aSubscribePrepareParams)
+    {
+        return CHIP_ERROR_NOT_IMPLEMENTED;
+    }
+
+    /**
+     * Notification that a Subscribe Response has been processed and application can do further work .
+     */
+    virtual CHIP_ERROR SubscribeResponseProcessed(const SubscribeClient * apSubscribeClient) { return CHIP_ERROR_NOT_IMPLEMENTED; }
+
+    /**
+     * Notification that a subscribe attempt encountered an asynchronous failure.
+     * @param[in]  apSubscribeClient   A current subscribe Client which can identify the subscribe to the consumer, particularly during
+     *                            multiple subscribe interactions
+     * @param[in]  aError         A error that could be CHIP_ERROR_TIMEOUT when read client fails to receive, or other error when
+     *                            fail to process subscribe response.
+     * @retval # CHIP_ERROR_NOT_IMPLEMENTED if not implemented
+     */
+    virtual CHIP_ERROR SubscribeError(const SubscribeClient * apSubscribeClient, CHIP_ERROR aError) { return CHIP_ERROR_NOT_IMPLEMENTED; }
+
+    /**
+     * Application can provide the customized GetSubscribeFinalSyncInterval to set final sync interval, at default, we use minIntervalSeconds
+     */
+    virtual CHIP_ERROR GetSubscribeFinalSyncInterval(uint16_t aMinIntervalSeconds, uint16_t aMaxIntervalSeconds, uint16_t & aFinalSyncIntervalSeconds)
+    {
+        aFinalSyncIntervalSeconds = aMinIntervalSeconds;
+        return CHIP_NO_ERROR;
+    }
+
+    /**
+     * Apply subscribe policy and get next retry timer value
+     */
+    virtual CHIP_ERROR ApplyResubscribePolicy(uint32_t aRetryCounter, uint16_t & aRetryTimerSec)
+    {
+        return CHIP_NO_ERROR;
     }
 
     virtual ~InteractionModelDelegate() = default;

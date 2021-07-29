@@ -63,14 +63,14 @@ public:
      *  @retval #CHIP_NO_ERROR On success.
      *
      */
-    CHIP_ERROR Init(InteractionModelDelegate * apDelegate);
+    virtual CHIP_ERROR Init(InteractionModelDelegate * apDelegate);
 
     /**
      *  Shut down the ReadHandler. This terminates this instance
      *  of the object and releases all held resources.
      *
      */
-    void Shutdown();
+    virtual void Shutdown();
     /**
      *  Process a read request.  Parts of the processing may end up being asynchronous, but the ReadHandler
      *  guarantees that it will call Shutdown on itself when processing is done (including if OnReadRequest
@@ -115,28 +115,38 @@ public:
     // is larger than current self vended event number
     void MoveToNextScheduledDirtyPriority();
 
-private:
+    virtual bool IsSubscription() { return false; }
+    virtual CHIP_ERROR GetSubscriptionId(uint64_t & aSubscriptionId) { return CHIP_ERROR_INCORRECT_STATE;}
+    bool MatchExchangeContext(Messaging::ExchangeContext * apExchangeContext) { return apExchangeContext == mpExchangeCtx; }
+    bool GetSyncAllInterestedData() { return mSyncAllInterestedData; }
+    void ClearSyncAllInterestedData() {  mSyncAllInterestedData = false; }
+
+protected:
     enum class HandlerState
     {
         Uninitialized = 0, ///< The handler has not been initialized
         Initialized,       ///< The handler has been initialized and is ready
         Reportable,        ///< The handler has received read request and is waiting for the data to send to be available
+        Subscribing,
     };
 
-    CHIP_ERROR ProcessReadRequest(System::PacketBufferHandle && aPayload);
+    InteractionModelDelegate * mpDelegate      = nullptr;
+    // Current Handler state
+    HandlerState mState                      = HandlerState::Uninitialized;
+    Messaging::ExchangeContext * mpExchangeCtx = nullptr;
+    const char * GetStateStr() const;
+    void MoveToState(const HandlerState aTargetState);
     CHIP_ERROR ProcessAttributePathList(AttributePathList::Parser & aAttributePathListParser);
     CHIP_ERROR ProcessEventPathList(EventPathList::Parser & aEventPathListParser);
-    void MoveToState(const HandlerState aTargetState);
 
-    const char * GetStateStr() const;
-
-    Messaging::ExchangeContext * mpExchangeCtx = nullptr;
+private:
+    CHIP_ERROR ProcessReadRequest(System::PacketBufferHandle && aPayload);
+    CHIP_ERROR AbortExistingExchangeContext();
+    void SetSyncAllInterestedData() {  mSyncAllInterestedData = true; }
 
     // Don't need the response for report data if true
     bool mSuppressResponse = false;
 
-    // Current Handler state
-    HandlerState mState                      = HandlerState::Uninitialized;
     ClusterInfo * mpAttributeClusterInfoList = nullptr;
     ClusterInfo * mpEventClusterInfoList     = nullptr;
 
@@ -147,6 +157,8 @@ private:
 
     // The last schedule event number snapshoted in the beginning when preparing to fill new events to reports
     EventNumber mLastScheduledEventNumber[kNumPriorityLevel];
+
+    bool mSyncAllInterestedData = false;
 };
 } // namespace app
 } // namespace chip

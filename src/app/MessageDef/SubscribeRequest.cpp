@@ -116,7 +116,7 @@ CHIP_ERROR SubscribeRequest::Parser::CheckSchemaValidity() const
             {
                 uint16_t maxIntervalSeconds;
                 ReturnLogErrorOnFailure(reader.Get(maxIntervalSeconds));
-                PRETTY_PRINT("\tkMaxInterval = 0x%" PRIx16 ",", maxIntervalSeconds);
+                PRETTY_PRINT("\tMaxIntervalSeconds = 0x%" PRIx16 ",", maxIntervalSeconds);
             }
 #endif // CHIP_DETAIL_LOGGING
             break;

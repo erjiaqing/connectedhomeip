@@ -26,6 +26,8 @@
 #include <app/AppBuildConfig.h>
 #include <app/InteractionModelEngine.h>
 #include <app/reporting/Engine.h>
+#include <system/SystemMutex.h>
+#include <lib/support/TypeTraits.h>
 
 namespace chip {
 namespace app {
@@ -35,7 +37,32 @@ CHIP_ERROR Engine::Init()
     mMoreChunkedMessages = false;
     mNumReportsInFlight  = 0;
     mCurReadHandlerIdx   = 0;
+    for (uint32_t index = 0; index < IM_SERVER_MAX_NUM_PATH_GROUPS - 1; index++)
+    {
+        mDirtyPaths[index].mpNext = &mDirtyPaths[index + 1];
+    }
+    mDirtyPaths[IM_SERVER_MAX_NUM_DIRTY_PATHS - 1].mpNext = nullptr;
+    mpNextAvailablePath                                 = mDirtyPaths;
+#if !CHIP_SYSTEM_CONFIG_NO_LOCKING
+    CHIP_ERROR err = System::Mutex::Init(mAccessLock);
+    if (err != CHIP_NO_ERROR)
+    {
+        ChipLogError(EventLogging, "mutex init fails with error %s", ErrorStr(err));
+    }
+#endif // !CHIP_SYSTEM_CONFIG_NO_LOCKING
     return CHIP_NO_ERROR;
+}
+
+void Engine::Shutdown()
+{
+    mpDirtyPath  = nullptr;
+    mpNextAvailablePath = nullptr;
+
+    for (uint32_t index = 0; index < IM_SERVER_MAX_NUM_DIRTY_PATHS; index++)
+    {
+        mDirtyPaths[index].mpNext = nullptr;
+        mDirtyPaths[index].ClearDirty();
+    }
 }
 
 EventNumber Engine::CountEvents(ReadHandler * apReadHandler, EventNumber * apInitialEvents)
@@ -64,6 +91,9 @@ Engine::RetrieveClusterData(AttributeDataElement::Builder & aAttributeDataElemen
         .EndOfAttributePath();
     err = attributePathBuilder.GetError();
     SuccessOrExit(err);
+
+    ChipLogDetail(DataManagement, "<RE:Run> Cluster %" PRIx32 ", Field %" PRIx32 " is dirty", aClusterInfo.mClusterId,
+            aClusterInfo.mFieldId);
 
     err = ReadSingleClusterData(aClusterInfo, aAttributeDataElementBuilder.GetWriter(), nullptr /* data exists */);
     SuccessOrExit(err);
@@ -98,19 +128,60 @@ CHIP_ERROR Engine::BuildSingleReportDataAttributeDataList(ReportData::Builder & 
         if (clusterInfo->IsDirty())
         {
             AttributeDataElement::Builder attributeDataElementBuilder = attributeDataList.CreateAttributeDataElementBuilder();
-            ChipLogDetail(DataManagement, "<RE:Run> Cluster " ChipLogFormatMEI ", Field %" PRIx32 " is dirty",
-                          ChipLogValueMEI(clusterInfo->mClusterId), clusterInfo->mFieldId);
-            // Retrieve data for this cluster instance and clear its dirty flag.
-            err = RetrieveClusterData(attributeDataElementBuilder, *clusterInfo);
-            VerifyOrExit(err == CHIP_NO_ERROR,
-                         ChipLogError(DataManagement, "<RE:Run> Error retrieving data from cluster, aborting"));
-            attributeClean = false;
-        }
+            if (apReadHandler->GetSyncAllInterestedData())
+            {
+                // Retrieve data for this cluster instance and clear its dirty flag.
+                err = RetrieveClusterData(attributeDataElementBuilder, *clusterInfo);
+                VerifyOrExit(err == CHIP_NO_ERROR,
+                             ChipLogError(DataManagement, "<RE:Run> Error retrieving data from cluster, aborting"));
+                attributeClean = false;
+            }
+            else
+            {
+                ClusterInfo * prev = mpDirtyPath;
+                ClusterInfo * current = mpDirtyPath;
+                ClusterInfo * next = mpDirtyPath;
 
+                while(current != nullptr)
+                {
+                    if (clusterInfo->IsAttributePathIncluded(*current))
+                    {
+                        // Retrieve data for this cluster instance and clear its dirty flag.
+                        err = RetrieveClusterData(attributeDataElementBuilder, *current);
+                        VerifyOrExit(err == CHIP_NO_ERROR,
+                                     ChipLogError(DataManagement, "<RE:Run> Error retrieving data from cluster, aborting"));
+                        attributeClean = false;
+
+                        next = current->mpNext;
+                        if (current == mpDirtyPath)
+                        {
+                            mpDirtyPath = next;
+                            prev = next;
+                        }
+                        else
+                        {
+                            prev->mpNext = next;
+                        }
+
+                        current->mpNext = mpNextAvailablePath;
+                        mpNextAvailablePath = current;
+                        current->ClearDirty();
+                        current = next;
+                    }
+                    else
+                    {
+                        prev = current;
+                        current = current->mpNext;
+                    }
+                }
+            }
+            clusterInfo->ClearDirty();
+        }
         clusterInfo = clusterInfo->mpNext;
     }
     attributeDataList.EndOfAttributeDataList();
     err = attributeDataList.GetError();
+    apReadHandler->ClearSyncAllInterestedData();
 
 exit:
     if (attributeClean || err != CHIP_NO_ERROR)
@@ -240,6 +311,14 @@ CHIP_ERROR Engine::BuildAndSendSingleReportData(ReadHandler * apReadHandler)
     err = reportDataBuilder.Init(&reportDataWriter);
     SuccessOrExit(err);
 
+    if (apReadHandler->IsSubscription())
+    {
+        uint64_t subscriptionId = 0;
+        err = apReadHandler->GetSubscriptionId(subscriptionId);
+        SuccessOrExit(err);
+        reportDataBuilder.SubscriptionId(subscriptionId);
+    }
+
     err = BuildSingleReportDataAttributeDataList(reportDataBuilder, apReadHandler);
     SuccessOrExit(err);
 
@@ -252,13 +331,13 @@ CHIP_ERROR Engine::BuildAndSendSingleReportData(ReadHandler * apReadHandler)
     {
         reportDataBuilder.MoreChunkedMessages(mMoreChunkedMessages);
     }
-
+    ChipLogDetail(DataManagement, "<RE> ReportsInF DEBUG3!!!!!!!!");
     reportDataBuilder.EndOfReportData();
     SuccessOrExit(err = reportDataBuilder.GetError());
-
+    ChipLogDetail(DataManagement, "<RE> ReportsInF DEBUG4!!!!!!!!");
     err = reportDataWriter.Finalize(&bufHandle);
     SuccessOrExit(err);
-
+    ChipLogDetail(DataManagement, "<RE> ReportsInF DEBUG5!!!!!!!!");
 #if CHIP_CONFIG_IM_ENABLE_SCHEMA_CHECK
     {
         ChipLogDetail(DataManagement, "<RE> Dumping report data...");
@@ -291,7 +370,7 @@ CHIP_ERROR Engine::BuildAndSendSingleReportData(ReadHandler * apReadHandler)
 
 exit:
     ChipLogFunctError(err);
-    if (!mMoreChunkedMessages || err != CHIP_NO_ERROR)
+    if ((!mMoreChunkedMessages || err != CHIP_NO_ERROR) && !(apReadHandler->IsSubscription()))
     {
         apReadHandler->Shutdown();
     }
@@ -318,10 +397,15 @@ CHIP_ERROR Engine::ScheduleRun()
 
 void Engine::Run()
 {
+#if !CHIP_SYSTEM_CONFIG_NO_LOCKING
+    ScopedLock lock(*this);
+#endif // !CHIP_SYSTEM_CONFIG_NO_LOCKING
     uint32_t numReadHandled = 0;
+    uint32_t numSubscribeHandled = 0;
 
     InteractionModelEngine * imEngine = InteractionModelEngine::GetInstance();
     ReadHandler * readHandler         = imEngine->mReadHandlers + mCurReadHandlerIdx;
+    SubscribeHandler * subscribeHandler         = imEngine->mSubscribeHandlers + mCurSubscribeHandlerIdx;
 
     while ((mNumReportsInFlight < CHIP_IM_MAX_REPORTS_IN_FLIGHT) && (numReadHandled < CHIP_IM_MAX_NUM_READ_HANDLER))
     {
@@ -335,6 +419,59 @@ void Engine::Run()
         mCurReadHandlerIdx = (mCurReadHandlerIdx + 1) % CHIP_IM_MAX_NUM_READ_HANDLER;
         readHandler        = imEngine->mReadHandlers + mCurReadHandlerIdx;
     }
+
+    while ((mNumReportsInFlight < CHIP_MAX_REPORTS_IN_FLIGHT) && (numSubscribeHandled < CHIP_MAX_NUM_SUBSCRIBE_HANDLER))
+    {
+        ChipLogDetail(DataManagement, "<RE> ReportsInF DEBUG");
+        if (subscribeHandler->IsReportable())
+        {
+            CHIP_ERROR err = BuildAndSendSingleReportData(subscribeHandler);
+            ChipLogFunctError(err);
+            return;
+        }
+        numSubscribeHandled++;
+        numSubscribeHandled = (mCurSubscribeHandlerIdx + 1) % CHIP_MAX_NUM_SUBSCRIBE_HANDLER;
+        subscribeHandler        = imEngine->mSubscribeHandlers + mCurSubscribeHandlerIdx;
+    }
+}
+
+CHIP_ERROR Engine::SetDirty(ClusterInfo & aClusterInfo)
+{
+    InteractionModelEngine* imEngine = InteractionModelEngine::GetInstance();
+#if !CHIP_SYSTEM_CONFIG_NO_LOCKING
+    ScopedLock lock(*this);
+#endif // !CHIP_SYSTEM_CONFIG_NO_LOCKING
+    for (int i = 0; i < CHIP_MAX_NUM_SUBSCRIBE_HANDLER; ++i)
+    {
+        SubscribeHandler * subscribeHandler = &imEngine->mSubscribeHandlers[i];
+
+        if (subscribeHandler->IsReportable())
+        {
+            ClusterInfo * clusterInstance = subscribeHandler->GetAttributeClusterInfolist();
+
+            while (clusterInstance != nullptr && clusterInstance->mpNext != nullptr)
+            {
+                if (clusterInstance->IsAttributePathIncluded(aClusterInfo))
+                {
+                    clusterInstance->SetDirty();
+                }
+                clusterInstance = clusterInstance->mpNext;
+            }
+        }
+    }
+
+    ClusterInfo * last = mpDirtyPath;
+    if (mpNextAvailablePath == nullptr)
+    {
+        return CHIP_ERROR_NO_MEMORY;
+    }
+
+    mpDirtyPath           = mpNextAvailablePath;
+    mpNextAvailablePath   = mpNextAvailablePath->mpNext;
+    *mpDirtyPath          = aClusterInfo;
+    mpDirtyPath->mpNext   = last;
+    mpDirtyPath->SetDirty();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR Engine::SendReport(ReadHandler * apReadHandler, System::PacketBufferHandle && aPayload)

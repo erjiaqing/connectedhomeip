@@ -74,6 +74,10 @@ const char * ReadClient::GetStateStr() const
         return "INIT";
     case ClientState::AwaitingResponse:
         return "AwaitingResponse";
+    case ClientState::Subscribing:
+        return "Subscribing";
+    case ClientState::SubscriptionIdle:
+        return "SubscriptionIdle";
     }
 #endif // CHIP_DETAIL_LOGGING
     return "N/A";
@@ -117,13 +121,22 @@ CHIP_ERROR ReadClient::SendReadRequest(NodeId aNodeId, FabricIndex aFabricIndex,
 
         if (aEventPathParamsListSize != 0 && apEventPathParamsList != nullptr)
         {
-            err = GenerateEventPathList(request, apEventPathParamsList, aEventPathParamsListSize, aEventNumber);
+            EventPathList::Builder & eventPathListBuilder = request.CreateEventPathListBuilder();
+            SuccessOrExit(err = eventPathListBuilder.GetError());
+            err = GenerateEventPathList(eventPathListBuilder, apEventPathParamsList, aEventPathParamsListSize);
             SuccessOrExit(err);
+            if (aEventNumber != 0)
+            {
+                // EventNumber is optional
+                request.EventNumber(aEventNumber);
+            }
         }
 
         if (aAttributePathParamsListSize != 0 && apAttributePathParamsList != nullptr)
         {
-            err = GenerateAttributePathList(request, apAttributePathParamsList, aAttributePathParamsListSize);
+            AttributePathList::Builder attributePathListBuilder = request.CreateAttributePathListBuilder();
+            SuccessOrExit(err = attributePathListBuilder.GetError());
+            err = GenerateAttributePathList(attributePathListBuilder, apAttributePathParamsList, aAttributePathParamsListSize);
             SuccessOrExit(err);
         }
 
@@ -161,14 +174,14 @@ exit:
     return err;
 }
 
-CHIP_ERROR ReadClient::GenerateEventPathList(ReadRequest::Builder & aRequest, EventPathParams * apEventPathParamsList,
-                                             size_t aEventPathParamsListSize, EventNumber & aEventNumber)
+CHIP_ERROR ReadClient::GenerateEventPathList(EventPathList::Builder & aEventPathListBuilder, EventPathParams * apEventPathParamsList,
+                                             size_t aEventPathParamsListSize)
 {
     CHIP_ERROR err                                = CHIP_NO_ERROR;
-    EventPathList::Builder & eventPathListBuilder = aRequest.CreateEventPathListBuilder();
+
     for (size_t eventIndex = 0; eventIndex < aEventPathParamsListSize; ++eventIndex)
     {
-        EventPath::Builder eventPathBuilder = eventPathListBuilder.CreateEventPathBuilder();
+        EventPath::Builder eventPathBuilder = aEventPathListBuilder.CreateEventPathBuilder();
         EventPathParams eventPath           = apEventPathParamsList[eventIndex];
         eventPathBuilder.NodeId(eventPath.mNodeId)
             .EventId(eventPath.mEventId)
@@ -178,28 +191,20 @@ CHIP_ERROR ReadClient::GenerateEventPathList(ReadRequest::Builder & aRequest, Ev
         SuccessOrExit(err = eventPathBuilder.GetError());
     }
 
-    eventPathListBuilder.EndOfEventPathList();
-    SuccessOrExit(err = eventPathListBuilder.GetError());
-
-    if (aEventNumber != 0)
-    {
-        // EventNumber is optional
-        aRequest.EventNumber(aEventNumber);
-    }
+    aEventPathListBuilder.EndOfEventPathList();
+    SuccessOrExit(err = aEventPathListBuilder.GetError());
 
 exit:
     ChipLogFunctError(err);
     return err;
 }
 
-CHIP_ERROR ReadClient::GenerateAttributePathList(ReadRequest::Builder & aRequest, AttributePathParams * apAttributePathParamsList,
+CHIP_ERROR ReadClient::GenerateAttributePathList(AttributePathList::Builder & aAttributePathListBuilder, AttributePathParams * apAttributePathParamsList,
                                                  size_t aAttributePathParamsListSize)
 {
-    AttributePathList::Builder attributePathListBuilder = aRequest.CreateAttributePathListBuilder();
-    ReturnErrorOnFailure(attributePathListBuilder.GetError());
     for (size_t index = 0; index < aAttributePathParamsListSize; index++)
     {
-        AttributePath::Builder attributePathBuilder = attributePathListBuilder.CreateAttributePathBuilder();
+        AttributePath::Builder attributePathBuilder = aAttributePathListBuilder.CreateAttributePathBuilder();
         attributePathBuilder.NodeId(apAttributePathParamsList[index].mNodeId)
             .EndpointId(apAttributePathParamsList[index].mEndpointId)
             .ClusterId(apAttributePathParamsList[index].mClusterId);
@@ -218,8 +223,8 @@ CHIP_ERROR ReadClient::GenerateAttributePathList(ReadRequest::Builder & aRequest
         attributePathBuilder.EndOfAttributePath();
         ReturnErrorOnFailure(attributePathBuilder.GetError());
     }
-    attributePathListBuilder.EndOfAttributePathList();
-    return attributePathListBuilder.GetError();
+    aAttributePathListBuilder.EndOfAttributePathList();
+    return aAttributePathListBuilder.GetError();
 }
 
 CHIP_ERROR ReadClient::OnMessageReceived(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
@@ -275,6 +280,7 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
     bool isAttributeDataListPresent = false;
     bool suppressResponse           = false;
     bool moreChunkedMessages        = false;
+    uint64_t subscriptionId         = 0;
     EventList::Parser eventList;
     AttributeDataList::Parser attributeDataList;
     System::PacketBufferTLVReader reader;
@@ -292,6 +298,20 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
 
     err = report.GetSuppressResponse(&suppressResponse);
     if (CHIP_END_OF_TLV == err)
+    {
+        err = CHIP_NO_ERROR;
+    }
+    SuccessOrExit(err);
+
+    err = report.GetSubscriptionId(&subscriptionId);
+    if (CHIP_NO_ERROR == err)
+    {
+        if (!IsValidSubscription(subscriptionId))
+        {
+            err = CHIP_ERROR_INVALID_ARGUMENT;
+        }
+    }
+    else if (CHIP_END_OF_TLV == err)
     {
         err = CHIP_NO_ERROR;
     }

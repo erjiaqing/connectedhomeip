@@ -40,6 +40,8 @@ CHIP_ERROR ReadHandler::Init(InteractionModelDelegate * apDelegate)
     mpAttributeClusterInfoList = nullptr;
     mpEventClusterInfoList     = nullptr;
     mCurrentPriority           = PriorityLevel::Invalid;
+    mSyncAllInterestedData     = true;
+    mpDelegate = apDelegate;
     MoveToState(HandlerState::Initialized);
 
 exit:
@@ -56,6 +58,8 @@ void ReadHandler::Shutdown()
     mpAttributeClusterInfoList = nullptr;
     mpEventClusterInfoList     = nullptr;
     mCurrentPriority           = PriorityLevel::Invalid;
+    mSyncAllInterestedData     = false;
+    mpDelegate = nullptr;
 }
 
 CHIP_ERROR ReadHandler::OnReadRequest(Messaging::ExchangeContext * apExchangeContext, System::PacketBufferHandle && aPayload)
@@ -89,7 +93,10 @@ CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload)
 
 exit:
     ChipLogFunctError(err);
-    Shutdown();
+    if (!IsSubscription())
+    {
+        Shutdown();
+    }
     return err;
 }
 
@@ -209,6 +216,7 @@ CHIP_ERROR ReadHandler::ProcessAttributePathList(AttributePathList::Parser & aAt
         err = InteractionModelEngine::GetInstance()->PushFront(mpAttributeClusterInfoList, clusterInfo);
         SuccessOrExit(err);
         mpAttributeClusterInfoList->SetDirty();
+        SetSyncAllInterestedData();
     }
     // if we have exhausted this container
     if (CHIP_END_OF_TLV == err)
@@ -279,6 +287,9 @@ const char * ReadHandler::GetStateStr() const
 
     case HandlerState::Reportable:
         return "Reportable";
+
+    case HandlerState::Subscribing:
+        return "Subscribing";
     }
 #endif // CHIP_DETAIL_LOGGING
     return "N/A";

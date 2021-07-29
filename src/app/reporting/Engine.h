@@ -36,6 +36,8 @@
 #include <system/SystemPacketBuffer.h>
 #include <system/TLVPacketBufferBackingStore.h>
 
+#define IM_SERVER_MAX_NUM_DIRTY_PATHS 10
+
 namespace chip {
 namespace app {
 namespace reporting {
@@ -70,6 +72,21 @@ public:
      */
     CHIP_ERROR ScheduleRun();
 
+    CHIP_ERROR SetDirty(ClusterInfo & aClusterInfo);
+
+    void Shutdown();
+
+#if !CHIP_SYSTEM_CONFIG_NO_LOCKING
+    class ScopedLock
+    {
+    public:
+        ScopedLock(Engine & aEngine) : mEngine(aEngine) { mEngine.mAccessLock.Lock(); }
+        ~ScopedLock() { mEngine.mAccessLock.Unlock(); }
+
+    private:
+        Engine & mEngine;
+    };
+#endif // !CHIP_SYSTEM_CONFIG_NO_LOCKING
 private:
     friend class TestReportingEngine;
     /**
@@ -119,6 +136,22 @@ private:
      *
      */
     uint32_t mCurReadHandlerIdx = 0;
+
+
+    /**
+     *  Current subscribe handler index
+     *
+     */
+    uint32_t mCurSubscribeHandlerIdx = 0;
+
+
+    ClusterInfo mDirtyPaths[IM_SERVER_MAX_NUM_DIRTY_PATHS];
+    ClusterInfo * mpNextAvailablePath = nullptr;
+    ClusterInfo * mpDirtyPath = nullptr;
+
+#if !CHIP_SYSTEM_CONFIG_NO_LOCKING
+    System::Mutex mAccessLock;
+#endif // !CHIP_SYSTEM_CONFIG_NO_LOCKING
 };
 
 }; // namespace reporting

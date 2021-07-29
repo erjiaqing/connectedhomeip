@@ -96,6 +96,8 @@ static_library("app") {
     "ReadHandler.cpp",
     "WriteClient.cpp",
     "WriteHandler.cpp",
+    "SubscribeClient.cpp",
+    "SubscribeHandler.cpp",
     "decoder.cpp",
     "encoder-common.cpp",
     "reporting/Engine.cpp",
@@ -113,6 +115,7 @@ static_library("app") {
 
   public_deps = [
     ":app_buildconfig",
+    "${chip_root}/src/protocols/secure_channel",
     "${chip_root}/src/lib/support",
     "${chip_root}/src/messaging",
     "${chip_root}/src/system",
