@@ -36,2249 +36,2839 @@ class ChipClusters:
     def __init__(self, chipstack):
         self._ChipStack = chipstack
 
-    def ListClusterCommands(self):
+    def ListClusterMetadata(self):
         return {
             "AccountLogin": {
-                "GetSetupPIN": {
-                    "tempAccountIdentifier": "str",
+                "clusterId": 0x0000050E,
+                "commands": {
+                    "GetSetupPIN": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "tempAccountIdentifier": "str",
+                        },
+                    },
+                    "Login": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "tempAccountIdentifier": "str",
+                            "setupPIN": "str",
+                        },
+                    },
                 },
-                "Login": {
-                    "tempAccountIdentifier": "str",
-                    "setupPIN": "str",
+                "attributes": {
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "ApplicationBasic": {
-                "ChangeStatus": {
-                    "status": "int",
+                "clusterId": 0x0000050D,
+                "commands": {
+                    "ChangeStatus": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "status": "int",
+                        },
+                    },
+                },
+                "attributes": {
+                    "VendorName": {
+                        "attributeId": 0x0000,
+                        "type": "str",
+                    },
+                    "VendorId": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "ApplicationName": {
+                        "attributeId": 0x0002,
+                        "type": "str",
+                    },
+                    "ProductId": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "ApplicationId": {
+                        "attributeId": 0x0005,
+                        "type": "str",
+                    },
+                    "CatalogVendorId": {
+                        "attributeId": 0x0006,
+                        "type": "int",
+                    },
+                    "ApplicationStatus": {
+                        "attributeId": 0x0007,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "ApplicationLauncher": {
-                "LaunchApp": {
-                    "data": "str",
-                    "catalogVendorId": "int",
-                    "applicationId": "str",
+                "clusterId": 0x0000050C,
+                "commands": {
+                    "LaunchApp": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "data": "str",
+                            "catalogVendorId": "int",
+                            "applicationId": "str",
+                        },
+                    },
+                },
+                "attributes": {
+                    "ApplicationLauncherList": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "CatalogVendorId": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "ApplicationId": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "AudioOutput": {
-                "RenameOutput": {
-                    "index": "int",
-                    "name": "str",
+                "clusterId": 0x0000050B,
+                "commands": {
+                    "RenameOutput": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "index": "int",
+                            "name": "str",
+                        },
+                    },
+                    "SelectOutput": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "index": "int",
+                        },
+                    },
                 },
-                "SelectOutput": {
-                    "index": "int",
+                "attributes": {
+                    "AudioOutputList": {
+                        "attributeId": 0x0000,
+                        "type": "",
+                    },
+                    "CurrentAudioOutput": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "BarrierControl": {
-                "BarrierControlGoToPercent": {
-                    "percentOpen": "int",
+                "clusterId": 0x00000103,
+                "commands": {
+                    "BarrierControlGoToPercent": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "percentOpen": "int",
+                        },
+                    },
+                    "BarrierControlStop": {
+                        "commandId": 0x00000001,
+                        "args": {
+                        },
+                    },
                 },
-                "BarrierControlStop": {
+                "attributes": {
+                    "BarrierMovingState": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "BarrierSafetyStatus": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "BarrierCapabilities": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "BarrierPosition": {
+                        "attributeId": 0x000A,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "Basic": {
-                "MfgSpecificPing": {
+                "clusterId": 0x00000028,
+                "commands": {
+                    "MfgSpecificPing": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
+                },
+                "attributes": {
+                    "InteractionModelVersion": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "VendorName": {
+                        "attributeId": 0x0001,
+                        "type": "str",
+                    },
+                    "VendorID": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ProductName": {
+                        "attributeId": 0x0003,
+                        "type": "str",
+                    },
+                    "ProductID": {
+                        "attributeId": 0x0004,
+                        "type": "int",
+                    },
+                    "UserLabel": {
+                        "attributeId": 0x0005,
+                        "type": "str",
+                        "writable": True,
+                    },
+                    "Location": {
+                        "attributeId": 0x0006,
+                        "type": "str",
+                        "writable": True,
+                    },
+                    "HardwareVersion": {
+                        "attributeId": 0x0007,
+                        "type": "int",
+                    },
+                    "HardwareVersionString": {
+                        "attributeId": 0x0008,
+                        "type": "str",
+                    },
+                    "SoftwareVersion": {
+                        "attributeId": 0x0009,
+                        "type": "int",
+                    },
+                    "SoftwareVersionString": {
+                        "attributeId": 0x000A,
+                        "type": "str",
+                    },
+                    "ManufacturingDate": {
+                        "attributeId": 0x000B,
+                        "type": "str",
+                    },
+                    "PartNumber": {
+                        "attributeId": 0x000C,
+                        "type": "str",
+                    },
+                    "ProductURL": {
+                        "attributeId": 0x000D,
+                        "type": "str",
+                    },
+                    "ProductLabel": {
+                        "attributeId": 0x000E,
+                        "type": "str",
+                    },
+                    "SerialNumber": {
+                        "attributeId": 0x000F,
+                        "type": "str",
+                    },
+                    "LocalConfigDisabled": {
+                        "attributeId": 0x0010,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Reachable": {
+                        "attributeId": 0x0011,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "BinaryInputBasic": {
-            },
-            "Binding": {
-                "Bind": {
-                    "nodeId": "int",
-                    "groupId": "int",
-                    "endpointId": "int",
-                    "clusterId": "int",
-                },
-                "Unbind": {
-                    "nodeId": "int",
-                    "groupId": "int",
-                    "endpointId": "int",
-                    "clusterId": "int",
-                },
-            },
-            "BridgedDeviceBasic": {
-            },
-            "ColorControl": {
-                "ColorLoopSet": {
-                    "updateFlags": "int",
-                    "action": "int",
-                    "direction": "int",
-                    "time": "int",
-                    "startHue": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "EnhancedMoveHue": {
-                    "moveMode": "int",
-                    "rate": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "EnhancedMoveToHue": {
-                    "enhancedHue": "int",
-                    "direction": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "EnhancedMoveToHueAndSaturation": {
-                    "enhancedHue": "int",
-                    "saturation": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "EnhancedStepHue": {
-                    "stepMode": "int",
-                    "stepSize": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveColor": {
-                    "rateX": "int",
-                    "rateY": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveColorTemperature": {
-                    "moveMode": "int",
-                    "rate": "int",
-                    "colorTemperatureMinimum": "int",
-                    "colorTemperatureMaximum": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveHue": {
-                    "moveMode": "int",
-                    "rate": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveSaturation": {
-                    "moveMode": "int",
-                    "rate": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveToColor": {
-                    "colorX": "int",
-                    "colorY": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveToColorTemperature": {
-                    "colorTemperature": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveToHue": {
-                    "hue": "int",
-                    "direction": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveToHueAndSaturation": {
-                    "hue": "int",
-                    "saturation": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "MoveToSaturation": {
-                    "saturation": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "StepColor": {
-                    "stepX": "int",
-                    "stepY": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "StepColorTemperature": {
-                    "stepMode": "int",
-                    "stepSize": "int",
-                    "transitionTime": "int",
-                    "colorTemperatureMinimum": "int",
-                    "colorTemperatureMaximum": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "StepHue": {
-                    "stepMode": "int",
-                    "stepSize": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "StepSaturation": {
-                    "stepMode": "int",
-                    "stepSize": "int",
-                    "transitionTime": "int",
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-                "StopMoveStep": {
-                    "optionsMask": "int",
-                    "optionsOverride": "int",
-                },
-            },
-            "ContentLauncher": {
-                "LaunchContent": {
-                    "autoPlay": "int",
-                    "data": "str",
-                },
-                "LaunchURL": {
-                    "contentURL": "str",
-                    "displayString": "str",
-                },
-            },
-            "Descriptor": {
-            },
-            "DiagnosticLogs": {
-                "RetrieveLogsRequest": {
-                    "intent": "int",
-                    "requestedProtocol": "int",
-                    "transferFileDesignator": "bytes",
-                },
-            },
-            "DoorLock": {
-                "ClearAllPins": {
-                },
-                "ClearAllRfids": {
-                },
-                "ClearHolidaySchedule": {
-                    "scheduleId": "int",
-                },
-                "ClearPin": {
-                    "userId": "int",
-                },
-                "ClearRfid": {
-                    "userId": "int",
-                },
-                "ClearWeekdaySchedule": {
-                    "scheduleId": "int",
-                    "userId": "int",
-                },
-                "ClearYeardaySchedule": {
-                    "scheduleId": "int",
-                    "userId": "int",
-                },
-                "GetHolidaySchedule": {
-                    "scheduleId": "int",
-                },
-                "GetLogRecord": {
-                    "logIndex": "int",
-                },
-                "GetPin": {
-                    "userId": "int",
-                },
-                "GetRfid": {
-                    "userId": "int",
-                },
-                "GetUserType": {
-                    "userId": "int",
-                },
-                "GetWeekdaySchedule": {
-                    "scheduleId": "int",
-                    "userId": "int",
-                },
-                "GetYeardaySchedule": {
-                    "scheduleId": "int",
-                    "userId": "int",
-                },
-                "LockDoor": {
-                    "pin": "str",
-                },
-                "SetHolidaySchedule": {
-                    "scheduleId": "int",
-                    "localStartTime": "int",
-                    "localEndTime": "int",
-                    "operatingModeDuringHoliday": "int",
-                },
-                "SetPin": {
-                    "userId": "int",
-                    "userStatus": "int",
-                    "userType": "int",
-                    "pin": "str",
-                },
-                "SetRfid": {
-                    "userId": "int",
-                    "userStatus": "int",
-                    "userType": "int",
-                    "id": "str",
-                },
-                "SetUserType": {
-                    "userId": "int",
-                    "userType": "int",
-                },
-                "SetWeekdaySchedule": {
-                    "scheduleId": "int",
-                    "userId": "int",
-                    "daysMask": "int",
-                    "startHour": "int",
-                    "startMinute": "int",
-                    "endHour": "int",
-                    "endMinute": "int",
-                },
-                "SetYeardaySchedule": {
-                    "scheduleId": "int",
-                    "userId": "int",
-                    "localStartTime": "int",
-                    "localEndTime": "int",
-                },
-                "UnlockDoor": {
-                    "pin": "str",
-                },
-                "UnlockWithTimeout": {
-                    "timeoutInSeconds": "int",
-                    "pin": "str",
-                },
-            },
-            "ElectricalMeasurement": {
-            },
-            "EthernetNetworkDiagnostics": {
-                "ResetCounts": {
-                },
-            },
-            "FixedLabel": {
-            },
-            "FlowMeasurement": {
-            },
-            "GeneralCommissioning": {
-                "ArmFailSafe": {
-                    "expiryLengthSeconds": "int",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-                "CommissioningComplete": {
-                },
-                "SetRegulatoryConfig": {
-                    "location": "int",
-                    "countryCode": "str",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-            },
-            "GeneralDiagnostics": {
-            },
-            "GroupKeyManagement": {
-            },
-            "Groups": {
-                "AddGroup": {
-                    "groupId": "int",
-                    "groupName": "str",
-                },
-                "AddGroupIfIdentifying": {
-                    "groupId": "int",
-                    "groupName": "str",
-                },
-                "GetGroupMembership": {
-                    "groupCount": "int",
-                    "groupList": "int",
-                },
-                "RemoveAllGroups": {
-                },
-                "RemoveGroup": {
-                    "groupId": "int",
-                },
-                "ViewGroup": {
-                    "groupId": "int",
-                },
-            },
-            "Identify": {
-                "Identify": {
-                    "identifyTime": "int",
-                },
-                "IdentifyQuery": {
-                },
-            },
-            "KeypadInput": {
-                "SendKey": {
-                    "keyCode": "int",
-                },
-            },
-            "LevelControl": {
-                "Move": {
-                    "moveMode": "int",
-                    "rate": "int",
-                    "optionMask": "int",
-                    "optionOverride": "int",
-                },
-                "MoveToLevel": {
-                    "level": "int",
-                    "transitionTime": "int",
-                    "optionMask": "int",
-                    "optionOverride": "int",
-                },
-                "MoveToLevelWithOnOff": {
-                    "level": "int",
-                    "transitionTime": "int",
-                },
-                "MoveWithOnOff": {
-                    "moveMode": "int",
-                    "rate": "int",
-                },
-                "Step": {
-                    "stepMode": "int",
-                    "stepSize": "int",
-                    "transitionTime": "int",
-                    "optionMask": "int",
-                    "optionOverride": "int",
-                },
-                "StepWithOnOff": {
-                    "stepMode": "int",
-                    "stepSize": "int",
-                    "transitionTime": "int",
-                },
-                "Stop": {
-                    "optionMask": "int",
-                    "optionOverride": "int",
-                },
-                "StopWithOnOff": {
-                },
-            },
-            "LowPower": {
-                "Sleep": {
-                },
-            },
-            "MediaInput": {
-                "HideInputStatus": {
-                },
-                "RenameInput": {
-                    "index": "int",
-                    "name": "str",
-                },
-                "SelectInput": {
-                    "index": "int",
-                },
-                "ShowInputStatus": {
-                },
-            },
-            "MediaPlayback": {
-                "MediaFastForward": {
-                },
-                "MediaNext": {
-                },
-                "MediaPause": {
-                },
-                "MediaPlay": {
-                },
-                "MediaPrevious": {
-                },
-                "MediaRewind": {
-                },
-                "MediaSeek": {
-                    "position": "int",
-                },
-                "MediaSkipBackward": {
-                    "deltaPositionMilliseconds": "int",
-                },
-                "MediaSkipForward": {
-                    "deltaPositionMilliseconds": "int",
-                },
-                "MediaStartOver": {
-                },
-                "MediaStop": {
-                },
-            },
-            "NetworkCommissioning": {
-                "AddThreadNetwork": {
-                    "operationalDataset": "bytes",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-                "AddWiFiNetwork": {
-                    "ssid": "bytes",
-                    "credentials": "bytes",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-                "DisableNetwork": {
-                    "networkID": "bytes",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-                "EnableNetwork": {
-                    "networkID": "bytes",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-                "GetLastNetworkCommissioningResult": {
-                    "timeoutMs": "int",
-                },
-                "RemoveNetwork": {
-                    "networkID": "bytes",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-                "ScanNetworks": {
-                    "ssid": "bytes",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-                "UpdateThreadNetwork": {
-                    "operationalDataset": "bytes",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-                "UpdateWiFiNetwork": {
-                    "ssid": "bytes",
-                    "credentials": "bytes",
-                    "breadcrumb": "int",
-                    "timeoutMs": "int",
-                },
-            },
-            "OtaSoftwareUpdateProvider": {
-                "ApplyUpdateRequest": {
-                    "updateToken": "bytes",
-                    "newVersion": "int",
-                },
-                "NotifyUpdateApplied": {
-                    "updateToken": "bytes",
-                    "currentVersion": "int",
-                },
-                "QueryImage": {
-                    "vendorId": "int",
-                    "productId": "int",
-                    "imageType": "int",
-                    "hardwareVersion": "int",
-                    "currentVersion": "int",
-                    "protocolsSupported": "int",
-                    "location": "str",
-                    "requestorCanConsent": "int",
-                    "metadataForProvider": "bytes",
-                },
-            },
-            "OccupancySensing": {
-            },
-            "OnOff": {
-                "Off": {
-                },
-                "OffWithEffect": {
-                    "effectId": "int",
-                    "effectVariant": "int",
-                },
-                "On": {
-                },
-                "OnWithRecallGlobalScene": {
-                },
-                "OnWithTimedOff": {
-                    "onOffControl": "int",
-                    "onTime": "int",
-                    "offWaitTime": "int",
-                },
-                "Toggle": {
-                },
-            },
-            "OperationalCredentials": {
-                "AddNOC": {
-                    "nOCArray": "bytes",
-                    "iPKValue": "bytes",
-                    "caseAdminNode": "int",
-                    "adminVendorId": "int",
-                },
-                "AddTrustedRootCertificate": {
-                    "rootCertificate": "bytes",
-                },
-                "OpCSRRequest": {
-                    "cSRNonce": "bytes",
-                },
-                "RemoveAllFabrics": {
-                },
-                "RemoveFabric": {
-                    "fabricId": "int",
-                    "nodeId": "int",
-                    "vendorId": "int",
-                },
-                "RemoveTrustedRootCertificate": {
-                    "trustedRootIdentifier": "bytes",
-                },
-                "SetFabric": {
-                    "vendorId": "int",
-                },
-                "UpdateFabricLabel": {
-                    "label": "str",
-                },
-            },
-            "PressureMeasurement": {
-            },
-            "PumpConfigurationAndControl": {
-            },
-            "RelativeHumidityMeasurement": {
-            },
-            "Scenes": {
-                "AddScene": {
-                    "groupId": "int",
-                    "sceneId": "int",
-                    "transitionTime": "int",
-                    "sceneName": "str",
-                    "clusterId": "int",
-                    "length": "int",
-                    "value": "int",
-                },
-                "GetSceneMembership": {
-                    "groupId": "int",
-                },
-                "RecallScene": {
-                    "groupId": "int",
-                    "sceneId": "int",
-                    "transitionTime": "int",
-                },
-                "RemoveAllScenes": {
-                    "groupId": "int",
-                },
-                "RemoveScene": {
-                    "groupId": "int",
-                    "sceneId": "int",
-                },
-                "StoreScene": {
-                    "groupId": "int",
-                    "sceneId": "int",
-                },
-                "ViewScene": {
-                    "groupId": "int",
-                    "sceneId": "int",
-                },
-            },
-            "SoftwareDiagnostics": {
-                "ResetWatermarks": {
-                },
-            },
-            "Switch": {
-            },
-            "TvChannel": {
-                "ChangeChannel": {
-                    "match": "str",
-                },
-                "ChangeChannelByNumber": {
-                    "majorNumber": "int",
-                    "minorNumber": "int",
-                },
-                "SkipChannel": {
-                    "count": "int",
-                },
-            },
-            "TargetNavigator": {
-                "NavigateTarget": {
-                    "target": "int",
-                    "data": "str",
-                },
-            },
-            "TemperatureMeasurement": {
-            },
-            "TestCluster": {
-                "Test": {
-                },
-                "TestAddArguments": {
-                    "arg1": "int",
-                    "arg2": "int",
-                },
-                "TestNotHandled": {
-                },
-                "TestSpecific": {
-                },
-                "TestUnknownCommand": {
-                },
-            },
-            "Thermostat": {
-                "ClearWeeklySchedule": {
-                },
-                "GetRelayStatusLog": {
-                },
-                "GetWeeklySchedule": {
-                    "daysToReturn": "int",
-                    "modeToReturn": "int",
-                },
-                "SetWeeklySchedule": {
-                    "numberOfTransitionsForSequence": "int",
-                    "dayOfWeekForSequence": "int",
-                    "modeForSequence": "int",
-                    "payload": "int",
-                },
-                "SetpointRaiseLower": {
-                    "mode": "int",
-                    "amount": "int",
-                },
-            },
-            "ThreadNetworkDiagnostics": {
-                "ResetCounts": {
-                },
-            },
-            "WakeOnLan": {
-            },
-            "WiFiNetworkDiagnostics": {
-                "ResetCounts": {
-                },
-            },
-            "WindowCovering": {
-                "DownOrClose": {
-                },
-                "GoToLiftPercentage": {
-                    "liftPercentageValue": "int",
-                    "liftPercent100thsValue": "int",
-                },
-                "GoToLiftValue": {
-                    "liftValue": "int",
-                },
-                "GoToTiltPercentage": {
-                    "tiltPercentageValue": "int",
-                    "tiltPercent100thsValue": "int",
-                },
-                "GoToTiltValue": {
-                    "tiltValue": "int",
-                },
-                "StopMotion": {
-                },
-                "UpOrOpen": {
-                },
-            },
-        }
-
-    def ListClusterAttributes(self):
-        return {
-            "AccountLogin": {
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
-                },
-            },
-            "ApplicationBasic": {
-                "VendorName": {
-                    "attributeId": 0x0000,
-                    "type": "str",
-                },
-                "VendorId": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "ApplicationName": {
-                    "attributeId": 0x0002,
-                    "type": "str",
-                },
-                "ProductId": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                },
-                "ApplicationId": {
-                    "attributeId": 0x0005,
-                    "type": "str",
-                },
-                "CatalogVendorId": {
-                    "attributeId": 0x0006,
-                    "type": "int",
-                },
-                "ApplicationStatus": {
-                    "attributeId": 0x0007,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
-                },
-            },
-            "ApplicationLauncher": {
-                "ApplicationLauncherList": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                },
-                "CatalogVendorId": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "ApplicationId": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
-                },
-            },
-            "AudioOutput": {
-                "AudioOutputList": {
-                    "attributeId": 0x0000,
-                    "type": "",
-                },
-                "CurrentAudioOutput": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
-                },
-            },
-            "BarrierControl": {
-                "BarrierMovingState": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "BarrierSafetyStatus": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "BarrierCapabilities": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                },
-                "BarrierPosition": {
-                    "attributeId": 0x000A,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
-                },
-            },
-            "Basic": {
-                "InteractionModelVersion": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                },
-                "VendorName": {
-                    "attributeId": 0x0001,
-                    "type": "str",
-                },
-                "VendorID": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ProductName": {
-                    "attributeId": 0x0003,
-                    "type": "str",
-                },
-                "ProductID": {
-                    "attributeId": 0x0004,
-                    "type": "int",
-                },
-                "UserLabel": {
-                    "attributeId": 0x0005,
-                    "type": "str",
-                    "writable": True,
-                },
-                "Location": {
-                    "attributeId": 0x0006,
-                    "type": "str",
-                    "writable": True,
-                },
-                "HardwareVersion": {
-                    "attributeId": 0x0007,
-                    "type": "int",
-                },
-                "HardwareVersionString": {
-                    "attributeId": 0x0008,
-                    "type": "str",
-                },
-                "SoftwareVersion": {
-                    "attributeId": 0x0009,
-                    "type": "int",
-                },
-                "SoftwareVersionString": {
-                    "attributeId": 0x000A,
-                    "type": "str",
-                },
-                "ManufacturingDate": {
-                    "attributeId": 0x000B,
-                    "type": "str",
-                },
-                "PartNumber": {
-                    "attributeId": 0x000C,
-                    "type": "str",
-                },
-                "ProductURL": {
-                    "attributeId": 0x000D,
-                    "type": "str",
-                },
-                "ProductLabel": {
-                    "attributeId": 0x000E,
-                    "type": "str",
-                },
-                "SerialNumber": {
-                    "attributeId": 0x000F,
-                    "type": "str",
-                },
-                "LocalConfigDisabled": {
-                    "attributeId": 0x0010,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Reachable": {
-                    "attributeId": 0x0011,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
-                },
-            },
-            "BinaryInputBasic": {
-                "OutOfService": {
-                    "attributeId": 0x0051,
-                    "type": "int",
-                    "writable": True,
-                },
-                "PresentValue": {
-                    "attributeId": 0x0055,
-                    "type": "int",
-                    "reportable": True,
-                    "writable": True,
-                },
-                "StatusFlags": {
-                    "attributeId": 0x006F,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "clusterId": 0x0000000F,
+                "commands": {
+                },
+                "attributes": {
+                    "OutOfService": {
+                        "attributeId": 0x0051,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "PresentValue": {
+                        "attributeId": 0x0055,
+                        "type": "int",
+                        "reportable": True,
+                        "writable": True,
+                    },
+                    "StatusFlags": {
+                        "attributeId": 0x006F,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "Binding": {
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "clusterId": 0x0000F000,
+                "commands": {
+                    "Bind": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "nodeId": "int",
+                            "groupId": "int",
+                            "endpointId": "int",
+                            "clusterId": "int",
+                        },
+                    },
+                    "Unbind": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "nodeId": "int",
+                            "groupId": "int",
+                            "endpointId": "int",
+                            "clusterId": "int",
+                        },
+                    },
+                },
+                "attributes": {
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "BridgedDeviceBasic": {
-                "VendorName": {
-                    "attributeId": 0x0001,
-                    "type": "str",
+                "clusterId": 0x00000039,
+                "commands": {
                 },
-                "VendorID": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ProductName": {
-                    "attributeId": 0x0003,
-                    "type": "str",
-                },
-                "UserLabel": {
-                    "attributeId": 0x0005,
-                    "type": "str",
-                    "writable": True,
-                },
-                "HardwareVersion": {
-                    "attributeId": 0x0007,
-                    "type": "int",
-                },
-                "HardwareVersionString": {
-                    "attributeId": 0x0008,
-                    "type": "str",
-                },
-                "SoftwareVersion": {
-                    "attributeId": 0x0009,
-                    "type": "int",
-                },
-                "SoftwareVersionString": {
-                    "attributeId": 0x000A,
-                    "type": "str",
-                },
-                "ManufacturingDate": {
-                    "attributeId": 0x000B,
-                    "type": "str",
-                },
-                "PartNumber": {
-                    "attributeId": 0x000C,
-                    "type": "str",
-                },
-                "ProductURL": {
-                    "attributeId": 0x000D,
-                    "type": "str",
-                },
-                "ProductLabel": {
-                    "attributeId": 0x000E,
-                    "type": "str",
-                },
-                "SerialNumber": {
-                    "attributeId": 0x000F,
-                    "type": "str",
-                },
-                "Reachable": {
-                    "attributeId": 0x0011,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "VendorName": {
+                        "attributeId": 0x0001,
+                        "type": "str",
+                    },
+                    "VendorID": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ProductName": {
+                        "attributeId": 0x0003,
+                        "type": "str",
+                    },
+                    "UserLabel": {
+                        "attributeId": 0x0005,
+                        "type": "str",
+                        "writable": True,
+                    },
+                    "HardwareVersion": {
+                        "attributeId": 0x0007,
+                        "type": "int",
+                    },
+                    "HardwareVersionString": {
+                        "attributeId": 0x0008,
+                        "type": "str",
+                    },
+                    "SoftwareVersion": {
+                        "attributeId": 0x0009,
+                        "type": "int",
+                    },
+                    "SoftwareVersionString": {
+                        "attributeId": 0x000A,
+                        "type": "str",
+                    },
+                    "ManufacturingDate": {
+                        "attributeId": 0x000B,
+                        "type": "str",
+                    },
+                    "PartNumber": {
+                        "attributeId": 0x000C,
+                        "type": "str",
+                    },
+                    "ProductURL": {
+                        "attributeId": 0x000D,
+                        "type": "str",
+                    },
+                    "ProductLabel": {
+                        "attributeId": 0x000E,
+                        "type": "str",
+                    },
+                    "SerialNumber": {
+                        "attributeId": 0x000F,
+                        "type": "str",
+                    },
+                    "Reachable": {
+                        "attributeId": 0x0011,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "ColorControl": {
-                "CurrentHue": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000300,
+                "commands": {
+                    "ColorLoopSet": {
+                        "commandId": 0x00000044,
+                        "args": {
+                            "updateFlags": "int",
+                            "action": "int",
+                            "direction": "int",
+                            "time": "int",
+                            "startHue": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "EnhancedMoveHue": {
+                        "commandId": 0x00000041,
+                        "args": {
+                            "moveMode": "int",
+                            "rate": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "EnhancedMoveToHue": {
+                        "commandId": 0x00000040,
+                        "args": {
+                            "enhancedHue": "int",
+                            "direction": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "EnhancedMoveToHueAndSaturation": {
+                        "commandId": 0x00000043,
+                        "args": {
+                            "enhancedHue": "int",
+                            "saturation": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "EnhancedStepHue": {
+                        "commandId": 0x00000042,
+                        "args": {
+                            "stepMode": "int",
+                            "stepSize": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveColor": {
+                        "commandId": 0x00000008,
+                        "args": {
+                            "rateX": "int",
+                            "rateY": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveColorTemperature": {
+                        "commandId": 0x0000004B,
+                        "args": {
+                            "moveMode": "int",
+                            "rate": "int",
+                            "colorTemperatureMinimum": "int",
+                            "colorTemperatureMaximum": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveHue": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "moveMode": "int",
+                            "rate": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveSaturation": {
+                        "commandId": 0x00000004,
+                        "args": {
+                            "moveMode": "int",
+                            "rate": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveToColor": {
+                        "commandId": 0x00000007,
+                        "args": {
+                            "colorX": "int",
+                            "colorY": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveToColorTemperature": {
+                        "commandId": 0x0000000A,
+                        "args": {
+                            "colorTemperature": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveToHue": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "hue": "int",
+                            "direction": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveToHueAndSaturation": {
+                        "commandId": 0x00000006,
+                        "args": {
+                            "hue": "int",
+                            "saturation": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "MoveToSaturation": {
+                        "commandId": 0x00000003,
+                        "args": {
+                            "saturation": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "StepColor": {
+                        "commandId": 0x00000009,
+                        "args": {
+                            "stepX": "int",
+                            "stepY": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "StepColorTemperature": {
+                        "commandId": 0x0000004C,
+                        "args": {
+                            "stepMode": "int",
+                            "stepSize": "int",
+                            "transitionTime": "int",
+                            "colorTemperatureMinimum": "int",
+                            "colorTemperatureMaximum": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "StepHue": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "stepMode": "int",
+                            "stepSize": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "StepSaturation": {
+                        "commandId": 0x00000005,
+                        "args": {
+                            "stepMode": "int",
+                            "stepSize": "int",
+                            "transitionTime": "int",
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
+                    "StopMoveStep": {
+                        "commandId": 0x00000047,
+                        "args": {
+                            "optionsMask": "int",
+                            "optionsOverride": "int",
+                        },
+                    },
                 },
-                "CurrentSaturation": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "RemainingTime": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "CurrentX": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "CurrentY": {
-                    "attributeId": 0x0004,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "DriftCompensation": {
-                    "attributeId": 0x0005,
-                    "type": "int",
-                },
-                "CompensationText": {
-                    "attributeId": 0x0006,
-                    "type": "str",
-                },
-                "ColorTemperature": {
-                    "attributeId": 0x0007,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "ColorMode": {
-                    "attributeId": 0x0008,
-                    "type": "int",
-                },
-                "ColorControlOptions": {
-                    "attributeId": 0x000F,
-                    "type": "int",
-                    "writable": True,
-                },
-                "NumberOfPrimaries": {
-                    "attributeId": 0x0010,
-                    "type": "int",
-                },
-                "Primary1X": {
-                    "attributeId": 0x0011,
-                    "type": "int",
-                },
-                "Primary1Y": {
-                    "attributeId": 0x0012,
-                    "type": "int",
-                },
-                "Primary1Intensity": {
-                    "attributeId": 0x0013,
-                    "type": "int",
-                },
-                "Primary2X": {
-                    "attributeId": 0x0015,
-                    "type": "int",
-                },
-                "Primary2Y": {
-                    "attributeId": 0x0016,
-                    "type": "int",
-                },
-                "Primary2Intensity": {
-                    "attributeId": 0x0017,
-                    "type": "int",
-                },
-                "Primary3X": {
-                    "attributeId": 0x0019,
-                    "type": "int",
-                },
-                "Primary3Y": {
-                    "attributeId": 0x001A,
-                    "type": "int",
-                },
-                "Primary3Intensity": {
-                    "attributeId": 0x001B,
-                    "type": "int",
-                },
-                "Primary4X": {
-                    "attributeId": 0x0020,
-                    "type": "int",
-                },
-                "Primary4Y": {
-                    "attributeId": 0x0021,
-                    "type": "int",
-                },
-                "Primary4Intensity": {
-                    "attributeId": 0x0022,
-                    "type": "int",
-                },
-                "Primary5X": {
-                    "attributeId": 0x0024,
-                    "type": "int",
-                },
-                "Primary5Y": {
-                    "attributeId": 0x0025,
-                    "type": "int",
-                },
-                "Primary5Intensity": {
-                    "attributeId": 0x0026,
-                    "type": "int",
-                },
-                "Primary6X": {
-                    "attributeId": 0x0028,
-                    "type": "int",
-                },
-                "Primary6Y": {
-                    "attributeId": 0x0029,
-                    "type": "int",
-                },
-                "Primary6Intensity": {
-                    "attributeId": 0x002A,
-                    "type": "int",
-                },
-                "WhitePointX": {
-                    "attributeId": 0x0030,
-                    "type": "int",
-                    "writable": True,
-                },
-                "WhitePointY": {
-                    "attributeId": 0x0031,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointRX": {
-                    "attributeId": 0x0032,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointRY": {
-                    "attributeId": 0x0033,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointRIntensity": {
-                    "attributeId": 0x0034,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointGX": {
-                    "attributeId": 0x0036,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointGY": {
-                    "attributeId": 0x0037,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointGIntensity": {
-                    "attributeId": 0x0038,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointBX": {
-                    "attributeId": 0x003A,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointBY": {
-                    "attributeId": 0x003B,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ColorPointBIntensity": {
-                    "attributeId": 0x003C,
-                    "type": "int",
-                    "writable": True,
-                },
-                "EnhancedCurrentHue": {
-                    "attributeId": 0x4000,
-                    "type": "int",
-                },
-                "EnhancedColorMode": {
-                    "attributeId": 0x4001,
-                    "type": "int",
-                },
-                "ColorLoopActive": {
-                    "attributeId": 0x4002,
-                    "type": "int",
-                },
-                "ColorLoopDirection": {
-                    "attributeId": 0x4003,
-                    "type": "int",
-                },
-                "ColorLoopTime": {
-                    "attributeId": 0x4004,
-                    "type": "int",
-                },
-                "ColorCapabilities": {
-                    "attributeId": 0x400A,
-                    "type": "int",
-                },
-                "ColorTempPhysicalMin": {
-                    "attributeId": 0x400B,
-                    "type": "int",
-                },
-                "ColorTempPhysicalMax": {
-                    "attributeId": 0x400C,
-                    "type": "int",
-                },
-                "CoupleColorTempToLevelMinMireds": {
-                    "attributeId": 0x400D,
-                    "type": "int",
-                },
-                "StartUpColorTemperatureMireds": {
-                    "attributeId": 0x4010,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "CurrentHue": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "CurrentSaturation": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "RemainingTime": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "CurrentX": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "CurrentY": {
+                        "attributeId": 0x0004,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "DriftCompensation": {
+                        "attributeId": 0x0005,
+                        "type": "int",
+                    },
+                    "CompensationText": {
+                        "attributeId": 0x0006,
+                        "type": "str",
+                    },
+                    "ColorTemperature": {
+                        "attributeId": 0x0007,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "ColorMode": {
+                        "attributeId": 0x0008,
+                        "type": "int",
+                    },
+                    "ColorControlOptions": {
+                        "attributeId": 0x000F,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "NumberOfPrimaries": {
+                        "attributeId": 0x0010,
+                        "type": "int",
+                    },
+                    "Primary1X": {
+                        "attributeId": 0x0011,
+                        "type": "int",
+                    },
+                    "Primary1Y": {
+                        "attributeId": 0x0012,
+                        "type": "int",
+                    },
+                    "Primary1Intensity": {
+                        "attributeId": 0x0013,
+                        "type": "int",
+                    },
+                    "Primary2X": {
+                        "attributeId": 0x0015,
+                        "type": "int",
+                    },
+                    "Primary2Y": {
+                        "attributeId": 0x0016,
+                        "type": "int",
+                    },
+                    "Primary2Intensity": {
+                        "attributeId": 0x0017,
+                        "type": "int",
+                    },
+                    "Primary3X": {
+                        "attributeId": 0x0019,
+                        "type": "int",
+                    },
+                    "Primary3Y": {
+                        "attributeId": 0x001A,
+                        "type": "int",
+                    },
+                    "Primary3Intensity": {
+                        "attributeId": 0x001B,
+                        "type": "int",
+                    },
+                    "Primary4X": {
+                        "attributeId": 0x0020,
+                        "type": "int",
+                    },
+                    "Primary4Y": {
+                        "attributeId": 0x0021,
+                        "type": "int",
+                    },
+                    "Primary4Intensity": {
+                        "attributeId": 0x0022,
+                        "type": "int",
+                    },
+                    "Primary5X": {
+                        "attributeId": 0x0024,
+                        "type": "int",
+                    },
+                    "Primary5Y": {
+                        "attributeId": 0x0025,
+                        "type": "int",
+                    },
+                    "Primary5Intensity": {
+                        "attributeId": 0x0026,
+                        "type": "int",
+                    },
+                    "Primary6X": {
+                        "attributeId": 0x0028,
+                        "type": "int",
+                    },
+                    "Primary6Y": {
+                        "attributeId": 0x0029,
+                        "type": "int",
+                    },
+                    "Primary6Intensity": {
+                        "attributeId": 0x002A,
+                        "type": "int",
+                    },
+                    "WhitePointX": {
+                        "attributeId": 0x0030,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "WhitePointY": {
+                        "attributeId": 0x0031,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointRX": {
+                        "attributeId": 0x0032,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointRY": {
+                        "attributeId": 0x0033,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointRIntensity": {
+                        "attributeId": 0x0034,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointGX": {
+                        "attributeId": 0x0036,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointGY": {
+                        "attributeId": 0x0037,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointGIntensity": {
+                        "attributeId": 0x0038,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointBX": {
+                        "attributeId": 0x003A,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointBY": {
+                        "attributeId": 0x003B,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ColorPointBIntensity": {
+                        "attributeId": 0x003C,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "EnhancedCurrentHue": {
+                        "attributeId": 0x4000,
+                        "type": "int",
+                    },
+                    "EnhancedColorMode": {
+                        "attributeId": 0x4001,
+                        "type": "int",
+                    },
+                    "ColorLoopActive": {
+                        "attributeId": 0x4002,
+                        "type": "int",
+                    },
+                    "ColorLoopDirection": {
+                        "attributeId": 0x4003,
+                        "type": "int",
+                    },
+                    "ColorLoopTime": {
+                        "attributeId": 0x4004,
+                        "type": "int",
+                    },
+                    "ColorCapabilities": {
+                        "attributeId": 0x400A,
+                        "type": "int",
+                    },
+                    "ColorTempPhysicalMin": {
+                        "attributeId": 0x400B,
+                        "type": "int",
+                    },
+                    "ColorTempPhysicalMax": {
+                        "attributeId": 0x400C,
+                        "type": "int",
+                    },
+                    "CoupleColorTempToLevelMinMireds": {
+                        "attributeId": 0x400D,
+                        "type": "int",
+                    },
+                    "StartUpColorTemperatureMireds": {
+                        "attributeId": 0x4010,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "ContentLauncher": {
-                "AcceptsHeaderList": {
-                    "attributeId": 0x0000,
-                    "type": "bytes",
+                "clusterId": 0x0000050A,
+                "commands": {
+                    "LaunchContent": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "autoPlay": "int",
+                            "data": "str",
+                        },
+                    },
+                    "LaunchURL": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "contentURL": "str",
+                            "displayString": "str",
+                        },
+                    },
                 },
-                "SupportedStreamingTypes": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "AcceptsHeaderList": {
+                        "attributeId": 0x0000,
+                        "type": "bytes",
+                    },
+                    "SupportedStreamingTypes": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "Descriptor": {
-                "DeviceList": {
-                    "attributeId": 0x0000,
-                    "type": "",
+                "clusterId": 0x0000001D,
+                "commands": {
                 },
-                "ServerList": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "ClientList": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "PartsList": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "DeviceList": {
+                        "attributeId": 0x0000,
+                        "type": "",
+                    },
+                    "ServerList": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "ClientList": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "PartsList": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "DiagnosticLogs": {
+                "clusterId": 0x00000032,
+                "commands": {
+                    "RetrieveLogsRequest": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "intent": "int",
+                            "requestedProtocol": "int",
+                            "transferFileDesignator": "bytes",
+                        },
+                    },
+                },
+                "attributes": {
+                },
             },
             "DoorLock": {
-                "LockState": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000101,
+                "commands": {
+                    "ClearAllPins": {
+                        "commandId": 0x00000008,
+                        "args": {
+                        },
+                    },
+                    "ClearAllRfids": {
+                        "commandId": 0x00000019,
+                        "args": {
+                        },
+                    },
+                    "ClearHolidaySchedule": {
+                        "commandId": 0x00000013,
+                        "args": {
+                            "scheduleId": "int",
+                        },
+                    },
+                    "ClearPin": {
+                        "commandId": 0x00000007,
+                        "args": {
+                            "userId": "int",
+                        },
+                    },
+                    "ClearRfid": {
+                        "commandId": 0x00000018,
+                        "args": {
+                            "userId": "int",
+                        },
+                    },
+                    "ClearWeekdaySchedule": {
+                        "commandId": 0x0000000D,
+                        "args": {
+                            "scheduleId": "int",
+                            "userId": "int",
+                        },
+                    },
+                    "ClearYeardaySchedule": {
+                        "commandId": 0x00000010,
+                        "args": {
+                            "scheduleId": "int",
+                            "userId": "int",
+                        },
+                    },
+                    "GetHolidaySchedule": {
+                        "commandId": 0x00000012,
+                        "args": {
+                            "scheduleId": "int",
+                        },
+                    },
+                    "GetLogRecord": {
+                        "commandId": 0x00000004,
+                        "args": {
+                            "logIndex": "int",
+                        },
+                    },
+                    "GetPin": {
+                        "commandId": 0x00000006,
+                        "args": {
+                            "userId": "int",
+                        },
+                    },
+                    "GetRfid": {
+                        "commandId": 0x00000017,
+                        "args": {
+                            "userId": "int",
+                        },
+                    },
+                    "GetUserType": {
+                        "commandId": 0x00000015,
+                        "args": {
+                            "userId": "int",
+                        },
+                    },
+                    "GetWeekdaySchedule": {
+                        "commandId": 0x0000000C,
+                        "args": {
+                            "scheduleId": "int",
+                            "userId": "int",
+                        },
+                    },
+                    "GetYeardaySchedule": {
+                        "commandId": 0x0000000F,
+                        "args": {
+                            "scheduleId": "int",
+                            "userId": "int",
+                        },
+                    },
+                    "LockDoor": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "pin": "str",
+                        },
+                    },
+                    "SetHolidaySchedule": {
+                        "commandId": 0x00000011,
+                        "args": {
+                            "scheduleId": "int",
+                            "localStartTime": "int",
+                            "localEndTime": "int",
+                            "operatingModeDuringHoliday": "int",
+                        },
+                    },
+                    "SetPin": {
+                        "commandId": 0x00000005,
+                        "args": {
+                            "userId": "int",
+                            "userStatus": "int",
+                            "userType": "int",
+                            "pin": "str",
+                        },
+                    },
+                    "SetRfid": {
+                        "commandId": 0x00000016,
+                        "args": {
+                            "userId": "int",
+                            "userStatus": "int",
+                            "userType": "int",
+                            "id": "str",
+                        },
+                    },
+                    "SetUserType": {
+                        "commandId": 0x00000014,
+                        "args": {
+                            "userId": "int",
+                            "userType": "int",
+                        },
+                    },
+                    "SetWeekdaySchedule": {
+                        "commandId": 0x0000000B,
+                        "args": {
+                            "scheduleId": "int",
+                            "userId": "int",
+                            "daysMask": "int",
+                            "startHour": "int",
+                            "startMinute": "int",
+                            "endHour": "int",
+                            "endMinute": "int",
+                        },
+                    },
+                    "SetYeardaySchedule": {
+                        "commandId": 0x0000000E,
+                        "args": {
+                            "scheduleId": "int",
+                            "userId": "int",
+                            "localStartTime": "int",
+                            "localEndTime": "int",
+                        },
+                    },
+                    "UnlockDoor": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "pin": "str",
+                        },
+                    },
+                    "UnlockWithTimeout": {
+                        "commandId": 0x00000003,
+                        "args": {
+                            "timeoutInSeconds": "int",
+                            "pin": "str",
+                        },
+                    },
                 },
-                "LockType": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "ActuatorEnabled": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "LockState": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "LockType": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "ActuatorEnabled": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "ElectricalMeasurement": {
-                "MeasurementType": {
-                    "attributeId": 0x0000,
-                    "type": "int",
+                "clusterId": 0x00000B04,
+                "commands": {
                 },
-                "TotalActivePower": {
-                    "attributeId": 0x0304,
-                    "type": "int",
-                },
-                "RmsVoltage": {
-                    "attributeId": 0x0505,
-                    "type": "int",
-                },
-                "RmsVoltageMin": {
-                    "attributeId": 0x0506,
-                    "type": "int",
-                },
-                "RmsVoltageMax": {
-                    "attributeId": 0x0507,
-                    "type": "int",
-                },
-                "RmsCurrent": {
-                    "attributeId": 0x0508,
-                    "type": "int",
-                },
-                "RmsCurrentMin": {
-                    "attributeId": 0x0509,
-                    "type": "int",
-                },
-                "RmsCurrentMax": {
-                    "attributeId": 0x050A,
-                    "type": "int",
-                },
-                "ActivePower": {
-                    "attributeId": 0x050B,
-                    "type": "int",
-                },
-                "ActivePowerMin": {
-                    "attributeId": 0x050C,
-                    "type": "int",
-                },
-                "ActivePowerMax": {
-                    "attributeId": 0x050D,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "MeasurementType": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "TotalActivePower": {
+                        "attributeId": 0x0304,
+                        "type": "int",
+                    },
+                    "RmsVoltage": {
+                        "attributeId": 0x0505,
+                        "type": "int",
+                    },
+                    "RmsVoltageMin": {
+                        "attributeId": 0x0506,
+                        "type": "int",
+                    },
+                    "RmsVoltageMax": {
+                        "attributeId": 0x0507,
+                        "type": "int",
+                    },
+                    "RmsCurrent": {
+                        "attributeId": 0x0508,
+                        "type": "int",
+                    },
+                    "RmsCurrentMin": {
+                        "attributeId": 0x0509,
+                        "type": "int",
+                    },
+                    "RmsCurrentMax": {
+                        "attributeId": 0x050A,
+                        "type": "int",
+                    },
+                    "ActivePower": {
+                        "attributeId": 0x050B,
+                        "type": "int",
+                    },
+                    "ActivePowerMin": {
+                        "attributeId": 0x050C,
+                        "type": "int",
+                    },
+                    "ActivePowerMax": {
+                        "attributeId": 0x050D,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "EthernetNetworkDiagnostics": {
-                "PacketRxCount": {
-                    "attributeId": 0x0002,
-                    "type": "int",
+                "clusterId": 0x00000037,
+                "commands": {
+                    "ResetCounts": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
                 },
-                "PacketTxCount": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                },
-                "TxErrCount": {
-                    "attributeId": 0x0004,
-                    "type": "int",
-                },
-                "CollisionCount": {
-                    "attributeId": 0x0005,
-                    "type": "int",
-                },
-                "OverrunCount": {
-                    "attributeId": 0x0006,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "PacketRxCount": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "PacketTxCount": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "TxErrCount": {
+                        "attributeId": 0x0004,
+                        "type": "int",
+                    },
+                    "CollisionCount": {
+                        "attributeId": 0x0005,
+                        "type": "int",
+                    },
+                    "OverrunCount": {
+                        "attributeId": 0x0006,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "FixedLabel": {
-                "LabelList": {
-                    "attributeId": 0x0000,
-                    "type": "",
+                "clusterId": 0x00000040,
+                "commands": {
                 },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "LabelList": {
+                        "attributeId": 0x0000,
+                        "type": "",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "FlowMeasurement": {
-                "MeasuredValue": {
-                    "attributeId": 0x0000,
-                    "type": "int",
+                "clusterId": 0x00000404,
+                "commands": {
                 },
-                "MinMeasuredValue": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "MaxMeasuredValue": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "MeasuredValue": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "MinMeasuredValue": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "MaxMeasuredValue": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "GeneralCommissioning": {
-                "FabricId": {
-                    "attributeId": 0x0000,
-                    "type": "bytes",
+                "clusterId": 0x00000030,
+                "commands": {
+                    "ArmFailSafe": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "expiryLengthSeconds": "int",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "CommissioningComplete": {
+                        "commandId": 0x00000004,
+                        "args": {
+                        },
+                    },
+                    "SetRegulatoryConfig": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "location": "int",
+                            "countryCode": "str",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
                 },
-                "Breadcrumb": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "FabricId": {
+                        "attributeId": 0x0000,
+                        "type": "bytes",
+                    },
+                    "Breadcrumb": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "GeneralDiagnostics": {
-                "NetworkInterfaces": {
-                    "attributeId": 0x0000,
-                    "type": "",
+                "clusterId": 0x00000033,
+                "commands": {
                 },
-                "RebootCount": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "NetworkInterfaces": {
+                        "attributeId": 0x0000,
+                        "type": "",
+                    },
+                    "RebootCount": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "GroupKeyManagement": {
-                "Groups": {
-                    "attributeId": 0x0000,
-                    "type": "",
+                "clusterId": 0x0000F004,
+                "commands": {
                 },
-                "GroupKeys": {
-                    "attributeId": 0x0001,
-                    "type": "",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "Groups": {
+                        "attributeId": 0x0000,
+                        "type": "",
+                    },
+                    "GroupKeys": {
+                        "attributeId": 0x0001,
+                        "type": "",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "Groups": {
-                "NameSupport": {
-                    "attributeId": 0x0000,
-                    "type": "int",
+                "clusterId": 0x00000004,
+                "commands": {
+                    "AddGroup": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "groupId": "int",
+                            "groupName": "str",
+                        },
+                    },
+                    "AddGroupIfIdentifying": {
+                        "commandId": 0x00000005,
+                        "args": {
+                            "groupId": "int",
+                            "groupName": "str",
+                        },
+                    },
+                    "GetGroupMembership": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "groupCount": "int",
+                            "groupList": "int",
+                        },
+                    },
+                    "RemoveAllGroups": {
+                        "commandId": 0x00000004,
+                        "args": {
+                        },
+                    },
+                    "RemoveGroup": {
+                        "commandId": 0x00000003,
+                        "args": {
+                            "groupId": "int",
+                        },
+                    },
+                    "ViewGroup": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "groupId": "int",
+                        },
+                    },
                 },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "NameSupport": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "Identify": {
-                "IdentifyTime": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "writable": True,
+                "clusterId": 0x00000003,
+                "commands": {
+                    "Identify": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "identifyTime": "int",
+                        },
+                    },
+                    "IdentifyQuery": {
+                        "commandId": 0x00000001,
+                        "args": {
+                        },
+                    },
                 },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "IdentifyTime": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "KeypadInput": {
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "clusterId": 0x00000509,
+                "commands": {
+                    "SendKey": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "keyCode": "int",
+                        },
+                    },
+                },
+                "attributes": {
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "LevelControl": {
-                "CurrentLevel": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000008,
+                "commands": {
+                    "Move": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "moveMode": "int",
+                            "rate": "int",
+                            "optionMask": "int",
+                            "optionOverride": "int",
+                        },
+                    },
+                    "MoveToLevel": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "level": "int",
+                            "transitionTime": "int",
+                            "optionMask": "int",
+                            "optionOverride": "int",
+                        },
+                    },
+                    "MoveToLevelWithOnOff": {
+                        "commandId": 0x00000004,
+                        "args": {
+                            "level": "int",
+                            "transitionTime": "int",
+                        },
+                    },
+                    "MoveWithOnOff": {
+                        "commandId": 0x00000005,
+                        "args": {
+                            "moveMode": "int",
+                            "rate": "int",
+                        },
+                    },
+                    "Step": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "stepMode": "int",
+                            "stepSize": "int",
+                            "transitionTime": "int",
+                            "optionMask": "int",
+                            "optionOverride": "int",
+                        },
+                    },
+                    "StepWithOnOff": {
+                        "commandId": 0x00000006,
+                        "args": {
+                            "stepMode": "int",
+                            "stepSize": "int",
+                            "transitionTime": "int",
+                        },
+                    },
+                    "Stop": {
+                        "commandId": 0x00000003,
+                        "args": {
+                            "optionMask": "int",
+                            "optionOverride": "int",
+                        },
+                    },
+                    "StopWithOnOff": {
+                        "commandId": 0x00000007,
+                        "args": {
+                        },
+                    },
                 },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "CurrentLevel": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "LowPower": {
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "clusterId": 0x00000508,
+                "commands": {
+                    "Sleep": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
+                },
+                "attributes": {
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "MediaInput": {
-                "MediaInputList": {
-                    "attributeId": 0x0000,
-                    "type": "",
+                "clusterId": 0x00000507,
+                "commands": {
+                    "HideInputStatus": {
+                        "commandId": 0x00000002,
+                        "args": {
+                        },
+                    },
+                    "RenameInput": {
+                        "commandId": 0x00000003,
+                        "args": {
+                            "index": "int",
+                            "name": "str",
+                        },
+                    },
+                    "SelectInput": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "index": "int",
+                        },
+                    },
+                    "ShowInputStatus": {
+                        "commandId": 0x00000001,
+                        "args": {
+                        },
+                    },
                 },
-                "CurrentMediaInput": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "MediaInputList": {
+                        "attributeId": 0x0000,
+                        "type": "",
+                    },
+                    "CurrentMediaInput": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "MediaPlayback": {
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "clusterId": 0x00000506,
+                "commands": {
+                    "MediaFastForward": {
+                        "commandId": 0x00000007,
+                        "args": {
+                        },
+                    },
+                    "MediaNext": {
+                        "commandId": 0x00000005,
+                        "args": {
+                        },
+                    },
+                    "MediaPause": {
+                        "commandId": 0x00000001,
+                        "args": {
+                        },
+                    },
+                    "MediaPlay": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
+                    "MediaPrevious": {
+                        "commandId": 0x00000004,
+                        "args": {
+                        },
+                    },
+                    "MediaRewind": {
+                        "commandId": 0x00000006,
+                        "args": {
+                        },
+                    },
+                    "MediaSeek": {
+                        "commandId": 0x0000000A,
+                        "args": {
+                            "position": "int",
+                        },
+                    },
+                    "MediaSkipBackward": {
+                        "commandId": 0x00000009,
+                        "args": {
+                            "deltaPositionMilliseconds": "int",
+                        },
+                    },
+                    "MediaSkipForward": {
+                        "commandId": 0x00000008,
+                        "args": {
+                            "deltaPositionMilliseconds": "int",
+                        },
+                    },
+                    "MediaStartOver": {
+                        "commandId": 0x00000003,
+                        "args": {
+                        },
+                    },
+                    "MediaStop": {
+                        "commandId": 0x00000002,
+                        "args": {
+                        },
+                    },
+                },
+                "attributes": {
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "NetworkCommissioning": {
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "clusterId": 0x00000031,
+                "commands": {
+                    "AddThreadNetwork": {
+                        "commandId": 0x00000006,
+                        "args": {
+                            "operationalDataset": "bytes",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "AddWiFiNetwork": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "ssid": "bytes",
+                            "credentials": "bytes",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "DisableNetwork": {
+                        "commandId": 0x0000000E,
+                        "args": {
+                            "networkID": "bytes",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "EnableNetwork": {
+                        "commandId": 0x0000000C,
+                        "args": {
+                            "networkID": "bytes",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "GetLastNetworkCommissioningResult": {
+                        "commandId": 0x00000010,
+                        "args": {
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "RemoveNetwork": {
+                        "commandId": 0x0000000A,
+                        "args": {
+                            "networkID": "bytes",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "ScanNetworks": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "ssid": "bytes",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "UpdateThreadNetwork": {
+                        "commandId": 0x00000008,
+                        "args": {
+                            "operationalDataset": "bytes",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                    "UpdateWiFiNetwork": {
+                        "commandId": 0x00000004,
+                        "args": {
+                            "ssid": "bytes",
+                            "credentials": "bytes",
+                            "breadcrumb": "int",
+                            "timeoutMs": "int",
+                        },
+                    },
+                },
+                "attributes": {
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "OtaSoftwareUpdateProvider": {
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "clusterId": 0x00000029,
+                "commands": {
+                    "ApplyUpdateRequest": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "updateToken": "bytes",
+                            "newVersion": "int",
+                        },
+                    },
+                    "NotifyUpdateApplied": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "updateToken": "bytes",
+                            "currentVersion": "int",
+                        },
+                    },
+                    "QueryImage": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "vendorId": "int",
+                            "productId": "int",
+                            "imageType": "int",
+                            "hardwareVersion": "int",
+                            "currentVersion": "int",
+                            "protocolsSupported": "int",
+                            "location": "str",
+                            "requestorCanConsent": "int",
+                            "metadataForProvider": "bytes",
+                        },
+                    },
+                },
+                "attributes": {
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "OccupancySensing": {
-                "Occupancy": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000406,
+                "commands": {
                 },
-                "OccupancySensorType": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "OccupancySensorTypeBitmap": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "Occupancy": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "OccupancySensorType": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "OccupancySensorTypeBitmap": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "OnOff": {
-                "OnOff": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000006,
+                "commands": {
+                    "Off": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
+                    "OffWithEffect": {
+                        "commandId": 0x00000040,
+                        "args": {
+                            "effectId": "int",
+                            "effectVariant": "int",
+                        },
+                    },
+                    "On": {
+                        "commandId": 0x00000001,
+                        "args": {
+                        },
+                    },
+                    "OnWithRecallGlobalScene": {
+                        "commandId": 0x00000041,
+                        "args": {
+                        },
+                    },
+                    "OnWithTimedOff": {
+                        "commandId": 0x00000042,
+                        "args": {
+                            "onOffControl": "int",
+                            "onTime": "int",
+                            "offWaitTime": "int",
+                        },
+                    },
+                    "Toggle": {
+                        "commandId": 0x00000002,
+                        "args": {
+                        },
+                    },
                 },
-                "GlobalSceneControl": {
-                    "attributeId": 0x4000,
-                    "type": "int",
-                },
-                "OnTime": {
-                    "attributeId": 0x4001,
-                    "type": "int",
-                    "writable": True,
-                },
-                "OffWaitTime": {
-                    "attributeId": 0x4002,
-                    "type": "int",
-                    "writable": True,
-                },
-                "StartUpOnOff": {
-                    "attributeId": 0x4003,
-                    "type": "int",
-                    "writable": True,
-                },
-                "FeatureMap": {
-                    "attributeId": 0xFFFC,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "OnOff": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "GlobalSceneControl": {
+                        "attributeId": 0x4000,
+                        "type": "int",
+                    },
+                    "OnTime": {
+                        "attributeId": 0x4001,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "OffWaitTime": {
+                        "attributeId": 0x4002,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "StartUpOnOff": {
+                        "attributeId": 0x4003,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "FeatureMap": {
+                        "attributeId": 0xFFFC,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "OperationalCredentials": {
-                "FabricsList": {
-                    "attributeId": 0x0001,
-                    "type": "",
+                "clusterId": 0x0000003E,
+                "commands": {
+                    "AddNOC": {
+                        "commandId": 0x00000006,
+                        "args": {
+                            "nOCArray": "bytes",
+                            "iPKValue": "bytes",
+                            "caseAdminNode": "int",
+                            "adminVendorId": "int",
+                        },
+                    },
+                    "AddTrustedRootCertificate": {
+                        "commandId": 0x000000A1,
+                        "args": {
+                            "rootCertificate": "bytes",
+                        },
+                    },
+                    "OpCSRRequest": {
+                        "commandId": 0x00000004,
+                        "args": {
+                            "cSRNonce": "bytes",
+                        },
+                    },
+                    "RemoveAllFabrics": {
+                        "commandId": 0x0000000B,
+                        "args": {
+                        },
+                    },
+                    "RemoveFabric": {
+                        "commandId": 0x0000000A,
+                        "args": {
+                            "fabricId": "int",
+                            "nodeId": "int",
+                            "vendorId": "int",
+                        },
+                    },
+                    "RemoveTrustedRootCertificate": {
+                        "commandId": 0x000000A2,
+                        "args": {
+                            "trustedRootIdentifier": "bytes",
+                        },
+                    },
+                    "SetFabric": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "vendorId": "int",
+                        },
+                    },
+                    "UpdateFabricLabel": {
+                        "commandId": 0x00000009,
+                        "args": {
+                            "label": "str",
+                        },
+                    },
                 },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "FabricsList": {
+                        "attributeId": 0x0001,
+                        "type": "",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "PressureMeasurement": {
-                "MeasuredValue": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000403,
+                "commands": {
                 },
-                "MinMeasuredValue": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "MaxMeasuredValue": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "MeasuredValue": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "MinMeasuredValue": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "MaxMeasuredValue": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "PumpConfigurationAndControl": {
-                "MaxPressure": {
-                    "attributeId": 0x0000,
-                    "type": "int",
+                "clusterId": 0x00000200,
+                "commands": {
                 },
-                "MaxSpeed": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "MaxFlow": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "EffectiveOperationMode": {
-                    "attributeId": 0x0011,
-                    "type": "int",
-                },
-                "EffectiveControlMode": {
-                    "attributeId": 0x0012,
-                    "type": "int",
-                },
-                "Capacity": {
-                    "attributeId": 0x0013,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "OperationMode": {
-                    "attributeId": 0x0020,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "MaxPressure": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "MaxSpeed": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "MaxFlow": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "EffectiveOperationMode": {
+                        "attributeId": 0x0011,
+                        "type": "int",
+                    },
+                    "EffectiveControlMode": {
+                        "attributeId": 0x0012,
+                        "type": "int",
+                    },
+                    "Capacity": {
+                        "attributeId": 0x0013,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "OperationMode": {
+                        "attributeId": 0x0020,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "RelativeHumidityMeasurement": {
-                "MeasuredValue": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000405,
+                "commands": {
                 },
-                "MinMeasuredValue": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "MaxMeasuredValue": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "MeasuredValue": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "MinMeasuredValue": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "MaxMeasuredValue": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "Scenes": {
-                "SceneCount": {
-                    "attributeId": 0x0000,
-                    "type": "int",
+                "clusterId": 0x00000005,
+                "commands": {
+                    "AddScene": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "groupId": "int",
+                            "sceneId": "int",
+                            "transitionTime": "int",
+                            "sceneName": "str",
+                            "clusterId": "int",
+                            "length": "int",
+                            "value": "int",
+                        },
+                    },
+                    "GetSceneMembership": {
+                        "commandId": 0x00000006,
+                        "args": {
+                            "groupId": "int",
+                        },
+                    },
+                    "RecallScene": {
+                        "commandId": 0x00000005,
+                        "args": {
+                            "groupId": "int",
+                            "sceneId": "int",
+                            "transitionTime": "int",
+                        },
+                    },
+                    "RemoveAllScenes": {
+                        "commandId": 0x00000003,
+                        "args": {
+                            "groupId": "int",
+                        },
+                    },
+                    "RemoveScene": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "groupId": "int",
+                            "sceneId": "int",
+                        },
+                    },
+                    "StoreScene": {
+                        "commandId": 0x00000004,
+                        "args": {
+                            "groupId": "int",
+                            "sceneId": "int",
+                        },
+                    },
+                    "ViewScene": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "groupId": "int",
+                            "sceneId": "int",
+                        },
+                    },
                 },
-                "CurrentScene": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "CurrentGroup": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "SceneValid": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                },
-                "NameSupport": {
-                    "attributeId": 0x0004,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "SceneCount": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "CurrentScene": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "CurrentGroup": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "SceneValid": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "NameSupport": {
+                        "attributeId": 0x0004,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "SoftwareDiagnostics": {
-                "CurrentHeapHighWatermark": {
-                    "attributeId": 0x0003,
-                    "type": "int",
+                "clusterId": 0x00000034,
+                "commands": {
+                    "ResetWatermarks": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
                 },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "CurrentHeapHighWatermark": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "Switch": {
-                "NumberOfPositions": {
-                    "attributeId": 0x0000,
-                    "type": "int",
+                "clusterId": 0x0000003B,
+                "commands": {
                 },
-                "CurrentPosition": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "NumberOfPositions": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "CurrentPosition": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "TvChannel": {
-                "TvChannelList": {
-                    "attributeId": 0x0000,
-                    "type": "",
+                "clusterId": 0x00000504,
+                "commands": {
+                    "ChangeChannel": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "match": "str",
+                        },
+                    },
+                    "ChangeChannelByNumber": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "majorNumber": "int",
+                            "minorNumber": "int",
+                        },
+                    },
+                    "SkipChannel": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "count": "int",
+                        },
+                    },
                 },
-                "TvChannelLineup": {
-                    "attributeId": 0x0001,
-                    "type": "bytes",
-                },
-                "CurrentTvChannel": {
-                    "attributeId": 0x0002,
-                    "type": "bytes",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "TvChannelList": {
+                        "attributeId": 0x0000,
+                        "type": "",
+                    },
+                    "TvChannelLineup": {
+                        "attributeId": 0x0001,
+                        "type": "bytes",
+                    },
+                    "CurrentTvChannel": {
+                        "attributeId": 0x0002,
+                        "type": "bytes",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "TargetNavigator": {
-                "TargetNavigatorList": {
-                    "attributeId": 0x0000,
-                    "type": "",
+                "clusterId": 0x00000505,
+                "commands": {
+                    "NavigateTarget": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "target": "int",
+                            "data": "str",
+                        },
+                    },
                 },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "TargetNavigatorList": {
+                        "attributeId": 0x0000,
+                        "type": "",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "TemperatureMeasurement": {
-                "MeasuredValue": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000402,
+                "commands": {
                 },
-                "MinMeasuredValue": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "MaxMeasuredValue": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "MeasuredValue": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "MinMeasuredValue": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "MaxMeasuredValue": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "TestCluster": {
-                "Boolean": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "writable": True,
+                "clusterId": 0x0000050F,
+                "commands": {
+                    "Test": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
+                    "TestAddArguments": {
+                        "commandId": 0x00000004,
+                        "args": {
+                            "arg1": "int",
+                            "arg2": "int",
+                        },
+                    },
+                    "TestNotHandled": {
+                        "commandId": 0x00000001,
+                        "args": {
+                        },
+                    },
+                    "TestSpecific": {
+                        "commandId": 0x00000002,
+                        "args": {
+                        },
+                    },
+                    "TestUnknownCommand": {
+                        "commandId": 0x00000003,
+                        "args": {
+                        },
+                    },
                 },
-                "Bitmap8": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Bitmap16": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Bitmap32": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Bitmap64": {
-                    "attributeId": 0x0004,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Int8u": {
-                    "attributeId": 0x0005,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Int16u": {
-                    "attributeId": 0x0006,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Int32u": {
-                    "attributeId": 0x0008,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Int64u": {
-                    "attributeId": 0x000C,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Int8s": {
-                    "attributeId": 0x000D,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Int16s": {
-                    "attributeId": 0x000E,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Int32s": {
-                    "attributeId": 0x0010,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Int64s": {
-                    "attributeId": 0x0014,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Enum8": {
-                    "attributeId": 0x0015,
-                    "type": "int",
-                    "writable": True,
-                },
-                "Enum16": {
-                    "attributeId": 0x0016,
-                    "type": "int",
-                    "writable": True,
-                },
-                "OctetString": {
-                    "attributeId": 0x0019,
-                    "type": "bytes",
-                    "writable": True,
-                },
-                "ListInt8u": {
-                    "attributeId": 0x001A,
-                    "type": "int",
-                },
-                "ListOctetString": {
-                    "attributeId": 0x001B,
-                    "type": "bytes",
-                },
-                "ListStructOctetString": {
-                    "attributeId": 0x001C,
-                    "type": "",
-                },
-                "LongOctetString": {
-                    "attributeId": 0x001D,
-                    "type": "bytes",
-                    "writable": True,
-                },
-                "CharString": {
-                    "attributeId": 0x001E,
-                    "type": "str",
-                    "writable": True,
-                },
-                "LongCharString": {
-                    "attributeId": 0x001F,
-                    "type": "str",
-                    "writable": True,
-                },
-                "Unsupported": {
-                    "attributeId": 0x00FF,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "Boolean": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Bitmap8": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Bitmap16": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Bitmap32": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Bitmap64": {
+                        "attributeId": 0x0004,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Int8u": {
+                        "attributeId": 0x0005,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Int16u": {
+                        "attributeId": 0x0006,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Int32u": {
+                        "attributeId": 0x0008,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Int64u": {
+                        "attributeId": 0x000C,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Int8s": {
+                        "attributeId": 0x000D,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Int16s": {
+                        "attributeId": 0x000E,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Int32s": {
+                        "attributeId": 0x0010,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Int64s": {
+                        "attributeId": 0x0014,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Enum8": {
+                        "attributeId": 0x0015,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "Enum16": {
+                        "attributeId": 0x0016,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "OctetString": {
+                        "attributeId": 0x0019,
+                        "type": "bytes",
+                        "writable": True,
+                    },
+                    "ListInt8u": {
+                        "attributeId": 0x001A,
+                        "type": "int",
+                    },
+                    "ListOctetString": {
+                        "attributeId": 0x001B,
+                        "type": "bytes",
+                    },
+                    "ListStructOctetString": {
+                        "attributeId": 0x001C,
+                        "type": "",
+                    },
+                    "LongOctetString": {
+                        "attributeId": 0x001D,
+                        "type": "bytes",
+                        "writable": True,
+                    },
+                    "CharString": {
+                        "attributeId": 0x001E,
+                        "type": "str",
+                        "writable": True,
+                    },
+                    "LongCharString": {
+                        "attributeId": 0x001F,
+                        "type": "str",
+                        "writable": True,
+                    },
+                    "Unsupported": {
+                        "attributeId": 0x00FF,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "Thermostat": {
-                "LocalTemperature": {
-                    "attributeId": 0x0000,
-                    "type": "int",
-                    "reportable": True,
+                "clusterId": 0x00000201,
+                "commands": {
+                    "ClearWeeklySchedule": {
+                        "commandId": 0x00000003,
+                        "args": {
+                        },
+                    },
+                    "GetRelayStatusLog": {
+                        "commandId": 0x00000004,
+                        "args": {
+                        },
+                    },
+                    "GetWeeklySchedule": {
+                        "commandId": 0x00000002,
+                        "args": {
+                            "daysToReturn": "int",
+                            "modeToReturn": "int",
+                        },
+                    },
+                    "SetWeeklySchedule": {
+                        "commandId": 0x00000001,
+                        "args": {
+                            "numberOfTransitionsForSequence": "int",
+                            "dayOfWeekForSequence": "int",
+                            "modeForSequence": "int",
+                            "payload": "int",
+                        },
+                    },
+                    "SetpointRaiseLower": {
+                        "commandId": 0x00000000,
+                        "args": {
+                            "mode": "int",
+                            "amount": "int",
+                        },
+                    },
                 },
-                "OccupiedCoolingSetpoint": {
-                    "attributeId": 0x0011,
-                    "type": "int",
-                    "writable": True,
-                },
-                "OccupiedHeatingSetpoint": {
-                    "attributeId": 0x0012,
-                    "type": "int",
-                    "writable": True,
-                },
-                "ControlSequenceOfOperation": {
-                    "attributeId": 0x001B,
-                    "type": "int",
-                    "writable": True,
-                },
-                "SystemMode": {
-                    "attributeId": 0x001C,
-                    "type": "int",
-                    "writable": True,
-                },
-                "StartOfWeek": {
-                    "attributeId": 0x0020,
-                    "type": "int",
-                },
-                "NumberOfWeeklyTransitions": {
-                    "attributeId": 0x0021,
-                    "type": "int",
-                },
-                "NumberOfDailyTransitions": {
-                    "attributeId": 0x0022,
-                    "type": "int",
-                },
-                "FeatureMap": {
-                    "attributeId": 0xFFFC,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "LocalTemperature": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "OccupiedCoolingSetpoint": {
+                        "attributeId": 0x0011,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "OccupiedHeatingSetpoint": {
+                        "attributeId": 0x0012,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "ControlSequenceOfOperation": {
+                        "attributeId": 0x001B,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "SystemMode": {
+                        "attributeId": 0x001C,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "StartOfWeek": {
+                        "attributeId": 0x0020,
+                        "type": "int",
+                    },
+                    "NumberOfWeeklyTransitions": {
+                        "attributeId": 0x0021,
+                        "type": "int",
+                    },
+                    "NumberOfDailyTransitions": {
+                        "attributeId": 0x0022,
+                        "type": "int",
+                    },
+                    "FeatureMap": {
+                        "attributeId": 0xFFFC,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "ThreadNetworkDiagnostics": {
-                "Channel": {
-                    "attributeId": 0x0000,
-                    "type": "int",
+                "clusterId": 0x00000035,
+                "commands": {
+                    "ResetCounts": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
                 },
-                "RoutingRole": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "NetworkName": {
-                    "attributeId": 0x0002,
-                    "type": "bytes",
-                },
-                "PanId": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                },
-                "ExtendedPanId": {
-                    "attributeId": 0x0004,
-                    "type": "int",
-                },
-                "MeshLocalPrefix": {
-                    "attributeId": 0x0005,
-                    "type": "bytes",
-                },
-                "OverrunCount": {
-                    "attributeId": 0x0006,
-                    "type": "int",
-                },
-                "NeighborTableList": {
-                    "attributeId": 0x0007,
-                    "type": "",
-                },
-                "RouteTableList": {
-                    "attributeId": 0x0008,
-                    "type": "",
-                },
-                "PartitionId": {
-                    "attributeId": 0x0009,
-                    "type": "int",
-                },
-                "Weighting": {
-                    "attributeId": 0x000A,
-                    "type": "int",
-                },
-                "DataVersion": {
-                    "attributeId": 0x000B,
-                    "type": "int",
-                },
-                "StableDataVersion": {
-                    "attributeId": 0x000C,
-                    "type": "int",
-                },
-                "LeaderRouterId": {
-                    "attributeId": 0x000D,
-                    "type": "int",
-                },
-                "DetachedRoleCount": {
-                    "attributeId": 0x000E,
-                    "type": "int",
-                },
-                "ChildRoleCount": {
-                    "attributeId": 0x000F,
-                    "type": "int",
-                },
-                "RouterRoleCount": {
-                    "attributeId": 0x0010,
-                    "type": "int",
-                },
-                "LeaderRoleCount": {
-                    "attributeId": 0x0011,
-                    "type": "int",
-                },
-                "AttachAttemptCount": {
-                    "attributeId": 0x0012,
-                    "type": "int",
-                },
-                "PartitionIdChangeCount": {
-                    "attributeId": 0x0013,
-                    "type": "int",
-                },
-                "BetterPartitionAttachAttemptCount": {
-                    "attributeId": 0x0014,
-                    "type": "int",
-                },
-                "ParentChangeCount": {
-                    "attributeId": 0x0015,
-                    "type": "int",
-                },
-                "TxTotalCount": {
-                    "attributeId": 0x0016,
-                    "type": "int",
-                },
-                "TxUnicastCount": {
-                    "attributeId": 0x0017,
-                    "type": "int",
-                },
-                "TxBroadcastCount": {
-                    "attributeId": 0x0018,
-                    "type": "int",
-                },
-                "TxAckRequestedCount": {
-                    "attributeId": 0x0019,
-                    "type": "int",
-                },
-                "TxAckedCount": {
-                    "attributeId": 0x001A,
-                    "type": "int",
-                },
-                "TxNoAckRequestedCount": {
-                    "attributeId": 0x001B,
-                    "type": "int",
-                },
-                "TxDataCount": {
-                    "attributeId": 0x001C,
-                    "type": "int",
-                },
-                "TxDataPollCount": {
-                    "attributeId": 0x001D,
-                    "type": "int",
-                },
-                "TxBeaconCount": {
-                    "attributeId": 0x001E,
-                    "type": "int",
-                },
-                "TxBeaconRequestCount": {
-                    "attributeId": 0x001F,
-                    "type": "int",
-                },
-                "TxOtherCount": {
-                    "attributeId": 0x0020,
-                    "type": "int",
-                },
-                "TxRetryCount": {
-                    "attributeId": 0x0021,
-                    "type": "int",
-                },
-                "TxDirectMaxRetryExpiryCount": {
-                    "attributeId": 0x0022,
-                    "type": "int",
-                },
-                "TxIndirectMaxRetryExpiryCount": {
-                    "attributeId": 0x0023,
-                    "type": "int",
-                },
-                "TxErrCcaCount": {
-                    "attributeId": 0x0024,
-                    "type": "int",
-                },
-                "TxErrAbortCount": {
-                    "attributeId": 0x0025,
-                    "type": "int",
-                },
-                "TxErrBusyChannelCount": {
-                    "attributeId": 0x0026,
-                    "type": "int",
-                },
-                "RxTotalCount": {
-                    "attributeId": 0x0027,
-                    "type": "int",
-                },
-                "RxUnicastCount": {
-                    "attributeId": 0x0028,
-                    "type": "int",
-                },
-                "RxBroadcastCount": {
-                    "attributeId": 0x0029,
-                    "type": "int",
-                },
-                "RxDataCount": {
-                    "attributeId": 0x002A,
-                    "type": "int",
-                },
-                "RxDataPollCount": {
-                    "attributeId": 0x002B,
-                    "type": "int",
-                },
-                "RxBeaconCount": {
-                    "attributeId": 0x002C,
-                    "type": "int",
-                },
-                "RxBeaconRequestCount": {
-                    "attributeId": 0x002D,
-                    "type": "int",
-                },
-                "RxOtherCount": {
-                    "attributeId": 0x002E,
-                    "type": "int",
-                },
-                "RxAddressFilteredCount": {
-                    "attributeId": 0x002F,
-                    "type": "int",
-                },
-                "RxDestAddrFilteredCount": {
-                    "attributeId": 0x0030,
-                    "type": "int",
-                },
-                "RxDuplicatedCount": {
-                    "attributeId": 0x0031,
-                    "type": "int",
-                },
-                "RxErrNoFrameCount": {
-                    "attributeId": 0x0032,
-                    "type": "int",
-                },
-                "RxErrUnknownNeighborCount": {
-                    "attributeId": 0x0033,
-                    "type": "int",
-                },
-                "RxErrInvalidSrcAddrCount": {
-                    "attributeId": 0x0034,
-                    "type": "int",
-                },
-                "RxErrSecCount": {
-                    "attributeId": 0x0035,
-                    "type": "int",
-                },
-                "RxErrFcsCount": {
-                    "attributeId": 0x0036,
-                    "type": "int",
-                },
-                "RxErrOtherCount": {
-                    "attributeId": 0x0037,
-                    "type": "int",
-                },
-                "SecurityPolicy": {
-                    "attributeId": 0x003B,
-                    "type": "",
-                },
-                "ChannelMask": {
-                    "attributeId": 0x003C,
-                    "type": "int",
-                },
-                "OperationalDatasetComponents": {
-                    "attributeId": 0x003D,
-                    "type": "",
-                },
-                "ActiveNetworkFaultsList": {
-                    "attributeId": 0x003E,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "Channel": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "RoutingRole": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "NetworkName": {
+                        "attributeId": 0x0002,
+                        "type": "bytes",
+                    },
+                    "PanId": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "ExtendedPanId": {
+                        "attributeId": 0x0004,
+                        "type": "int",
+                    },
+                    "MeshLocalPrefix": {
+                        "attributeId": 0x0005,
+                        "type": "bytes",
+                    },
+                    "OverrunCount": {
+                        "attributeId": 0x0006,
+                        "type": "int",
+                    },
+                    "NeighborTableList": {
+                        "attributeId": 0x0007,
+                        "type": "",
+                    },
+                    "RouteTableList": {
+                        "attributeId": 0x0008,
+                        "type": "",
+                    },
+                    "PartitionId": {
+                        "attributeId": 0x0009,
+                        "type": "int",
+                    },
+                    "Weighting": {
+                        "attributeId": 0x000A,
+                        "type": "int",
+                    },
+                    "DataVersion": {
+                        "attributeId": 0x000B,
+                        "type": "int",
+                    },
+                    "StableDataVersion": {
+                        "attributeId": 0x000C,
+                        "type": "int",
+                    },
+                    "LeaderRouterId": {
+                        "attributeId": 0x000D,
+                        "type": "int",
+                    },
+                    "DetachedRoleCount": {
+                        "attributeId": 0x000E,
+                        "type": "int",
+                    },
+                    "ChildRoleCount": {
+                        "attributeId": 0x000F,
+                        "type": "int",
+                    },
+                    "RouterRoleCount": {
+                        "attributeId": 0x0010,
+                        "type": "int",
+                    },
+                    "LeaderRoleCount": {
+                        "attributeId": 0x0011,
+                        "type": "int",
+                    },
+                    "AttachAttemptCount": {
+                        "attributeId": 0x0012,
+                        "type": "int",
+                    },
+                    "PartitionIdChangeCount": {
+                        "attributeId": 0x0013,
+                        "type": "int",
+                    },
+                    "BetterPartitionAttachAttemptCount": {
+                        "attributeId": 0x0014,
+                        "type": "int",
+                    },
+                    "ParentChangeCount": {
+                        "attributeId": 0x0015,
+                        "type": "int",
+                    },
+                    "TxTotalCount": {
+                        "attributeId": 0x0016,
+                        "type": "int",
+                    },
+                    "TxUnicastCount": {
+                        "attributeId": 0x0017,
+                        "type": "int",
+                    },
+                    "TxBroadcastCount": {
+                        "attributeId": 0x0018,
+                        "type": "int",
+                    },
+                    "TxAckRequestedCount": {
+                        "attributeId": 0x0019,
+                        "type": "int",
+                    },
+                    "TxAckedCount": {
+                        "attributeId": 0x001A,
+                        "type": "int",
+                    },
+                    "TxNoAckRequestedCount": {
+                        "attributeId": 0x001B,
+                        "type": "int",
+                    },
+                    "TxDataCount": {
+                        "attributeId": 0x001C,
+                        "type": "int",
+                    },
+                    "TxDataPollCount": {
+                        "attributeId": 0x001D,
+                        "type": "int",
+                    },
+                    "TxBeaconCount": {
+                        "attributeId": 0x001E,
+                        "type": "int",
+                    },
+                    "TxBeaconRequestCount": {
+                        "attributeId": 0x001F,
+                        "type": "int",
+                    },
+                    "TxOtherCount": {
+                        "attributeId": 0x0020,
+                        "type": "int",
+                    },
+                    "TxRetryCount": {
+                        "attributeId": 0x0021,
+                        "type": "int",
+                    },
+                    "TxDirectMaxRetryExpiryCount": {
+                        "attributeId": 0x0022,
+                        "type": "int",
+                    },
+                    "TxIndirectMaxRetryExpiryCount": {
+                        "attributeId": 0x0023,
+                        "type": "int",
+                    },
+                    "TxErrCcaCount": {
+                        "attributeId": 0x0024,
+                        "type": "int",
+                    },
+                    "TxErrAbortCount": {
+                        "attributeId": 0x0025,
+                        "type": "int",
+                    },
+                    "TxErrBusyChannelCount": {
+                        "attributeId": 0x0026,
+                        "type": "int",
+                    },
+                    "RxTotalCount": {
+                        "attributeId": 0x0027,
+                        "type": "int",
+                    },
+                    "RxUnicastCount": {
+                        "attributeId": 0x0028,
+                        "type": "int",
+                    },
+                    "RxBroadcastCount": {
+                        "attributeId": 0x0029,
+                        "type": "int",
+                    },
+                    "RxDataCount": {
+                        "attributeId": 0x002A,
+                        "type": "int",
+                    },
+                    "RxDataPollCount": {
+                        "attributeId": 0x002B,
+                        "type": "int",
+                    },
+                    "RxBeaconCount": {
+                        "attributeId": 0x002C,
+                        "type": "int",
+                    },
+                    "RxBeaconRequestCount": {
+                        "attributeId": 0x002D,
+                        "type": "int",
+                    },
+                    "RxOtherCount": {
+                        "attributeId": 0x002E,
+                        "type": "int",
+                    },
+                    "RxAddressFilteredCount": {
+                        "attributeId": 0x002F,
+                        "type": "int",
+                    },
+                    "RxDestAddrFilteredCount": {
+                        "attributeId": 0x0030,
+                        "type": "int",
+                    },
+                    "RxDuplicatedCount": {
+                        "attributeId": 0x0031,
+                        "type": "int",
+                    },
+                    "RxErrNoFrameCount": {
+                        "attributeId": 0x0032,
+                        "type": "int",
+                    },
+                    "RxErrUnknownNeighborCount": {
+                        "attributeId": 0x0033,
+                        "type": "int",
+                    },
+                    "RxErrInvalidSrcAddrCount": {
+                        "attributeId": 0x0034,
+                        "type": "int",
+                    },
+                    "RxErrSecCount": {
+                        "attributeId": 0x0035,
+                        "type": "int",
+                    },
+                    "RxErrFcsCount": {
+                        "attributeId": 0x0036,
+                        "type": "int",
+                    },
+                    "RxErrOtherCount": {
+                        "attributeId": 0x0037,
+                        "type": "int",
+                    },
+                    "SecurityPolicy": {
+                        "attributeId": 0x003B,
+                        "type": "",
+                    },
+                    "ChannelMask": {
+                        "attributeId": 0x003C,
+                        "type": "int",
+                    },
+                    "OperationalDatasetComponents": {
+                        "attributeId": 0x003D,
+                        "type": "",
+                    },
+                    "ActiveNetworkFaultsList": {
+                        "attributeId": 0x003E,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "WakeOnLan": {
-                "WakeOnLanMacAddress": {
-                    "attributeId": 0x0000,
-                    "type": "str",
+                "clusterId": 0x00000503,
+                "commands": {
                 },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "WakeOnLanMacAddress": {
+                        "attributeId": 0x0000,
+                        "type": "str",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "WiFiNetworkDiagnostics": {
-                "Bssid": {
-                    "attributeId": 0x0000,
-                    "type": "bytes",
+                "clusterId": 0x00000036,
+                "commands": {
+                    "ResetCounts": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
                 },
-                "SecurityType": {
-                    "attributeId": 0x0001,
-                    "type": "int",
-                },
-                "WiFiVersion": {
-                    "attributeId": 0x0002,
-                    "type": "int",
-                },
-                "ChannelNumber": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                },
-                "Rssi": {
-                    "attributeId": 0x0004,
-                    "type": "int",
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "Bssid": {
+                        "attributeId": 0x0000,
+                        "type": "bytes",
+                    },
+                    "SecurityType": {
+                        "attributeId": 0x0001,
+                        "type": "int",
+                    },
+                    "WiFiVersion": {
+                        "attributeId": 0x0002,
+                        "type": "int",
+                    },
+                    "ChannelNumber": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "Rssi": {
+                        "attributeId": 0x0004,
+                        "type": "int",
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
             "WindowCovering": {
-                "Type": {
-                    "attributeId": 0x0000,
-                    "type": "int",
+                "clusterId": 0x00000102,
+                "commands": {
+                    "DownOrClose": {
+                        "commandId": 0x00000001,
+                        "args": {
+                        },
+                    },
+                    "GoToLiftPercentage": {
+                        "commandId": 0x00000005,
+                        "args": {
+                            "liftPercentageValue": "int",
+                            "liftPercent100thsValue": "int",
+                        },
+                    },
+                    "GoToLiftValue": {
+                        "commandId": 0x00000004,
+                        "args": {
+                            "liftValue": "int",
+                        },
+                    },
+                    "GoToTiltPercentage": {
+                        "commandId": 0x00000008,
+                        "args": {
+                            "tiltPercentageValue": "int",
+                            "tiltPercent100thsValue": "int",
+                        },
+                    },
+                    "GoToTiltValue": {
+                        "commandId": 0x00000007,
+                        "args": {
+                            "tiltValue": "int",
+                        },
+                    },
+                    "StopMotion": {
+                        "commandId": 0x00000002,
+                        "args": {
+                        },
+                    },
+                    "UpOrOpen": {
+                        "commandId": 0x00000000,
+                        "args": {
+                        },
+                    },
                 },
-                "CurrentPositionLift": {
-                    "attributeId": 0x0003,
-                    "type": "int",
-                },
-                "CurrentPositionTilt": {
-                    "attributeId": 0x0004,
-                    "type": "int",
-                },
-                "ConfigStatus": {
-                    "attributeId": 0x0007,
-                    "type": "int",
-                },
-                "CurrentPositionLiftPercentage": {
-                    "attributeId": 0x0008,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "CurrentPositionTiltPercentage": {
-                    "attributeId": 0x0009,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "OperationalStatus": {
-                    "attributeId": 0x000A,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "TargetPositionLiftPercent100ths": {
-                    "attributeId": 0x000B,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "TargetPositionTiltPercent100ths": {
-                    "attributeId": 0x000C,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "EndProductType": {
-                    "attributeId": 0x000D,
-                    "type": "int",
-                },
-                "CurrentPositionLiftPercent100ths": {
-                    "attributeId": 0x000E,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "CurrentPositionTiltPercent100ths": {
-                    "attributeId": 0x000F,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "InstalledOpenLimitLift": {
-                    "attributeId": 0x0010,
-                    "type": "int",
-                },
-                "InstalledClosedLimitLift": {
-                    "attributeId": 0x0011,
-                    "type": "int",
-                },
-                "InstalledOpenLimitTilt": {
-                    "attributeId": 0x0012,
-                    "type": "int",
-                },
-                "InstalledClosedLimitTilt": {
-                    "attributeId": 0x0013,
-                    "type": "int",
-                },
-                "Mode": {
-                    "attributeId": 0x0017,
-                    "type": "int",
-                    "writable": True,
-                },
-                "SafetyStatus": {
-                    "attributeId": 0x001A,
-                    "type": "int",
-                    "reportable": True,
-                },
-                "ClusterRevision": {
-                    "attributeId": 0xFFFD,
-                    "type": "int",
+                "attributes": {
+                    "Type": {
+                        "attributeId": 0x0000,
+                        "type": "int",
+                    },
+                    "CurrentPositionLift": {
+                        "attributeId": 0x0003,
+                        "type": "int",
+                    },
+                    "CurrentPositionTilt": {
+                        "attributeId": 0x0004,
+                        "type": "int",
+                    },
+                    "ConfigStatus": {
+                        "attributeId": 0x0007,
+                        "type": "int",
+                    },
+                    "CurrentPositionLiftPercentage": {
+                        "attributeId": 0x0008,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "CurrentPositionTiltPercentage": {
+                        "attributeId": 0x0009,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "OperationalStatus": {
+                        "attributeId": 0x000A,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "TargetPositionLiftPercent100ths": {
+                        "attributeId": 0x000B,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "TargetPositionTiltPercent100ths": {
+                        "attributeId": 0x000C,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "EndProductType": {
+                        "attributeId": 0x000D,
+                        "type": "int",
+                    },
+                    "CurrentPositionLiftPercent100ths": {
+                        "attributeId": 0x000E,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "CurrentPositionTiltPercent100ths": {
+                        "attributeId": 0x000F,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "InstalledOpenLimitLift": {
+                        "attributeId": 0x0010,
+                        "type": "int",
+                    },
+                    "InstalledClosedLimitLift": {
+                        "attributeId": 0x0011,
+                        "type": "int",
+                    },
+                    "InstalledOpenLimitTilt": {
+                        "attributeId": 0x0012,
+                        "type": "int",
+                    },
+                    "InstalledClosedLimitTilt": {
+                        "attributeId": 0x0013,
+                        "type": "int",
+                    },
+                    "Mode": {
+                        "attributeId": 0x0017,
+                        "type": "int",
+                        "writable": True,
+                    },
+                    "SafetyStatus": {
+                        "attributeId": 0x001A,
+                        "type": "int",
+                        "reportable": True,
+                    },
+                    "ClusterRevision": {
+                        "attributeId": 0xFFFD,
+                        "type": "int",
+                    },
                 },
             },
         }
@@ -2314,6 +2904,12 @@ class ChipClusters:
             raise UnknownAttribute(cluster, attribute)
         funcCaller = self._ChipStack.Call if imEnabled else self._ChipStack.CallAsync
         funcCaller(lambda: func(device, endpoint, groupid, value))
+
+    def ReadEvents(self, device: ctypes.c_void_p, cluster: str, eventid: int, endpoint: id):
+        clusterMetadata = self.ListClusterMetadata().get(cluster, None)
+        if not clusterMetadata:
+            raise UnknownCluster(cluster)
+        self._ChipStack.Call(lambda: self._chipLib.pychip_Device_ReadEvent(device, endpoint, clusterMetadata["clusterId"], eventid))
 
     # Cluster commands
 
@@ -3792,6 +4388,8 @@ class ChipClusters:
         self._chipLib.chip_ime_SetSuccessResponseDelegate.restype = None
         self._chipLib.chip_ime_SetFailureResponseDelegate.argtypes = [ChipClusters.FAILURE_DELEGATE]
         self._chipLib.chip_ime_SetFailureResponseDelegate.res = None
+        self._chipLib.pychip_Device_ReadEvent.argtypes = [ctypes.c_void_p, ctypes.c_uint16, ctypes.c_uint32, ctypes.c_uint32]
+        self._chipLib.pychip_Device_ReadEvent.res = ctypes.c_uint32
         # Cluster AccountLogin
         # Cluster AccountLogin Command GetSetupPIN
         self._chipLib.chip_ime_AppendCommand_AccountLogin_GetSetupPIN.argtypes = [ctypes.c_void_p, ctypes.c_uint8, ctypes.c_uint16, ctypes.c_char_p, ctypes.c_uint32]
