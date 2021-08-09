@@ -25,30 +25,30 @@
 #include <app/AppBuildConfig.h>
 #include <app/InteractionModelEngine.h>
 #include <app/MessageDef/EventPath.h>
-#include <app/ReadHandler.h>
-#include <app/reporting/Engine.h>
 #include <app/MessageDef/SubscribeRequest.h>
 #include <app/MessageDef/SubscribeResponse.h>
-#include <protocols/secure_channel/StatusReport.h>
-#include <platform/internal/CHIPDeviceLayerInternal.h>
+#include <app/ReadHandler.h>
+#include <app/reporting/Engine.h>
 #include <lib/support/TypeTraits.h>
+#include <platform/internal/CHIPDeviceLayerInternal.h>
+#include <protocols/secure_channel/StatusReport.h>
 
 namespace chip {
 namespace app {
 CHIP_ERROR SubscribeHandler::Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate)
 {
-    VerifyOrReturnError(apDelegate != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
-    mpExchangeMgr = apExchangeMgr,
-    mSubscriptionId = 0;
+    IgnoreUnusedVariable(apDelegate);
+    mpExchangeMgr = apExchangeMgr, mSubscriptionId = 0;
     mFinalSyncIntervalSeconds = 0;
     return ReadHandler::Init(apDelegate);
 }
 
 void SubscribeHandler::Shutdown()
 {
-    mSubscriptionId = 0;
+    mSubscriptionId           = 0;
     mFinalSyncIntervalSeconds = 0;
-    InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(OnSubscribeTimerCallback, this);
+    InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(
+        OnSubscribeTimerCallback, this);
     ReadHandler::Shutdown();
 }
 
@@ -59,23 +59,24 @@ CHIP_ERROR SubscribeHandler::OnStatusReport(Messaging::ExchangeContext * apExcha
 
     err = statusReport.Parse(std::move(aPayload));
     SuccessOrExit(err);
-    if ((statusReport.GetProtocolId() == Protocols::InteractionModel::Id.ToFullyQualifiedSpecForm()) && (statusReport.GetProtocolCode() == to_underlying(Protocols::InteractionModel::ProtocolCode::Success)))
+    if ((statusReport.GetProtocolId() == Protocols::InteractionModel::Id.ToFullyQualifiedSpecForm()) &&
+        (statusReport.GetProtocolCode() == to_underlying(Protocols::InteractionModel::ProtocolCode::Success)))
     {
         switch (mState)
         {
-            case HandlerState::Subscribing:
-                mpDelegate->SubscriptionEstablished();
-                MoveToState(HandlerState::Reportable);
-                InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun();
-                break;
-            case HandlerState::Reportable:
-                RefreshSubscribeSyncTimer();
-                break;
-            case HandlerState::Initialized:
-            case HandlerState::Uninitialized:
-            default:
-                err = CHIP_ERROR_INCORRECT_STATE;
-                break;
+        case HandlerState::Subscribing:
+            mpDelegate->SubscriptionEstablished();
+            MoveToState(HandlerState::Reportable);
+            InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun();
+            break;
+        case HandlerState::Reportable:
+            RefreshSubscribeSyncTimer();
+            break;
+        case HandlerState::Initialized:
+        case HandlerState::Uninitialized:
+        default:
+            err = CHIP_ERROR_INCORRECT_TATE;
+            break;
         }
     }
     else
@@ -91,7 +92,8 @@ exit:
     return err;
 }
 
-CHIP_ERROR SubscribeHandler::OnSubscribeRequest(Messaging::ExchangeContext * apExchangeContext, System::PacketBufferHandle && aPayload)
+CHIP_ERROR SubscribeHandler::OnSubscribeRequest(Messaging::ExchangeContext * apExchangeContext,
+                                                System::PacketBufferHandle && aPayload)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     System::PacketBufferHandle response;
@@ -125,7 +127,8 @@ CHIP_ERROR SubscribeHandler::SendSubscribeResponse()
     ReturnLogErrorOnFailure(writer.Finalize(&packet));
     VerifyOrReturnLogError(mpExchangeCtx != nullptr, CHIP_ERROR_INCORRECT_STATE);
 
-    ReturnLogErrorOnFailure(mpExchangeCtx->SendMessage(Protocols::InteractionModel::MsgType::SubscribeResponse, std::move(packet), Messaging::SendFlags(Messaging::SendMessageFlags::kExpectResponse)));
+    ReturnLogErrorOnFailure(mpExchangeCtx->SendMessage(Protocols::InteractionModel::MsgType::SubscribeResponse, std::move(packet),
+                                                       Messaging::SendFlags(Messaging::SendMessageFlags::kExpectResponse)));
     MoveToState(HandlerState::Subscribing);
     return CHIP_NO_ERROR;
 }
@@ -149,7 +152,7 @@ CHIP_ERROR SubscribeHandler::ProcessSubscribeRequest(System::PacketBufferHandle 
     SuccessOrExit(err);
 #if CHIP_CONFIG_IM_ENABLE_SCHEMA_CHECK
     err = subscribeRequestParser.CheckSchemaValidity();
-SuccessOrExit(err);
+    SuccessOrExit(err);
 #endif
 
     err = subscribeRequestParser.GetAttributePathList(&attributePathListParser);
@@ -182,12 +185,13 @@ SuccessOrExit(err);
     err = subscribeRequestParser.GetMaxIntervalSeconds(&maxIntervalSeconds);
     SuccessOrExit(err);
 
-    err = mpDelegate->GetSubscribeFinalSyncInterval(minIntervalSeconds, maxIntervalSeconds, mFinalSyncIntervalSeconds);
+    mFinalSyncIntervalSeconds = minIntervalSeconds;
+    // err = mpDelegate->GetSubscribeFinalSyncInterval(minIntervalSeconds, maxIntervalSeconds, mFinalSyncIntervalSeconds);
     SuccessOrExit(err);
 
     // TODO: Use GetSecureRandomData to generate subscription id
-    //err = Platform::Security::GetSecureRandomData((uint8_t *) &mSubscriptionId, sizeof(mSubscriptionId));
-    //SuccessOrExit(err);
+    // err = Platform::Security::GetSecureRandomData((uint8_t *) &mSubscriptionId, sizeof(mSubscriptionId));
+    // SuccessOrExit(err);
 
     err = SendSubscribeResponse();
     SuccessOrExit(err);
@@ -217,17 +221,18 @@ CHIP_ERROR SubscribeHandler::RefreshSubscribeSyncTimer(void)
     CHIP_ERROR err = CHIP_NO_ERROR;
     // Calculate margin to reserve for MRP activity, so we send out sync report earlier
     // TODO: calculate the margin Sec for MRP retry activity
-    uint16_t marginMsec = 5;
+    uint16_t marginMsec  = 5;
     uint16_t timeoutMsec = mFinalSyncIntervalSeconds;
     if (marginMsec < timeoutMsec)
     {
         timeoutMsec = mFinalSyncIntervalSeconds - marginMsec;
     }
-    InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(OnSubscribeTimerCallback, this);
-    if(HandlerState::Reportable == mState)
+    InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(
+        OnSubscribeTimerCallback, this);
+    if (HandlerState::Reportable == mState)
     {
         err = InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->StartTimer(
-                timeoutMsec, OnSubscribeTimerCallback, this);
+            timeoutMsec, OnSubscribeTimerCallback, this);
         ReturnLogErrorOnFailure(err);
     }
     return err;
@@ -237,16 +242,15 @@ CHIP_ERROR SubscribeHandler::SendReportData(System::PacketBufferHandle && aPaylo
 {
     if (IsReportable() && !IsInitialReport())
     {
-            mpExchangeCtx = mpExchangeMgr->NewContext(mSecureSession, this);
-            ChipLogDetail(DataManagement, "SendReportData!! debug initial report!!!!!.");
+        mpExchangeCtx = mpExchangeMgr->NewContext(mSecureSession, this);
+        ChipLogDetail(DataManagement, "SendReportData!! debug initial report!!!!!.");
     }
     mSecureSession = mpExchangeCtx->GetSecureSession();
     return ReadHandler::SendReportData(std::move(aPayload));
 }
 
-CHIP_ERROR SubscribeHandler::OnMessageReceived(Messaging::ExchangeContext * apExchangeContext,
-                                                     const PacketHeader & aPacketHeader, const PayloadHeader & aPayloadHeader,
-                                                     System::PacketBufferHandle && aPayload)
+CHIP_ERROR SubscribeHandler::OnMessageReceived(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
+                                               const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload)
 {
     // TODO: process status report for chunking report handling in SubscribeHandler::OnMessageReceived
     return CHIP_NO_ERROR;

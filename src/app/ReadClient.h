@@ -78,7 +78,11 @@ public:
                                EventNumber aEventNumber);
 
     uint64_t GetAppIdentifier() const { return mAppIdentifier; }
-    Messaging::ExchangeContext * GetExchangeContext() const { return mpExchangeCtx; }
+    NodeId GetSourceNodeId() const
+    {
+        return mpExchangeCtx != nullptr ? mpExchangeCtx->GetSecureSession().GetPeerNodeId() : kUndefinedNodeId;
+    }
+
     virtual bool IsSubscription() const { return false; };
 
 protected:
@@ -107,7 +111,8 @@ protected:
      *  @retval #CHIP_NO_ERROR On success.
      *
      */
-    virtual CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate, uint64_t aAppIdentifier);
+    virtual CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate,
+                            uint64_t aAppIdentifier);
 
     virtual ~ReadClient() = default;
 
@@ -124,8 +129,8 @@ protected:
 
     CHIP_ERROR GenerateEventPathList(EventPathList::Builder & aEventPathListBuilder, EventPathParams * apEventPathParamsList,
                                      size_t aEventPathParamsListSize);
-    CHIP_ERROR GenerateAttributePathList(AttributePathList::Builder & aAttributeathListBuilder, AttributePathParams * apAttributePathParamsList,
-                                         size_t aAttributePathParamsListSize);
+    CHIP_ERROR GenerateAttributePathList(AttributePathList::Builder & aAttributeathListBuilder,
+                                         AttributePathParams * apAttributePathParamsList, size_t aAttributePathParamsListSize);
     CHIP_ERROR ProcessAttributeDataList(TLV::TLVReader & aAttributeDataListReader);
 
     void MoveToState(const ClientState aTargetState);
@@ -133,9 +138,7 @@ protected:
     CHIP_ERROR AbortExistingExchangeContext();
     const char * GetStateStr() const;
 
-    virtual bool IsValidSubscription(uint64_t & aSubscriptionId) {
-        return false;
-    }
+    virtual bool IsValidSubscription(uint64_t & aSubscriptionId) { return false; }
 
     /**
      * Internal shutdown method that we use when we know what's going on with

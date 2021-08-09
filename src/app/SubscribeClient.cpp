@@ -24,31 +24,31 @@
 
 #include <app/AppBuildConfig.h>
 #include <app/InteractionModelEngine.h>
-#include <app/SubscribeClient.h>
 #include <app/MessageDef/SubscribeRequest.h>
 #include <app/MessageDef/SubscribeResponse.h>
-#include <protocols/secure_channel/StatusReport.h>
+#include <app/SubscribeClient.h>
 #include <lib/support/TypeTraits.h>
+#include <protocols/secure_channel/StatusReport.h>
 
 namespace chip {
 namespace app {
 CHIP_ERROR SubscribeClient::Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate,
                                  uint64_t aAppIdentifier)
 {
-    CHIP_ERROR err = CHIP_NO_ERROR;
-    err = ReadClient::Init(apExchangeMgr, apDelegate, aAppIdentifier);
-    mRetryCounter = 0;
+    CHIP_ERROR err            = CHIP_NO_ERROR;
+    err                       = ReadClient::Init(apExchangeMgr, apDelegate, aAppIdentifier);
+    mRetryCounter             = 0;
     mFinalSyncIntervalSeconds = 0;
-    mSubscriptionId = 0;
+    mSubscriptionId           = 0;
     EnableResubscribe(true);
     return err;
 }
 
 void SubscribeClient::ShutdownInternal()
 {
-    mRetryCounter = 0;
+    mRetryCounter             = 0;
     mFinalSyncIntervalSeconds = 0;
-    mSubscriptionId = 0;
+    mSubscriptionId           = 0;
     EnableResubscribe(false);
     CancelLivenessCheckTimer();
     ReadClient::ShutdownInternal();
@@ -82,7 +82,8 @@ CHIP_ERROR SubscribeClient::SendSubscribeRequest()
         {
             EventPathList::Builder & eventPathListBuilder = request.CreateEventPathListBuilder();
             SuccessOrExit(err = eventPathListBuilder.GetError());
-            err = GenerateEventPathList(eventPathListBuilder, subscribePrepareParams.mpEventPathParamsList, subscribePrepareParams.mEventPathParamsListSize);
+            err = GenerateEventPathList(eventPathListBuilder, subscribePrepareParams.mpEventPathParamsList,
+                                        subscribePrepareParams.mEventPathParamsListSize);
             SuccessOrExit(err);
 
             if (subscribePrepareParams.mEventNumber != 0)
@@ -96,11 +97,14 @@ CHIP_ERROR SubscribeClient::SendSubscribeRequest()
         {
             AttributePathList::Builder & attributePathListBuilder = request.CreateAttributePathListBuilder();
             SuccessOrExit(err = attributePathListBuilder.GetError());
-            err = GenerateAttributePathList(attributePathListBuilder, subscribePrepareParams.mpAttributePathParamsList, subscribePrepareParams.mAttributePathParamsListSize);
+            err = GenerateAttributePathList(attributePathListBuilder, subscribePrepareParams.mpAttributePathParamsList,
+                                            subscribePrepareParams.mAttributePathParamsListSize);
             SuccessOrExit(err);
         }
 
-        request.MinIntervalSeconds(subscribePrepareParams.mMinIntervalSeconds).MaxIntervalSeconds(subscribePrepareParams.mMaxIntervalSeconds).EndOfSubscribeRequest();
+        request.MinIntervalSeconds(subscribePrepareParams.mMinIntervalSeconds)
+            .MaxIntervalSeconds(subscribePrepareParams.mMaxIntervalSeconds)
+            .EndOfSubscribeRequest();
         SuccessOrExit(err = request.GetError());
 
         err = writer.Finalize(&msgBuf);
@@ -135,7 +139,7 @@ exit:
 }
 
 CHIP_ERROR SubscribeClient::OnMessageReceived(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
-                                         const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload)
+                                              const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     VerifyOrExit(mpDelegate != nullptr, err = CHIP_ERROR_INCORRECT_STATE);
@@ -235,13 +239,13 @@ void SubscribeClient::OnResponseTimeout(Messaging::ExchangeContext * apExchangeC
 CHIP_ERROR SubscribeClient::SendStatusReport(CHIP_ERROR aError)
 {
     Protocols::SecureChannel::GeneralStatusCode generalCode = Protocols::SecureChannel::GeneralStatusCode::kSuccess;
-    uint32_t protocolId           = Protocols::InteractionModel::Id.ToFullyQualifiedSpecForm();
-    uint16_t protocolCode         = to_underlying(Protocols::InteractionModel::ProtocolCode::Success);
+    uint32_t protocolId                                     = Protocols::InteractionModel::Id.ToFullyQualifiedSpecForm();
+    uint16_t protocolCode                                   = to_underlying(Protocols::InteractionModel::ProtocolCode::Success);
     VerifyOrReturnLogError(mpExchangeCtx != nullptr, CHIP_ERROR_NO_MEMORY);
     // Need to add chunk support for multiple report
     if (aError != CHIP_NO_ERROR)
     {
-        generalCode = Protocols::SecureChannel::GeneralStatusCode::kFailure;
+        generalCode  = Protocols::SecureChannel::GeneralStatusCode::kFailure;
         protocolCode = to_underlying(Protocols::InteractionModel::ProtocolCode::InvalidSubscription);
     }
 
@@ -253,7 +257,8 @@ CHIP_ERROR SubscribeClient::SendStatusReport(CHIP_ERROR aError)
     System::PacketBufferHandle msgBuf = buf.Finalize();
     VerifyOrReturnLogError(!msgBuf.IsNull(), CHIP_ERROR_NO_MEMORY);
 
-    ReturnLogErrorOnFailure(mpExchangeCtx->SendMessage(Protocols::SecureChannel::MsgType::StatusReport, std::move(msgBuf), Messaging::SendFlags(Messaging::SendMessageFlags::kExpectResponse)));
+    ReturnLogErrorOnFailure(mpExchangeCtx->SendMessage(Protocols::SecureChannel::MsgType::StatusReport, std::move(msgBuf),
+                                                       Messaging::SendFlags(Messaging::SendMessageFlags::kExpectResponse)));
     MoveToState(ClientState::SubscriptionIdle);
     return CHIP_NO_ERROR;
 }
@@ -267,11 +272,11 @@ CHIP_ERROR SubscribeClient::ProcessReportData(System::PacketBufferHandle && aPay
 
 CHIP_ERROR SubscribeClient::RefreshLivenessCheckTimer()
 {
-    CHIP_ERROR err                   = CHIP_NO_ERROR;
+    CHIP_ERROR err = CHIP_NO_ERROR;
     CancelLivenessCheckTimer();
     ChipLogProgress(DataManagement, "SubscribeClient::RefreshLivenessCheckTime timer %d", mFinalSyncIntervalSeconds);
     err = InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->StartTimer(
-                mFinalSyncIntervalSeconds, OnLivenessTimeoutCallback, this);
+        mFinalSyncIntervalSeconds, OnLivenessTimeoutCallback, this);
 
     if (err != CHIP_NO_ERROR)
     {
@@ -282,19 +287,20 @@ CHIP_ERROR SubscribeClient::RefreshLivenessCheckTimer()
 
 void SubscribeClient::CancelLivenessCheckTimer()
 {
-   InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(OnLivenessTimeoutCallback, this);
+    InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(
+        OnLivenessTimeoutCallback, this);
 }
 
 void SubscribeClient::OnLivenessTimeoutCallback(System::Layer * apSystemLayer, void * apAppState)
 {
-    CHIP_ERROR err                   = CHIP_NO_ERROR;
-    uint16_t retryTimeSec = 0;
+    CHIP_ERROR err                 = CHIP_NO_ERROR;
+    uint16_t retryTimeSec          = 0;
     SubscribeClient * const client = reinterpret_cast<SubscribeClient *>(apAppState);
     if ((nullptr != client->mpDelegate) && (ClientState::Uninitialized != client->mState))
     {
         client->mpDelegate->ApplyResubscribePolicy(client->mRetryCounter, retryTimeSec);
         err = InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->StartTimer(
-                retryTimeSec, OnReSubscribeTimerCallback, apAppState);
+            retryTimeSec, OnReSubscribeTimerCallback, apAppState);
     }
 }
 
@@ -303,7 +309,7 @@ void SubscribeClient::OnReSubscribeTimerCallback(System::Layer * apSystemLayer, 
     SubscribeClient * const client = reinterpret_cast<SubscribeClient *>(apAppState);
     if (client != nullptr && client->mEnableResubscribe && (client->mState != ClientState::Uninitialized))
     {
-        client->mRetryCounter ++;
+        client->mRetryCounter++;
         client->SendSubscribeRequest();
     }
 }
@@ -313,8 +319,8 @@ void SubscribeClient::OnReSubscribeTimerCallback(System::Layer * apSystemLayer, 
  */
 void SubscribeClient::ResetResubscribe()
 {
-    mRetryCounter = 0;
-    mSubscriptionId = 0;
+    mRetryCounter             = 0;
+    mSubscriptionId           = 0;
     mFinalSyncIntervalSeconds = 0;
     if (mState != ClientState::Uninitialized)
     {
@@ -323,14 +329,15 @@ void SubscribeClient::ResetResubscribe()
         if (mEnableResubscribe)
         {
             InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->StartTimer(
-                    0, OnReSubscribeTimerCallback, this);
+                0, OnReSubscribeTimerCallback, this);
         }
     }
 }
 
 void SubscribeClient::CancelResubscribe()
 {
-    InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(OnReSubscribeTimerCallback, this);
+    InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(
+        OnReSubscribeTimerCallback, this);
 }
 
 /**

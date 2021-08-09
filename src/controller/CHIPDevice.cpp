@@ -682,20 +682,46 @@ CHIP_ERROR Device::SendReadAttributeRequest(app::AttributePathParams aPath, Call
 
     ReturnErrorOnFailure(LoadSecureSessionParametersIfNeeded(loadedSecureSession));
 
+    // The application context is used to identify different requests from client applicaiton the type of it is intptr_t, here we
+    // use the seqNum.
+    ReturnErrorOnFailure(chip::app::InteractionModelEngine::GetInstance()->SendReadRequest(
+        GetDeviceId(), 0, &mSecureSession, nullptr /*event path params list*/, 0, &aPath, 1, 0 /* event number */,
+        seqNum /* application context */));
     if (onSuccessCallback != nullptr || onFailureCallback != nullptr)
     {
         AddResponseHandler(seqNum, onSuccessCallback, onFailureCallback, aTlvDataFilter);
     }
+
+    return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR Device::SendSubscribeAttributeRequest(app::AttributePathParams aPath, uint16_t mMinIntervalSeconds,
+                                                 uint16_t mMaxIntervalSeconds, Callback::Cancelable * onSuccessCallback,
+                                                 Callback::Cancelable * onFailureCallback)
+{
+    bool loadedSecureSession = false;
+    uint8_t seqNum           = GetNextSequenceNumber();
+    aPath.mNodeId            = GetDeviceId();
+
+    ReturnErrorOnFailure(LoadSecureSessionParametersIfNeeded(loadedSecureSession));
+
     // The application context is used to identify different requests from client applicaiton the type of it is intptr_t, here we
     // use the seqNum.
-    CHIP_ERROR err = chip::app::InteractionModelEngine::GetInstance()->SendReadRequest(
-        GetDeviceId(), 0, &mSecureSession, nullptr /*event path params list*/, 0, &aPath, 1, 0 /* event number */,
-        seqNum /* application context */);
-    if (err != CHIP_NO_ERROR)
+    app::SubscribeParams params{
+        .mNodeId                      = GetDeviceId(),
+        .mpSecureSession              = &mSecureSession,
+        .mpAttributePathParamsList    = &aPath,
+        .mAttributePathParamsListSize = 1,
+        .mMinIntervalSeconds          = mMinIntervalSeconds,
+        .mMaxIntervalSeconds          = mMaxIntervalSeconds,
+    };
+    ReturnErrorOnFailure(
+        chip::app::InteractionModelEngine::GetInstance()->SendSubscribeRequest(params, seqNum /* application context */));
+    if (onSuccessCallback != nullptr || onFailureCallback != nullptr)
     {
-        CancelResponseHandler(seqNum);
+        AddResponseHandler(seqNum, onSuccessCallback, onFailureCallback);
     }
-    return err;
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR Device::SendWriteAttributeRequest(app::WriteClientHandle aHandle, Callback::Cancelable * onSuccessCallback,
@@ -703,20 +729,16 @@ CHIP_ERROR Device::SendWriteAttributeRequest(app::WriteClientHandle aHandle, Cal
 {
     bool loadedSecureSession = false;
     uint8_t seqNum           = GetNextSequenceNumber();
-    CHIP_ERROR err           = CHIP_NO_ERROR;
 
     aHandle->SetAppIdentifier(seqNum);
     ReturnErrorOnFailure(LoadSecureSessionParametersIfNeeded(loadedSecureSession));
 
+    ReturnErrorOnFailure(aHandle.SendWriteRequest(GetDeviceId(), 0, &mSecureSession));
     if (onSuccessCallback != nullptr || onFailureCallback != nullptr)
     {
         AddResponseHandler(seqNum, onSuccessCallback, onFailureCallback);
     }
-    if ((err = aHandle.SendWriteRequest(GetDeviceId(), 0, &mSecureSession)) != CHIP_NO_ERROR)
-    {
-        CancelResponseHandler(seqNum);
-    }
-    return err;
+    return CHIP_NO_ERROR;
 }
 
 Device::~Device()

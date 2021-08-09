@@ -293,8 +293,9 @@ exit:
     return err;
 }
 
-CHIP_ERROR InteractionModelEngine::OnSubscribeRequest(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
-                                                 const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload)
+CHIP_ERROR InteractionModelEngine::OnSubscribeRequest(Messaging::ExchangeContext * apExchangeContext,
+                                                      const PacketHeader & aPacketHeader, const PayloadHeader & aPayloadHeader,
+                                                      System::PacketBufferHandle && aPayload)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
@@ -322,8 +323,9 @@ exit:
     return err;
 }
 
-CHIP_ERROR InteractionModelEngine::OnStatusReport(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
-                                                      const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload)
+CHIP_ERROR InteractionModelEngine::OnStatusReport(Messaging::ExchangeContext * apExchangeContext,
+                                                  const PacketHeader & aPacketHeader, const PayloadHeader & aPayloadHeader,
+                                                  System::PacketBufferHandle && aPayload)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
@@ -332,7 +334,7 @@ CHIP_ERROR InteractionModelEngine::OnStatusReport(Messaging::ExchangeContext * a
     {
         if (subscribeHandler.MatchExchangeContext(apExchangeContext))
         {
-            err               = subscribeHandler.OnStatusReport(apExchangeContext, std::move(aPayload));
+            err = subscribeHandler.OnStatusReport(apExchangeContext, std::move(aPayload));
             if (err != CHIP_NO_ERROR)
             {
                 subscribeHandler.Shutdown();
@@ -375,11 +377,10 @@ exit:
     return err;
 }
 
-CHIP_ERROR InteractionModelEngine::OnReportData(Messaging::ExchangeContext * apExchangeContext,
-                                                  const PacketHeader & aPacketHeader, const PayloadHeader & aPayloadHeader,
-                                                  System::PacketBufferHandle && aPayload)
+CHIP_ERROR InteractionModelEngine::OnReportData(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
+                                                const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload)
 {
-    CHIP_ERROR err = CHIP_NO_ERROR;
+    CHIP_ERROR err          = CHIP_NO_ERROR;
     uint64_t subscriptionId = 0;
     ChipLogDetail(DataManagement, "Receive Report Data");
     ReportData::Parser report;
@@ -391,11 +392,13 @@ CHIP_ERROR InteractionModelEngine::OnReportData(Messaging::ExchangeContext * apE
     err = report.GetSubscriptionId(&subscriptionId);
     SuccessOrExit(err);
 
-    for (auto & subscribeClient : mSubscribeClients) {
-        if (subscribeClient.IsSubscriptionIdle()) {
-            if (subscribeClient.IsValidSubscription(subscriptionId)) {
-                subscribeClient.OnMessageReceived(apExchangeContext, aPacketHeader, aPayloadHeader,
-                                                  std::move(aPayload));
+    for (auto & subscribeClient : mSubscribeClients)
+    {
+        if (subscribeClient.IsSubscriptionIdle())
+        {
+            if (subscribeClient.IsValidSubscription(subscriptionId))
+            {
+                subscribeClient.OnMessageReceived(apExchangeContext, aPacketHeader, aPayloadHeader, std::move(aPayload));
                 apExchangeContext = nullptr;
                 break;
             }
@@ -472,10 +475,10 @@ CHIP_ERROR InteractionModelEngine::SendReadRequest(NodeId aNodeId, FabricIndex a
     return err;
 }
 
-CHIP_ERROR InteractionModelEngine::SendSubscribeRequest(uint64_t aAppIdentifier)
+CHIP_ERROR InteractionModelEngine::SendSubscribeRequest(const SubscribeParams & aSubscribeParams, uint64_t aAppIdentifier)
 {
     SubscribeClient * client = nullptr;
-    CHIP_ERROR err      = CHIP_NO_ERROR;
+    CHIP_ERROR err           = CHIP_NO_ERROR;
     ReturnErrorOnFailure(NewSubscribeClient(&client, aAppIdentifier));
     err = client->SendSubscribeRequest();
     if (err != CHIP_NO_ERROR)

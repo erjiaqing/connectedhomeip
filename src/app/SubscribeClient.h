@@ -38,7 +38,8 @@ namespace app {
 class SubscribeClient : public ReadClient
 {
 public:
-    CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate, uint64_t aAppIdentifier) override;
+    CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate,
+                    uint64_t aAppIdentifier) override;
     /**
      *  Send a Subscribe Request.  There can be one Subscribe Request outstanding on a given SubscribeClient.
      *  If SendSubscribeRequest returns success, no more Subscribe Requests can be sent on this SubscribeClient
@@ -55,12 +56,11 @@ public:
     bool IsSubscription() const override { return true; };
     virtual ~SubscribeClient() = default;
 
-    bool IsValidSubscription(uint64_t & aSubscriptionId) override {
-        return aSubscriptionId == mSubscriptionId;
-    }
+    bool IsValidSubscription(uint64_t & aSubscriptionId) override { return aSubscriptionId == mSubscriptionId; }
 
     CHIP_ERROR OnMessageReceived(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
                                  const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload) override;
+
 private:
     /**
      * Internal shutdown method that we use when we know what's going on with
@@ -81,10 +81,10 @@ private:
 
     void CancelResubscribe();
 
-    bool mEnableResubscribe = false;
-    uint32_t mRetryCounter = 0;
+    bool mEnableResubscribe            = false;
+    uint32_t mRetryCounter             = 0;
     uint16_t mFinalSyncIntervalSeconds = 0;
-    uint64_t mSubscriptionId = 0;
+    uint64_t mSubscriptionId           = 0;
 };
 }; // namespace app
 }; // namespace chip

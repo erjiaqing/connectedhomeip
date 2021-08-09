@@ -44,10 +44,10 @@
 #include <app/InteractionModelDelegate.h>
 #include <app/ReadClient.h>
 #include <app/ReadHandler.h>
-#include <app/WriteClient.h>
-#include <app/WriteHandler.h>
 #include <app/SubscribeClient.h>
 #include <app/SubscribeHandler.h>
+#include <app/WriteClient.h>
+#include <app/WriteHandler.h>
 #include <app/reporting/Engine.h>
 #include <app/util/basic-types.h>
 
@@ -119,7 +119,15 @@ public:
                                AttributePathParams * apAttributePathParamsList, size_t aAttributePathParamsListSize,
                                EventNumber aEventNumber, uint64_t aAppIdentifier = 0);
 
-    CHIP_ERROR SendSubscribeRequest(uint64_t aAppIdentifier = 0);
+    /**
+     *  Creates a new subscribe client and send SubscribeRequest message to the node using the subscribe client. User should use
+     * this method since it takes care of the life cycle of SubscribeClient.
+     *
+     *  @retval #CHIP_ERROR_NO_MEMORY If there is no SubscribeClient available
+     *  @retval #CHIP_NO_ERROR On success.
+     */
+    CHIP_ERROR SendSubscribeRequest(const SubscribeParams & aSubscribeParams, uint64_t aAppIdentifier = 0);
+
     /**
      *  Retrieve a WriteClient that the SDK consumer can use to send a write.  If the call succeeds,
      *  see WriteClient documentation for lifetime handling.
@@ -176,12 +184,11 @@ private:
                               const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload);
 
     CHIP_ERROR OnSubscribeRequest(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
-                                                          const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload);
+                                  const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload);
     CHIP_ERROR OnStatusReport(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
-                                                      const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload);
-    CHIP_ERROR OnReportData(Messaging::ExchangeContext * apExchangeContext,
-                                                    const PacketHeader & aPacketHeader, const PayloadHeader & aPayloadHeader,
-                                                    System::PacketBufferHandle && aPayload);
+                              const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload);
+    CHIP_ERROR OnReportData(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
+                            const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload);
     /**
      *  Retrieve a ReadClient that the SDK consumer can use to send do a read.  If the call succeeds, the consumer
      *  is responsible for calling Shutdown() on the ReadClient once it's done using it.

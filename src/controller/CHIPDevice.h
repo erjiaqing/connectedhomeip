@@ -151,6 +151,10 @@ public:
     CHIP_ERROR SendReadAttributeRequest(app::AttributePathParams aPath, Callback::Cancelable * onSuccessCallback,
                                         Callback::Cancelable * onFailureCallback, app::TLVDataFilter aTlvDataFilter);
 
+    CHIP_ERROR SendSubscribeAttributeRequest(app::AttributePathParams aPath, uint16_t mMinIntervalSeconds,
+                                             uint16_t mMaxIntervalSeconds, Callback::Cancelable * onSuccessCallback,
+                                             Callback::Cancelable * onFailureCallback);
+
     CHIP_ERROR SendWriteAttributeRequest(app::WriteClientHandle aHandle, Callback::Cancelable * onSuccessCallback,
                                          Callback::Cancelable * onFailureCallback);
 

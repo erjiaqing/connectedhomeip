@@ -113,7 +113,28 @@ constexpr uint16_t kByteSpanSizeLengthInBytes = 2;
         return true;                                                                                                               \
     }
 
-#define GET_ATTRIBUTE_RESPONSE_CALLBACKS(name)                                                                                     \
+#define GET_ATTRIBUTE_RESPONSE_CALLBACKS(name, obj)                                                                                \
+    Callback::Cancelable * onSuccessCallback = nullptr;                                                                            \
+    Callback::Cancelable * onFailureCallback = nullptr;                                                                            \
+    NodeId sourceNodeId                      = obj->GetSourceNodeId();                                                             \
+    uint8_t seq                              = static_cast<uint8_t>(obj->GetAppIdentifier());                              \
+    /* #6559: Currently, we only have one commands for the IMInvokeCommands and to a device, so the seqNum is always set to 0. */  \
+    CHIP_ERROR err = gCallbacks.GetResponseCallback(sourceNodeId, seq, &onSuccessCallback, &onFailureCallback);                    \
+                                                                                                                                   \
+    if (CHIP_NO_ERROR != err)                                                                                                      \
+    {                                                                                                                              \
+        if (onSuccessCallback == nullptr)                                                                                          \
+        {                                                                                                                          \
+            ChipLogDetail(Zcl, "%s: Missing success callback", name);                                                              \
+        }                                                                                                                          \
+                                                                                                                                   \
+        if (onFailureCallback == nullptr)                                                                                          \
+        {                                                                                                                          \
+            ChipLogDetail(Zcl, "%s: Missing failure callback", name);                                                              \
+        }                                                                                                                          \
+                                                                                                                                   \
+        return true;                                                                                                               \
+    }
 
 
 #define GET_REPORT_CALLBACK(name)                                                                                                  \
@@ -411,6 +432,28 @@ bool IMDefaultResponseCallback(const app::Command * commandObj, EmberAfStatus st
     else
     {
         Callback::Callback<DefaultFailureCallback> * cb = Callback::Callback<DefaultFailureCallback>::FromCancelable(onFailureCallback);
+        cb->mCall(cb->mContext, static_cast<uint8_t>(status));
+    }
+
+    return true;
+}
+
+bool IMSubscribeResponseCallback(const chip::app::SubscribeClient * apSubscribeClient, EmberAfStatus status)
+{
+    ChipLogProgress(Zcl, "SubscribeResponse:");
+    ChipLogProgress(Zcl, "  ApplicationIdentifier: %" PRIx64, apSubscribeClient->GetAppIdentifier());
+    LogStatus(status);
+    GET_ATTRIBUTE_RESPONSE_CALLBACKS("emberAfSubscribeResponseCallback", apSubscribeClient);
+    if (status == EMBER_ZCL_STATUS_SUCCESS)
+    {
+        Callback::Callback<DefaultSuccessCallback> * cb =
+            Callback::Callback<DefaultSuccessCallback>::FromCancelable(onSuccessCallback);
+        cb->mCall(cb->mContext);
+    }
+    else
+    {
+        Callback::Callback<DefaultFailureCallback> * cb =
+            Callback::Callback<DefaultFailureCallback>::FromCancelable(onFailureCallback);
         cb->mCall(cb->mContext, static_cast<uint8_t>(status));
     }
 

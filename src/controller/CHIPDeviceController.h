@@ -200,6 +200,8 @@ public:
     CHIP_ERROR WriteResponseProtocolError(const app::WriteClient * apWriteClient, uint8_t aAttributeIndex) override;
 
     CHIP_ERROR WriteResponseError(const app::WriteClient * apWriteClient, CHIP_ERROR aError) override;
+
+    CHIP_ERROR SubscribeResponseProcessed(const app::SubscribeClient * apSubscribeClient) override;
 };
 
 /**

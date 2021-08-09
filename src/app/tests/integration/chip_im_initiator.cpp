@@ -265,7 +265,39 @@ CHIP_ERROR SendSubscribeRequest()
 
     printf("\nSend subscribe request message to Node: %" PRIu64 "\n", chip::kTestDeviceNodeId);
 
-    err = chip::app::InteractionModelEngine::GetInstance()->SendSubscribeRequest();
+    chip::app::SubscribeParams aSubscribeParams;
+
+    {
+        aSubscribeParams.mpEventPathParamsList                = new chip::app::EventPathParams[2];
+        aSubscribeParams.mpEventPathParamsList[0].mNodeId     = kTestNodeId;
+        aSubscribeParams.mpEventPathParamsList[0].mEndpointId = kTestEndpointId;
+        aSubscribeParams.mpEventPathParamsList[0].mClusterId  = kTestClusterId;
+        aSubscribeParams.mpEventPathParamsList[0].mEventId    = kTestChangeEvent1;
+
+        aSubscribeParams.mpEventPathParamsList[1].mNodeId     = kTestNodeId;
+        aSubscribeParams.mpEventPathParamsList[1].mEndpointId = kTestEndpointId;
+        aSubscribeParams.mpEventPathParamsList[1].mClusterId  = kTestClusterId;
+        aSubscribeParams.mpEventPathParamsList[1].mEventId    = kTestChangeEvent2;
+
+        aSubscribeParams.mEventPathParamsListSize = 2;
+
+        aSubscribeParams.mpAttributePathParamsList                = new chip::app::AttributePathParams[1];
+        aSubscribeParams.mpAttributePathParamsList[0].mNodeId     = chip::kTestDeviceNodeId;
+        aSubscribeParams.mpAttributePathParamsList[0].mEndpointId = kTestEndpointId;
+        aSubscribeParams.mpAttributePathParamsList[0].mClusterId  = kTestClusterId;
+        aSubscribeParams.mpAttributePathParamsList[0].mFieldId    = 1;
+        aSubscribeParams.mpAttributePathParamsList[0].mListIndex  = 0;
+        aSubscribeParams.mpAttributePathParamsList[0].mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+
+        aSubscribeParams.mAttributePathParamsListSize = 1;
+
+        aSubscribeParams.mNodeId             = chip::kTestDeviceNodeId;
+        aSubscribeParams.mMinIntervalSeconds = 2;
+        aSubscribeParams.mMaxIntervalSeconds = 5;
+        printf("\nSend subscribe request message to Node: %" PRIu64 "\n", chip::kTestDeviceNodeId);
+    }
+
+    err = chip::app::InteractionModelEngine::GetInstance()->SendSubscribeRequest(aSubscribeParams);
     SuccessOrExit(err);
 
     gSubCount++;

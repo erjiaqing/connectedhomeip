@@ -53,9 +53,7 @@ namespace {
   constexpr uint8_t kFrameControlGlobalCommand = 0x00;
 
   // Pick source endpoint as 1 for now
-  constexpr EndpointId kSourceEndpoint = 1;
-
-  const uint8_t kReportingDirectionReported = 0x00;
+  constexpr chip::EndpointId kSourceEndpoint = 1;
 }
 
 using namespace app::Clusters;
@@ -163,19 +161,13 @@ CHIP_ERROR {{asUpperCamelCase parent.name}}Cluster::WriteAttribute{{asUpperCamel
 {{#if isReportableAttribute}}
 CHIP_ERROR {{asUpperCamelCase parent.name}}Cluster::ConfigureAttribute{{asUpperCamelCase name}}(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint16_t minInterval, uint16_t maxInterval{{#if isAnalog}}, {{chipType}} change{{/if}})
 {
-    COMMAND_HEADER("Report{{asUpperCamelCase parent.name}}{{asUpperCamelCase name}}", {{asUpperCamelCase parent.name}}::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-       .Put8(seqNum)
-       .Put32(Globals::Commands::Ids::ConfigureReporting)
-       .Put8(kReportingDirectionReported)
-       .Put32({{#if isGlobalAttribute}}Globals{{else}}{{asUpperCamelCase parent.name}}{{/if}}::Attributes::Ids::{{asUpperCamelCase name}})
-       .Put8({{atomicTypeId}})
-       .Put16(minInterval)
-       .Put16(maxInterval);
-    {{#if isAnalog}}
-    buf.Put{{chipTypePutLength}}(static_cast<{{chipTypePutCastType}}>(change));
-    {{/if}}
-    COMMAND_FOOTER();
+    {{#if isAnalog}}IgnoreUnusedVariable(change);{{/if}}
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = {{asHex code 8}};
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR {{asUpperCamelCase parent.name}}Cluster::ReportAttribute{{asUpperCamelCase name}}(Callback::Cancelable * onReportCallback)
