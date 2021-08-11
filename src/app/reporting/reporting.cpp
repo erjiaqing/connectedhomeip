@@ -39,6 +39,8 @@
  *******************************************************************************
  ******************************************************************************/
 
+#include <app/ClusterInfo.h>
+#include <app/InteractionModelEngine.h>
 #include <app/common/gen/attribute-type.h>
 #include <app/common/gen/cluster-id.h>
 #include <app/common/gen/command-id.h>
@@ -66,16 +68,18 @@ using namespace chip;
 
 #define NULL_INDEX 0xFF
 
-static void conditionallySendReport(EndpointId endpoint, ClusterId clusterId);
+// static void conditionallySendReport(EndpointId endpoint, ClusterId clusterId);
 static void scheduleTick(void);
 static void removeConfiguration(uint8_t index);
 static void removeConfigurationAndScheduleTick(uint8_t index);
 static EmberAfStatus configureReceivedAttribute(const EmberAfClusterCommand * cmd, AttributeId attributeId, uint8_t mask,
                                                 uint16_t timeout);
 static void putReportableChangeInResp(const EmberAfPluginReportingEntry * entry, EmberAfAttributeType dataType);
+/*
 static void retrySendReport(const MessageSendDestination & destination, EmberApsFrame * apsFrame, uint16_t msgLen,
                             uint8_t * message, EmberStatus status);
 static uint32_t computeStringHash(uint8_t * data, uint8_t length);
+*/
 
 EmberEventControl emberAfPluginReportingTickEventControl;
 
@@ -98,7 +102,7 @@ EmberAfStatus emberAfPluginReportingConfiguredCallback(const EmberAfPluginReport
 {
     return EMBER_ZCL_STATUS_SUCCESS;
 }
-
+/*
 static void retrySendReport(const MessageSendDestination & destination, EmberApsFrame * apsFrame, uint16_t msgLen,
                             uint8_t * message, EmberStatus status)
 {
@@ -108,7 +112,7 @@ static void retrySendReport(const MessageSendDestination & destination, EmberAps
         emberAfSendUnicast(destination, apsFrame, msgLen, message);
     }
 }
-
+*/
 // Implementation based on public domain Fowler/Noll/Vo FNV-1a hash function:
 // http://isthe.com/chongo/tech/comp/fnv/
 // https://tools.ietf.org/html/draft-eastlake-fnv-14
@@ -118,6 +122,7 @@ static void retrySendReport(const MessageSendDestination & destination, EmberAps
 // reportable changes. The strings themselves are longer than the storage size.
 #define FNV1_OFFSET_BASIS (2166136261)
 #define FNV1_PRIME (16777619)
+/*
 static uint32_t computeStringHash(uint8_t * data, uint8_t length)
 {
     // FNV-1a, 32-bit hash
@@ -128,7 +133,7 @@ static uint32_t computeStringHash(uint8_t * data, uint8_t length)
         hash *= FNV1_PRIME; // Or, hash += (hash<<1) + (hash<<4) + (hash<<7) + (hash<<8) + (hash<<24);
     }
     return hash;
-}
+}*/
 
 #ifdef EZSP_HOST
 #if REPORT_TABLE_SIZE != 0
@@ -189,6 +194,9 @@ void emberAfPluginReportingInitCallback(void)
     scheduleTick();
 }
 
+void emberAfPluginReportingTickEventHandler(void) {}
+
+/*
 void emberAfPluginReportingTickEventHandler(void)
 {
     EmberApsFrame * apsFrame = NULL;
@@ -358,29 +366,8 @@ void emberAfPluginReportingTickEventHandler(void)
     }
     scheduleTick();
 }
-
-static void conditionallySendReport(EndpointId endpoint, ClusterId clusterId)
-{
-    EmberStatus status;
-    if (emberAfIsDeviceEnabled(endpoint) || clusterId == ZCL_IDENTIFY_CLUSTER_ID)
-    {
-        status = emberAfSendCommandUnicastToBindingsWithCallback(&retrySendReport);
-
-        // If the callback table is full, attempt to send the message with no
-        // callback.  Note that this could lead to a message failing to transmit
-        // with no notification to the user for any number of reasons (ex: hitting
-        // the message queue limit), but is better than not sending the message at
-        // all because the system hits its callback queue limit.
-        if (status == EMBER_TABLE_FULL)
-        {
-            emberAfSendCommandUnicastToBindings();
-        }
-
-#ifdef EMBER_AF_PLUGIN_REPORTING_ENABLE_GROUP_BOUND_REPORTS
-        emberAfSendCommandMulticastToBindings();
-#endif // EMBER_AF_PLUGIN_REPORTING_ENABLE_GROUP_BOUND_REPORTS
-    }
-}
+*/
+// Start of code for handling reporting command itself
 
 bool emberAfConfigureReportingCommandCallback(const EmberAfClusterCommand * cmd)
 {
@@ -697,48 +684,14 @@ EmberStatus emAfPluginReportingRemoveEntry(uint8_t index)
 void emberAfReportingAttributeChangeCallback(EndpointId endpoint, ClusterId clusterId, AttributeId attributeId, uint8_t mask,
                                              uint16_t manufacturerCode, EmberAfAttributeType type, uint8_t * data)
 {
-    uint8_t i;
-    for (i = 0; i < REPORT_TABLE_SIZE; i++)
-    {
-        EmberAfPluginReportingEntry entry;
-        emAfPluginReportingGetEntry(i, &entry);
-        if (entry.endpoint == EMBER_AF_PLUGIN_REPORTING_UNUSED_ENDPOINT_ID)
-        {
-            continue;
-        }
-        if (entry.direction == EMBER_ZCL_REPORTING_DIRECTION_REPORTED && entry.endpoint == endpoint &&
-            entry.clusterId == clusterId && entry.attributeId == attributeId && entry.mask == mask &&
-            entry.manufacturerCode == manufacturerCode)
-        {
-            // For CHAR and OCTET strings, the string value may be too long to fit into the
-            // lastReportValue field (EmberAfDifferenceType), so instead we save the string's
-            // hash, and detect changes in string value based on unequal hash.
-            uint32_t stringHash = 0;
-            uint8_t dataSize    = emberAfGetDataSize(type);
-            uint8_t * dataRef   = data;
-            if (type == ZCL_OCTET_STRING_ATTRIBUTE_TYPE || type == ZCL_CHAR_STRING_ATTRIBUTE_TYPE)
-            {
-                stringHash = computeStringHash(data + 1, emberAfStringLength(data));
-                dataRef    = (uint8_t *) &stringHash;
-                dataSize   = sizeof(stringHash);
-            }
-            // If we are reporting this particular attribute, we only care whether
-            // the new value meets the reportable change criteria.  If it does, we
-            // mark the entry as ready to report and reschedule the tick.  Whether
-            // the tick will be scheduled for immediate or delayed execution depends
-            // on the minimum reporting interval.  This is handled in the scheduler.
-            EmberAfDifferenceType difference =
-                emberAfGetDifference(dataRef, emAfPluginReportVolatileData[i].lastReportValue, dataSize);
-            uint8_t analogOrDiscrete = emberAfGetAttributeAnalogOrDiscreteType(type);
-            if ((analogOrDiscrete == EMBER_AF_DATA_TYPE_DISCRETE && difference != 0) ||
-                (analogOrDiscrete == EMBER_AF_DATA_TYPE_ANALOG && entry.data.reported.reportableChange <= difference))
-            {
-                emAfPluginReportVolatileData[i].reportableChange = true;
-                scheduleTick();
-            }
-            break;
-        }
-    }
+    chip::app::ClusterInfo path;
+    path.mClusterId  = clusterId;
+    path.mFieldId    = attributeId;
+    path.mEndpointId = endpoint;
+    path.mFlags.Set(chip::app::ClusterInfo::Flags::kFieldIdValid);
+
+    chip::app::InteractionModelEngine::GetInstance()->GetReportingEngine().SetDirty(path);
+    chip::app::InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun();
 }
 
 bool emAfPluginReportingDoEntriesMatch(const EmberAfPluginReportingEntry * const entry1,
@@ -809,7 +762,7 @@ static void scheduleTick(void)
             uint32_t minIntervalMs = (entry.data.reported.minInterval * MILLISECOND_TICKS_PER_SECOND);
             uint32_t maxIntervalMs = (entry.data.reported.maxInterval * MILLISECOND_TICKS_PER_SECOND);
             uint32_t elapsedMs     = elapsedTimeInt32u(emAfPluginReportVolatileData[i].lastReportTimeMs,
-                                                   chip::System::Clock::GetMonotonicMilliseconds());
+                                                       chip::System::Clock::GetMonotonicMilliseconds());
             uint32_t remainingMs   = MAX_INT32U_VALUE;
             if (emAfPluginReportVolatileData[i].reportableChange)
             {

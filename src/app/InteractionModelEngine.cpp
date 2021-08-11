@@ -475,7 +475,8 @@ CHIP_ERROR InteractionModelEngine::SendReadRequest(NodeId aNodeId, FabricIndex a
     return err;
 }
 
-CHIP_ERROR InteractionModelEngine::SendSubscribeRequest(const SubscribeParams & aSubscribeParams, uint64_t aAppIdentifier)
+CHIP_ERROR InteractionModelEngine::SendSubscribeRequest(const SubscribePrepareParams & aSubscribePrepareParams,
+                                                        uint64_t aAppIdentifier)
 {
     SubscribeClient * client = nullptr;
     CHIP_ERROR err           = CHIP_NO_ERROR;

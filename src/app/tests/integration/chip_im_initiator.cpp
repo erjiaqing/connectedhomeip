@@ -94,7 +94,6 @@ enum class TestCommandResult : uint8_t
 
 TestCommandResult gLastCommandResult = TestCommandResult::kUndefined;
 
-
 void CommandRequestTimerHandler(chip::System::Layer * systemLayer, void * appState);
 void BadCommandRequestTimerHandler(chip::System::Layer * systemLayer, void * appState);
 void ReadRequestTimerHandler(chip::System::Layer * systemLayer, void * appState);
@@ -260,44 +259,44 @@ exit:
 
 CHIP_ERROR SendSubscribeRequest()
 {
-    CHIP_ERROR err = CHIP_NO_ERROR;
+    CHIP_ERROR err   = CHIP_NO_ERROR;
     gLastMessageTime = chip::System::Clock::GetMonotonicMilliseconds();
 
     printf("\nSend subscribe request message to Node: %" PRIu64 "\n", chip::kTestDeviceNodeId);
 
-    chip::app::SubscribeParams aSubscribeParams;
+    chip::app::SubscribePrepareParams aSubscribePrepareParams;
 
     {
-        aSubscribeParams.mpEventPathParamsList                = new chip::app::EventPathParams[2];
-        aSubscribeParams.mpEventPathParamsList[0].mNodeId     = kTestNodeId;
-        aSubscribeParams.mpEventPathParamsList[0].mEndpointId = kTestEndpointId;
-        aSubscribeParams.mpEventPathParamsList[0].mClusterId  = kTestClusterId;
-        aSubscribeParams.mpEventPathParamsList[0].mEventId    = kTestChangeEvent1;
+        aSubscribePrepareParams.mpEventPathParamsList                = new chip::app::EventPathParams[2];
+        aSubscribePrepareParams.mpEventPathParamsList[0].mNodeId     = kTestNodeId;
+        aSubscribePrepareParams.mpEventPathParamsList[0].mEndpointId = kTestEndpointId;
+        aSubscribePrepareParams.mpEventPathParamsList[0].mClusterId  = kTestClusterId;
+        aSubscribePrepareParams.mpEventPathParamsList[0].mEventId    = kTestChangeEvent1;
 
-        aSubscribeParams.mpEventPathParamsList[1].mNodeId     = kTestNodeId;
-        aSubscribeParams.mpEventPathParamsList[1].mEndpointId = kTestEndpointId;
-        aSubscribeParams.mpEventPathParamsList[1].mClusterId  = kTestClusterId;
-        aSubscribeParams.mpEventPathParamsList[1].mEventId    = kTestChangeEvent2;
+        aSubscribePrepareParams.mpEventPathParamsList[1].mNodeId     = kTestNodeId;
+        aSubscribePrepareParams.mpEventPathParamsList[1].mEndpointId = kTestEndpointId;
+        aSubscribePrepareParams.mpEventPathParamsList[1].mClusterId  = kTestClusterId;
+        aSubscribePrepareParams.mpEventPathParamsList[1].mEventId    = kTestChangeEvent2;
 
-        aSubscribeParams.mEventPathParamsListSize = 2;
+        aSubscribePrepareParams.mEventPathParamsListSize = 2;
 
-        aSubscribeParams.mpAttributePathParamsList                = new chip::app::AttributePathParams[1];
-        aSubscribeParams.mpAttributePathParamsList[0].mNodeId     = chip::kTestDeviceNodeId;
-        aSubscribeParams.mpAttributePathParamsList[0].mEndpointId = kTestEndpointId;
-        aSubscribeParams.mpAttributePathParamsList[0].mClusterId  = kTestClusterId;
-        aSubscribeParams.mpAttributePathParamsList[0].mFieldId    = 1;
-        aSubscribeParams.mpAttributePathParamsList[0].mListIndex  = 0;
-        aSubscribeParams.mpAttributePathParamsList[0].mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+        aSubscribePrepareParams.mpAttributePathParamsList                = new chip::app::AttributePathParams[1];
+        aSubscribePrepareParams.mpAttributePathParamsList[0].mNodeId     = chip::kTestDeviceNodeId;
+        aSubscribePrepareParams.mpAttributePathParamsList[0].mEndpointId = kTestEndpointId;
+        aSubscribePrepareParams.mpAttributePathParamsList[0].mClusterId  = kTestClusterId;
+        aSubscribePrepareParams.mpAttributePathParamsList[0].mFieldId    = 1;
+        aSubscribePrepareParams.mpAttributePathParamsList[0].mListIndex  = 0;
+        aSubscribePrepareParams.mpAttributePathParamsList[0].mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
 
-        aSubscribeParams.mAttributePathParamsListSize = 1;
+        aSubscribePrepareParams.mAttributePathParamsListSize = 1;
 
-        aSubscribeParams.mNodeId             = chip::kTestDeviceNodeId;
-        aSubscribeParams.mMinIntervalSeconds = 2;
-        aSubscribeParams.mMaxIntervalSeconds = 5;
+        aSubscribePrepareParams.mNodeId             = chip::kTestDeviceNodeId;
+        aSubscribePrepareParams.mMinIntervalSeconds = 2;
+        aSubscribePrepareParams.mMaxIntervalSeconds = 5;
         printf("\nSend subscribe request message to Node: %" PRIu64 "\n", chip::kTestDeviceNodeId);
     }
 
-    err = chip::app::InteractionModelEngine::GetInstance()->SendSubscribeRequest(aSubscribeParams);
+    err = chip::app::InteractionModelEngine::GetInstance()->SendSubscribeRequest(aSubscribePrepareParams);
     SuccessOrExit(err);
 
     gSubCount++;
@@ -363,9 +362,9 @@ void HandleSubscribeReportComplete()
 {
     uint32_t respTime    = chip::System::Clock::GetMonotonicMilliseconds();
     uint32_t transitTime = respTime - gLastMessageTime;
-    gSubRespCount ++;
+    gSubRespCount++;
     printf("Subscribe Complete: %" PRIu64 "/%" PRIu64 "(%.2f%%) time=%.3fms\n", gSubRespCount, gSubCount,
-            static_cast<double>(gSubRespCount) * 100 / gSubCount, static_cast<double>(transitTime) / 1000);
+           static_cast<double>(gSubRespCount) * 100 / gSubCount, static_cast<double>(transitTime) / 1000);
 }
 
 void CommandRequestTimerHandler(chip::System::Layer * systemLayer, void * appState)
@@ -607,7 +606,7 @@ public:
 
     CHIP_ERROR SubscriptionPrepareNeeded(chip::app::SubscribePrepareParams & aSubscribePrepareParams) override
     {
-        aSubscribePrepareParams.mpEventPathParamsList = new chip::app::EventPathParams[2];
+        aSubscribePrepareParams.mpEventPathParamsList                = new chip::app::EventPathParams[2];
         aSubscribePrepareParams.mpEventPathParamsList[0].mNodeId     = kTestNodeId;
         aSubscribePrepareParams.mpEventPathParamsList[0].mEndpointId = kTestEndpointId;
         aSubscribePrepareParams.mpEventPathParamsList[0].mClusterId  = kTestClusterId;
@@ -620,7 +619,7 @@ public:
 
         aSubscribePrepareParams.mEventPathParamsListSize = 2;
 
-        aSubscribePrepareParams.mpAttributePathParamsList = new chip::app::AttributePathParams[1];
+        aSubscribePrepareParams.mpAttributePathParamsList                = new chip::app::AttributePathParams[1];
         aSubscribePrepareParams.mpAttributePathParamsList[0].mNodeId     = chip::kTestDeviceNodeId;
         aSubscribePrepareParams.mpAttributePathParamsList[0].mEndpointId = kTestEndpointId;
         aSubscribePrepareParams.mpAttributePathParamsList[0].mClusterId  = kTestClusterId;
@@ -630,7 +629,7 @@ public:
 
         aSubscribePrepareParams.mAttributePathParamsListSize = 1;
 
-        aSubscribePrepareParams.mNodeId = chip::kTestDeviceNodeId;
+        aSubscribePrepareParams.mNodeId             = chip::kTestDeviceNodeId;
         aSubscribePrepareParams.mMinIntervalSeconds = 2;
         aSubscribePrepareParams.mMaxIntervalSeconds = 5;
         printf("\nSend subscribe request message to Node: %" PRIu64 "\n", chip::kTestDeviceNodeId);

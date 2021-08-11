@@ -75,7 +75,7 @@ CHIP_ERROR SubscribeHandler::OnStatusReport(Messaging::ExchangeContext * apExcha
         case HandlerState::Initialized:
         case HandlerState::Uninitialized:
         default:
-            err = CHIP_ERROR_INCORRECT_TATE;
+            err = CHIP_ERROR_INCORRECT_STATE;
             break;
         }
     }
@@ -97,6 +97,8 @@ CHIP_ERROR SubscribeHandler::OnSubscribeRequest(Messaging::ExchangeContext * apE
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     System::PacketBufferHandle response;
+
+    ChipLogDetail(DataManagement, "%s: apExchangeContext=%p", __FUNCTION__, apExchangeContext);
 
     mpExchangeCtx = apExchangeContext;
     err           = ProcessSubscribeRequest(std::move(aPayload));

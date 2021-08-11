@@ -40,8 +40,8 @@ CHIP_ERROR ReadHandler::Init(InteractionModelDelegate * apDelegate)
     mpAttributeClusterInfoList = nullptr;
     mpEventClusterInfoList     = nullptr;
     mCurrentPriority           = PriorityLevel::Invalid;
-    mInitialReport     = true;
-    mpDelegate = apDelegate;
+    mInitialReport             = true;
+    mpDelegate                 = apDelegate;
     MoveToState(HandlerState::Initialized);
 
 exit:
@@ -58,14 +58,15 @@ void ReadHandler::Shutdown()
     mpAttributeClusterInfoList = nullptr;
     mpEventClusterInfoList     = nullptr;
     mCurrentPriority           = PriorityLevel::Invalid;
-    mInitialReport     = false;
-    mpDelegate = nullptr;
+    mInitialReport             = false;
+    mpDelegate                 = nullptr;
 }
 
 CHIP_ERROR ReadHandler::OnReadRequest(Messaging::ExchangeContext * apExchangeContext, System::PacketBufferHandle && aPayload)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     System::PacketBufferHandle response;
+    ChipLogDetail(DataManagement, "%s: apExchangeContext=%p", __FUNCTION__, apExchangeContext);
 
     mpExchangeCtx = apExchangeContext;
     err           = ProcessReadRequest(std::move(aPayload));

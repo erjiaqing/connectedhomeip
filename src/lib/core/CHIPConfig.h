@@ -2469,6 +2469,15 @@ extern const char CHIP_NON_PRODUCTION_MARKER[];
 #endif
 
 /**
+ * @def CHIP_IM_SERVER_MAX_NUM_DIRTY_PATH
+ *
+ * @brief Defines the maximum number of path objects, limits the number of attributes being read or subscribed at the same time.
+ */
+#ifndef CHIP_IM_SERVER_MAX_NUM_DIRTY_PATHS
+#define CHIP_IM_SERVER_MAX_NUM_DIRTY_PATHS 8
+#endif
+
+/**
  * @def CHIP_IM_MAX_NUM_WRITE_HANDLER
  *
  * @brief Defines the maximum number of WriteHandler, limits the number of active write transactions on server.

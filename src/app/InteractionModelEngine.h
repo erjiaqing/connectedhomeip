@@ -46,6 +46,7 @@
 #include <app/ReadHandler.h>
 #include <app/SubscribeClient.h>
 #include <app/SubscribeHandler.h>
+#include <app/SubscribePrepareParams.h>
 #include <app/WriteClient.h>
 #include <app/WriteHandler.h>
 #include <app/reporting/Engine.h>
@@ -126,7 +127,7 @@ public:
      *  @retval #CHIP_ERROR_NO_MEMORY If there is no SubscribeClient available
      *  @retval #CHIP_NO_ERROR On success.
      */
-    CHIP_ERROR SendSubscribeRequest(const SubscribeParams & aSubscribeParams, uint64_t aAppIdentifier = 0);
+    CHIP_ERROR SendSubscribeRequest(const SubscribePrepareParams & aSubscribePrepareParams, uint64_t aAppIdentifier = 0);
 
     /**
      *  Retrieve a WriteClient that the SDK consumer can use to send a write.  If the call succeeds,

@@ -52,6 +52,7 @@ void SubscribeClient::ShutdownInternal()
     EnableResubscribe(false);
     CancelLivenessCheckTimer();
     ReadClient::ShutdownInternal();
+    abort();
 }
 
 CHIP_ERROR SubscribeClient::SendSubscribeRequest()
@@ -276,10 +277,11 @@ CHIP_ERROR SubscribeClient::RefreshLivenessCheckTimer()
     CancelLivenessCheckTimer();
     ChipLogProgress(DataManagement, "SubscribeClient::RefreshLivenessCheckTime timer %d", mFinalSyncIntervalSeconds);
     err = InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->StartTimer(
-        mFinalSyncIntervalSeconds, OnLivenessTimeoutCallback, this);
+        mFinalSyncIntervalSeconds * 1000000, OnLivenessTimeoutCallback, this);
 
     if (err != CHIP_NO_ERROR)
     {
+        ChipLogError(DataManagement, "Failed to refresh liveness check timer");
         ShutdownInternal();
     }
     return err;

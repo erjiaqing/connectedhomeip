@@ -707,7 +707,7 @@ CHIP_ERROR Device::SendSubscribeAttributeRequest(app::AttributePathParams aPath,
 
     // The application context is used to identify different requests from client applicaiton the type of it is intptr_t, here we
     // use the seqNum.
-    app::SubscribeParams params{
+    app::SubscribePrepareParams params{
         .mNodeId                      = GetDeviceId(),
         .mpSecureSession              = &mSecureSession,
         .mpAttributePathParamsList    = &aPath,
