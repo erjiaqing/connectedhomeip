@@ -231,6 +231,15 @@ public:
      */
     virtual CHIP_ERROR ApplyResubscribePolicy(uint32_t aRetryCounter, uint16_t & aRetryTimerSec)
     {
+        aRetryTimerSec = 1000;
+        return CHIP_NO_ERROR;
+    }
+
+    /**
+     * SubscriptionEstablished
+     */
+    virtual CHIP_ERROR SubscriptionEstablished()
+    {
         return CHIP_NO_ERROR;
     }
 

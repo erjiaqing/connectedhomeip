@@ -33,7 +33,7 @@
 namespace chip {
 namespace app {
 CHIP_ERROR SubscribeClient::Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate,
-                                 intptr_t aAppIdentifier)
+                                 uint64_t aAppIdentifier)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     err = ReadClient::Init(apExchangeMgr, apDelegate, aAppIdentifier);
@@ -138,11 +138,10 @@ CHIP_ERROR SubscribeClient::OnMessageReceived(Messaging::ExchangeContext * apExc
                                          const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
-
-    VerifyOrExit(apExchangeContext == mpExchangeCtx, err = CHIP_ERROR_INCORRECT_STATE);
     VerifyOrExit(mpDelegate != nullptr, err = CHIP_ERROR_INCORRECT_STATE);
     if (aPayloadHeader.HasMessageType(Protocols::InteractionModel::MsgType::SubscribeResponse))
     {
+        VerifyOrExit(apExchangeContext == mpExchangeCtx, err = CHIP_ERROR_INCORRECT_STATE);
         err = ProcessSubscribeResponse(std::move(aPayload));
         if (err != CHIP_NO_ERROR)
         {
@@ -270,6 +269,7 @@ CHIP_ERROR SubscribeClient::RefreshLivenessCheckTimer()
 {
     CHIP_ERROR err                   = CHIP_NO_ERROR;
     CancelLivenessCheckTimer();
+    ChipLogProgress(DataManagement, "SubscribeClient::RefreshLivenessCheckTime timer %d", mFinalSyncIntervalSeconds);
     err = InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->StartTimer(
                 mFinalSyncIntervalSeconds, OnLivenessTimeoutCallback, this);
 
@@ -285,7 +285,7 @@ void SubscribeClient::CancelLivenessCheckTimer()
    InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(OnLivenessTimeoutCallback, this);
 }
 
-void SubscribeClient::OnLivenessTimeoutCallback(System::Layer * apSystemLayer, void * apAppState, CHIP_ERROR aError)
+void SubscribeClient::OnLivenessTimeoutCallback(System::Layer * apSystemLayer, void * apAppState)
 {
     CHIP_ERROR err                   = CHIP_NO_ERROR;
     uint16_t retryTimeSec = 0;
@@ -298,7 +298,7 @@ void SubscribeClient::OnLivenessTimeoutCallback(System::Layer * apSystemLayer, v
     }
 }
 
-void SubscribeClient::OnReSubscribeTimerCallback(System::Layer * apSystemLayer, void * apAppState, CHIP_ERROR aError)
+void SubscribeClient::OnReSubscribeTimerCallback(System::Layer * apSystemLayer, void * apAppState)
 {
     SubscribeClient * const client = reinterpret_cast<SubscribeClient *>(apAppState);
     if (client != nullptr && client->mEnableResubscribe && (client->mState != ClientState::Uninitialized))

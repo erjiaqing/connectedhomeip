@@ -34,7 +34,7 @@ struct ClusterInfo
 
     bool IsAttributePathIncluded(const ClusterInfo & other) const
     {
-        if (other.mNodeId != mNodeId || other.mEndpointId != mEndpointId || other.mClusterId != mClusterId)
+        if (other.mEndpointId != mEndpointId || other.mClusterId != mClusterId)
         {
             return false;
         }

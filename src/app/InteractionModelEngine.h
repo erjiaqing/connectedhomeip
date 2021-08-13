@@ -119,7 +119,7 @@ public:
                                AttributePathParams * apAttributePathParamsList, size_t aAttributePathParamsListSize,
                                EventNumber aEventNumber, uint64_t aAppIdentifier = 0);
 
-    CHIP_ERROR SendSubscribeRequest(intptr_t aAppIdentifier = 0);
+    CHIP_ERROR SendSubscribeRequest(uint64_t aAppIdentifier = 0);
     /**
      *  Retrieve a WriteClient that the SDK consumer can use to send a write.  If the call succeeds,
      *  see WriteClient documentation for lifetime handling.
@@ -179,6 +179,9 @@ private:
                                                           const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload);
     CHIP_ERROR OnStatusReport(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
                                                       const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload);
+    CHIP_ERROR OnReportData(Messaging::ExchangeContext * apExchangeContext,
+                                                    const PacketHeader & aPacketHeader, const PayloadHeader & aPayloadHeader,
+                                                    System::PacketBufferHandle && aPayload);
     /**
      *  Retrieve a ReadClient that the SDK consumer can use to send do a read.  If the call succeeds, the consumer
      *  is responsible for calling Shutdown() on the ReadClient once it's done using it.
@@ -190,7 +193,7 @@ private:
      */
     CHIP_ERROR NewReadClient(ReadClient ** const apReadClient, uint64_t aAppIdentifier);
 
-    CHIP_ERROR NewSubscribeClient(SubscribeClient ** const apSubscribeClient, intptr_t aAppIdentifier);
+    CHIP_ERROR NewSubscribeClient(SubscribeClient ** const apSubscribeClient, uint64_t aAppIdentifier);
 
     Messaging::ExchangeManager * mpExchangeMgr = nullptr;
     InteractionModelDelegate * mpDelegate      = nullptr;

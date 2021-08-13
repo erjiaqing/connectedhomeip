@@ -82,6 +82,8 @@ uint64_t gSubCount = 0;
 // Count of the number of SubscribeResponses received.
 uint64_t gSubRespCount = 0;
 
+uint64_t gSubReportCount = 0;
+
 // Whether the last command successed.
 enum class TestCommandResult : uint8_t
 {
@@ -325,13 +327,11 @@ void HandleWriteComplete()
            static_cast<double>(gWriteRespCount) * 100 / gWriteCount, static_cast<double>(transitTime) / 1000);
 }
 
-void HandleSubscribeComplete()
+void HandleSubscribeReportComplete()
 {
     uint32_t respTime    = chip::System::Clock::GetMonotonicMilliseconds();
     uint32_t transitTime = respTime - gLastMessageTime;
-
-    gSubRespCount++;
-
+    gSubRespCount ++;
     printf("Subscribe Complete: %" PRIu64 "/%" PRIu64 "(%.2f%%) time=%.3fms\n", gSubRespCount, gSubCount,
             static_cast<double>(gSubRespCount) * 100 / gSubCount, static_cast<double>(transitTime) / 1000);
 }
@@ -467,12 +467,12 @@ void SubscribeRequestTimerHandler(chip::System::Layer * systemLayer, void * appS
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
-    if (gWriteRespCount != gWriteCount)
+    if (gSubRespCount != gSubCount)
     {
         printf("No response received\n");
 
-        // Set gWriteRespCount to gWriteCount to start next iteration if there is any.
-        gWriteRespCount = gWriteCount;
+        // Set gSubRespCount to gSubCount to start next iteration if there is any.
+        gSubRespCount = gSubCount;
     }
 
     if (gSubRespCount < kMaxSubMessageCount)
@@ -486,6 +486,7 @@ void SubscribeRequestTimerHandler(chip::System::Layer * systemLayer, void * appS
     else
     {
         // Complete all tests.
+
         chip::DeviceLayer::PlatformMgr().StopEventLoopTask();
     }
 
@@ -513,8 +514,12 @@ public:
     {
         if (apReadClient->IsSubscription())
         {
-            HandleSubscribeComplete();
-            apReadClient->Shutdown();
+            gSubReportCount++;
+            if (gSubReportCount == 2)
+            {
+                HandleSubscribeReportComplete();
+                apReadClient->Shutdown();
+            }
         }
         else
         {

@@ -120,6 +120,7 @@ protected:
      *
      */
     bool IsFree() const { return mState == ClientState::Uninitialized; };
+    bool IsSubscriptionIdle() const { return mState == ClientState::SubscriptionIdle; };
 
     CHIP_ERROR GenerateEventPathList(EventPathList::Builder & aEventPathListBuilder, EventPathParams * apEventPathParamsList,
                                      size_t aEventPathParamsListSize);

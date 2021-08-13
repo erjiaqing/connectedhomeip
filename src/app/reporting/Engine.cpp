@@ -37,7 +37,7 @@ CHIP_ERROR Engine::Init()
     mMoreChunkedMessages = false;
     mNumReportsInFlight  = 0;
     mCurReadHandlerIdx   = 0;
-    for (uint32_t index = 0; index < IM_SERVER_MAX_NUM_PATH_GROUPS - 1; index++)
+    for (uint32_t index = 0; index < CHIP_IM_SERVER_MAX_NUM_PATH_GROUPS - 1; index++)
     {
         mDirtyPaths[index].mpNext = &mDirtyPaths[index + 1];
     }
@@ -128,7 +128,7 @@ CHIP_ERROR Engine::BuildSingleReportDataAttributeDataList(ReportData::Builder & 
         if (clusterInfo->IsDirty())
         {
             AttributeDataElement::Builder attributeDataElementBuilder = attributeDataList.CreateAttributeDataElementBuilder();
-            if (apReadHandler->GetSyncAllInterestedData())
+            if (apReadHandler->IsInitialReport())
             {
                 // Retrieve data for this cluster instance and clear its dirty flag.
                 err = RetrieveClusterData(attributeDataElementBuilder, *clusterInfo);
@@ -181,7 +181,6 @@ CHIP_ERROR Engine::BuildSingleReportDataAttributeDataList(ReportData::Builder & 
     }
     attributeDataList.EndOfAttributeDataList();
     err = attributeDataList.GetError();
-    apReadHandler->ClearSyncAllInterestedData();
 
 exit:
     if (attributeClean || err != CHIP_NO_ERROR)
@@ -420,7 +419,7 @@ void Engine::Run()
         readHandler        = imEngine->mReadHandlers + mCurReadHandlerIdx;
     }
 
-    while ((mNumReportsInFlight < CHIP_MAX_REPORTS_IN_FLIGHT) && (numSubscribeHandled < CHIP_MAX_NUM_SUBSCRIBE_HANDLER))
+    while ((mNumReportsInFlight < CHIP_IM_MAX_REPORTS_IN_FLIGHT) && (numSubscribeHandled < CHIP_IM_MAX_NUM_SUBSCRIBE_HANDLER))
     {
         ChipLogDetail(DataManagement, "<RE> ReportsInF DEBUG");
         if (subscribeHandler->IsReportable())
@@ -430,7 +429,7 @@ void Engine::Run()
             return;
         }
         numSubscribeHandled++;
-        numSubscribeHandled = (mCurSubscribeHandlerIdx + 1) % CHIP_MAX_NUM_SUBSCRIBE_HANDLER;
+        numSubscribeHandled = (mCurSubscribeHandlerIdx + 1) % CHIP_IM_MAX_NUM_SUBSCRIBE_HANDLER;
         subscribeHandler        = imEngine->mSubscribeHandlers + mCurSubscribeHandlerIdx;
     }
 }
@@ -441,7 +440,7 @@ CHIP_ERROR Engine::SetDirty(ClusterInfo & aClusterInfo)
 #if !CHIP_SYSTEM_CONFIG_NO_LOCKING
     ScopedLock lock(*this);
 #endif // !CHIP_SYSTEM_CONFIG_NO_LOCKING
-    for (int i = 0; i < CHIP_MAX_NUM_SUBSCRIBE_HANDLER; ++i)
+    for (int i = 0; i < CHIP_IM_MAX_NUM_SUBSCRIBE_HANDLER; ++i)
     {
         SubscribeHandler * subscribeHandler = &imEngine->mSubscribeHandlers[i];
 

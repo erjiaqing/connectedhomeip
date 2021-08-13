@@ -161,12 +161,32 @@ void InitializeEventLogging(chip::Messaging::ExchangeManager * apMgr)
     chip::app::EventManagement::CreateEventManagement(apMgr, sizeof(logStorageResources) / sizeof(logStorageResources[0]),
                                                       gCircularEventBuffer, logStorageResources);
 }
+
+void MutateClusterHandler(chip::System::Layer * systemLayer, void * appState)
+{
+    chip::app::ClusterInfo dirtyPath;
+    dirtyPath.mClusterId = kTestClusterId;
+    dirtyPath.mEndpointId = kTestEndpointId;
+    dirtyPath.mFieldId = 1;
+    dirtyPath.mFlags.Set(chip::app::ClusterInfo::Flags::kFieldIdValid);
+
+    chip::app::InteractionModelEngine::GetInstance()->GetReportingEngine().SetDirty(dirtyPath);
+    chip::app::InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun();
+}
+
+class MockInteractionModelApp : public chip::app::InteractionModelDelegate {
+public:
+    virtual CHIP_ERROR SubscriptionEstablished() {
+        chip::DeviceLayer::SystemLayer.StartTimer(1000, MutateClusterHandler, NULL);
+        return CHIP_NO_ERROR;
+    }
+};
 } // namespace
 
 int main(int argc, char * argv[])
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
-    chip::app::InteractionModelDelegate mockDelegate;
+    MockInteractionModelApp mockDelegate;
     chip::Optional<chip::Transport::PeerAddress> peer(chip::Transport::Type::kUndefined);
     const chip::FabricIndex gFabricIndex = 0;
     chip::Transport::FabricTable fabrics;

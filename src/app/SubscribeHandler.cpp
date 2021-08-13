@@ -35,9 +35,10 @@
 
 namespace chip {
 namespace app {
-CHIP_ERROR SubscribeHandler::Init(InteractionModelDelegate * apDelegate)
+CHIP_ERROR SubscribeHandler::Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate)
 {
     VerifyOrReturnError(apDelegate != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
+    mpExchangeMgr = apExchangeMgr,
     mSubscriptionId = 0;
     mFinalSyncIntervalSeconds = 0;
     return ReadHandler::Init(apDelegate);
@@ -63,6 +64,7 @@ CHIP_ERROR SubscribeHandler::OnStatusReport(Messaging::ExchangeContext * apExcha
         switch (mState)
         {
             case HandlerState::Subscribing:
+                mpDelegate->SubscriptionEstablished();
                 MoveToState(HandlerState::Reportable);
                 InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun();
                 break;
@@ -85,7 +87,6 @@ exit:
     if (err != CHIP_NO_ERROR)
     {
         Shutdown();
-
     }
     return err;
 }
@@ -206,7 +207,7 @@ exit:
     return err;
 }
 
-void SubscribeHandler::OnSubscribeTimerCallback(System::Layer * apSystemLayer, void * apAppState, CHIP_ERROR aError)
+void SubscribeHandler::OnSubscribeTimerCallback(System::Layer * apSystemLayer, void * apAppState)
 {
     InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun();
 }
@@ -230,6 +231,30 @@ CHIP_ERROR SubscribeHandler::RefreshSubscribeSyncTimer(void)
         ReturnLogErrorOnFailure(err);
     }
     return err;
+}
+
+CHIP_ERROR SubscribeHandler::SendReportData(System::PacketBufferHandle && aPayload)
+{
+    if (IsReportable() && !IsInitialReport())
+    {
+            mpExchangeCtx = mpExchangeMgr->NewContext(mSecureSession, this);
+            ChipLogDetail(DataManagement, "SendReportData!! debug initial report!!!!!.");
+    }
+    mSecureSession = mpExchangeCtx->GetSecureSession();
+    return ReadHandler::SendReportData(std::move(aPayload));
+}
+
+CHIP_ERROR SubscribeHandler::OnMessageReceived(Messaging::ExchangeContext * apExchangeContext,
+                                                     const PacketHeader & aPacketHeader, const PayloadHeader & aPayloadHeader,
+                                                     System::PacketBufferHandle && aPayload)
+{
+    // TODO: process status report for chunking report handling in SubscribeHandler::OnMessageReceived
+    return CHIP_NO_ERROR;
+}
+
+void SubscribeHandler::OnResponseTimeout(Messaging::ExchangeContext * apExchangeContext)
+{
+    Shutdown();
 }
 } // namespace app
 } // namespace chip

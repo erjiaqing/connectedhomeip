@@ -35,10 +35,10 @@ namespace app {
  *         for the relevant data, send a subscribe response, and further maintain the subscription.
  *
  */
-class SubscribeHandler : public ReadHandler
+class SubscribeHandler : public ReadHandler, public Messaging::ExchangeDelegate
 {
 public:
-    CHIP_ERROR Init(InteractionModelDelegate * apDelegate) override;
+    CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate);
     void Shutdown() override;
     CHIP_ERROR GetSubscriptionId(uint64_t & aSubscriptionId) override
     {
@@ -50,13 +50,18 @@ public:
     bool IsSubscription() override { return true; };
 
 private:
+    CHIP_ERROR SendReportData(System::PacketBufferHandle && aPayload) override;
+    CHIP_ERROR OnMessageReceived(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
+                                 const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload) override;
+    void OnResponseTimeout(Messaging::ExchangeContext * apExchangeContext) override;
     CHIP_ERROR SendSubscribeResponse();
     CHIP_ERROR ProcessSubscribeRequest(System::PacketBufferHandle && aPayload);
-    static void OnSubscribeTimerCallback(System::Layer * apSystemLayer, void * apAppState, CHIP_ERROR aError);
+    static void OnSubscribeTimerCallback(System::Layer * apSystemLayer, void * apAppState);
     CHIP_ERROR RefreshSubscribeSyncTimer(void);
-
+    Messaging::ExchangeManager * mpExchangeMgr = nullptr;
     uint64_t mSubscriptionId = 0;
     uint16_t mFinalSyncIntervalSeconds = 0;
+    SecureSessionHandle mSecureSession;
 };
 } // namespace app
 } // namespace chip

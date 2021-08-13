@@ -63,7 +63,7 @@ public:
      *  @retval #CHIP_NO_ERROR On success.
      *
      */
-    virtual CHIP_ERROR Init(InteractionModelDelegate * apDelegate);
+    CHIP_ERROR Init(InteractionModelDelegate * apDelegate);
 
     /**
      *  Shut down the ReadHandler. This terminates this instance
@@ -94,7 +94,7 @@ public:
      *  @retval #CHIP_NO_ERROR On success.
      *
      */
-    CHIP_ERROR SendReportData(System::PacketBufferHandle && aPayload);
+    virtual CHIP_ERROR SendReportData(System::PacketBufferHandle && aPayload);
 
     bool IsFree() const { return mState == HandlerState::Uninitialized; }
     bool IsReportable() const { return mState == HandlerState::Reportable; }
@@ -118,15 +118,15 @@ public:
     virtual bool IsSubscription() { return false; }
     virtual CHIP_ERROR GetSubscriptionId(uint64_t & aSubscriptionId) { return CHIP_ERROR_INCORRECT_STATE;}
     bool MatchExchangeContext(Messaging::ExchangeContext * apExchangeContext) { return apExchangeContext == mpExchangeCtx; }
-    bool GetSyncAllInterestedData() { return mSyncAllInterestedData; }
-    void ClearSyncAllInterestedData() {  mSyncAllInterestedData = false; }
+    bool IsInitialReport() { return mInitialReport; }
+    void ClearInitialReport() {  mInitialReport = false; }
 
 protected:
     enum class HandlerState
     {
         Uninitialized = 0, ///< The handler has not been initialized
         Initialized,       ///< The handler has been initialized and is ready
-        Reportable,        ///< The handler has received read request and is waiting for the data to send to be available
+        Reportable,        ///< The handler has received read request and is waiting for the data to send to be available or subscription has been established, and ready for generating report
         Subscribing,
     };
 
@@ -142,7 +142,7 @@ protected:
 private:
     CHIP_ERROR ProcessReadRequest(System::PacketBufferHandle && aPayload);
     CHIP_ERROR AbortExistingExchangeContext();
-    void SetSyncAllInterestedData() {  mSyncAllInterestedData = true; }
+    void SetInitialReport() {  mInitialReport = true; }
 
     // Don't need the response for report data if true
     bool mSuppressResponse = false;
@@ -158,7 +158,7 @@ private:
     // The last schedule event number snapshoted in the beginning when preparing to fill new events to reports
     EventNumber mLastScheduledEventNumber[kNumPriorityLevel];
 
-    bool mSyncAllInterestedData = false;
+    bool mInitialReport = false;
 };
 } // namespace app
 } // namespace chip

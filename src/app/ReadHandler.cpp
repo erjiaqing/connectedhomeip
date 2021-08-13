@@ -40,7 +40,7 @@ CHIP_ERROR ReadHandler::Init(InteractionModelDelegate * apDelegate)
     mpAttributeClusterInfoList = nullptr;
     mpEventClusterInfoList     = nullptr;
     mCurrentPriority           = PriorityLevel::Invalid;
-    mSyncAllInterestedData     = true;
+    mInitialReport     = true;
     mpDelegate = apDelegate;
     MoveToState(HandlerState::Initialized);
 
@@ -58,7 +58,7 @@ void ReadHandler::Shutdown()
     mpAttributeClusterInfoList = nullptr;
     mpEventClusterInfoList     = nullptr;
     mCurrentPriority           = PriorityLevel::Invalid;
-    mSyncAllInterestedData     = false;
+    mInitialReport     = false;
     mpDelegate = nullptr;
 }
 
@@ -83,12 +83,14 @@ CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     VerifyOrExit(mpExchangeCtx != nullptr, err = CHIP_ERROR_INCORRECT_STATE);
-
     err = mpExchangeCtx->SendMessage(Protocols::InteractionModel::MsgType::ReportData, std::move(aPayload));
-
     if (err != CHIP_NO_ERROR)
     {
         mpExchangeCtx->Close();
+    }
+    else
+    {
+        ClearInitialReport();
     }
 
 exit:
@@ -216,7 +218,7 @@ CHIP_ERROR ReadHandler::ProcessAttributePathList(AttributePathList::Parser & aAt
         err = InteractionModelEngine::GetInstance()->PushFront(mpAttributeClusterInfoList, clusterInfo);
         SuccessOrExit(err);
         mpAttributeClusterInfoList->SetDirty();
-        SetSyncAllInterestedData();
+        SetInitialReport();
     }
     // if we have exhausted this container
     if (CHIP_END_OF_TLV == err)

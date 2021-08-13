@@ -38,7 +38,7 @@ namespace app {
 class SubscribeClient : public ReadClient
 {
 public:
-    CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate, intptr_t aAppIdentifier) override;
+    CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate, uint64_t aAppIdentifier) override;
     /**
      *  Send a Subscribe Request.  There can be one Subscribe Request outstanding on a given SubscribeClient.
      *  If SendSubscribeRequest returns success, no more Subscribe Requests can be sent on this SubscribeClient
@@ -55,6 +55,12 @@ public:
     bool IsSubscription() const override { return true; };
     virtual ~SubscribeClient() = default;
 
+    bool IsValidSubscription(uint64_t & aSubscriptionId) override {
+        return aSubscriptionId == mSubscriptionId;
+    }
+
+    CHIP_ERROR OnMessageReceived(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
+                                 const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload) override;
 private:
     /**
      * Internal shutdown method that we use when we know what's going on with
@@ -63,20 +69,16 @@ private:
     void ShutdownInternal() override;
     CHIP_ERROR ProcessReportData(System::PacketBufferHandle && aPayload) override;
     CHIP_ERROR SendStatusReport(CHIP_ERROR aError);
-    CHIP_ERROR OnMessageReceived(Messaging::ExchangeContext * apExchangeContext, const PacketHeader & aPacketHeader,
-                                 const PayloadHeader & aPayloadHeader, System::PacketBufferHandle && aPayload) override;
+
     CHIP_ERROR ProcessSubscribeResponse(System::PacketBufferHandle && aPayload);
     void OnResponseTimeout(Messaging::ExchangeContext * apExchangeContext) override;
     void SetRetryTimer();
 
     CHIP_ERROR RefreshLivenessCheckTimer();
     void CancelLivenessCheckTimer();
-    static void OnLivenessTimeoutCallback(System::Layer * apSystemLayer, void * apAppState, CHIP_ERROR aError);
-    static void OnReSubscribeTimerCallback(System::Layer * apSystemLayer, void * apAppState, CHIP_ERROR aError);
+    static void OnLivenessTimeoutCallback(System::Layer * apSystemLayer, void * apAppState);
+    static void OnReSubscribeTimerCallback(System::Layer * apSystemLayer, void * apAppState);
 
-    bool IsValidSubscription(uint64_t & aSubscriptionId) override {
-        return aSubscriptionId == mSubscriptionId;
-    }
     void CancelResubscribe();
 
     bool mEnableResubscribe = false;
