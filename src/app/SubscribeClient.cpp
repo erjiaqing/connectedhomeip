@@ -55,17 +55,17 @@ void SubscribeClient::ShutdownInternal()
     abort();
 }
 
-CHIP_ERROR SubscribeClient::SendSubscribeRequest()
+CHIP_ERROR SubscribeClient::SendSubscribeRequest(const SubscribePrepareParams & subscribePrepareParams)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     System::PacketBufferHandle msgBuf;
-    SubscribePrepareParams subscribePrepareParams;
+    // SubscribePrepareParams subscribePrepareParams;
     VerifyOrExit(ClientState::Initialized == mState, err = CHIP_ERROR_INCORRECT_STATE);
     VerifyOrExit(mpDelegate != nullptr, err = CHIP_ERROR_INCORRECT_STATE);
 
     AbortExistingExchangeContext();
 
-    mpDelegate->SubscriptionPrepareNeeded(subscribePrepareParams);
+    // mpDelegate->SubscriptionPrepareNeeded(subscribePrepareParams);
 
     {
         System::PacketBufferTLVWriter writer;
@@ -312,7 +312,7 @@ void SubscribeClient::OnReSubscribeTimerCallback(System::Layer * apSystemLayer, 
     if (client != nullptr && client->mEnableResubscribe && (client->mState != ClientState::Uninitialized))
     {
         client->mRetryCounter++;
-        client->SendSubscribeRequest();
+        // client->SendSubscribeRequest();
     }
 }
 

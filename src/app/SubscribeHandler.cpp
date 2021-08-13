@@ -65,7 +65,7 @@ CHIP_ERROR SubscribeHandler::OnStatusReport(Messaging::ExchangeContext * apExcha
         switch (mState)
         {
         case HandlerState::Subscribing:
-            mpDelegate->SubscriptionEstablished();
+            // mpDelegate->SubscriptionEstablished();
             MoveToState(HandlerState::Reportable);
             InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun();
             break;
@@ -227,7 +227,7 @@ CHIP_ERROR SubscribeHandler::RefreshSubscribeSyncTimer(void)
     uint16_t timeoutMsec = mFinalSyncIntervalSeconds;
     if (marginMsec < timeoutMsec)
     {
-        timeoutMsec = mFinalSyncIntervalSeconds - marginMsec;
+        timeoutMsec = static_cast<uint16_t>(mFinalSyncIntervalSeconds - marginMsec);
     }
     InteractionModelEngine::GetInstance()->GetExchangeManager()->GetSessionMgr()->SystemLayer()->CancelTimer(
         OnSubscribeTimerCallback, this);

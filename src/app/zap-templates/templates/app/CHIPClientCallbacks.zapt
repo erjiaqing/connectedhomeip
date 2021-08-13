@@ -62,6 +62,25 @@ void BasicAttributeFilter(chip::TLV::TLVReader * data, chip::Callback::Cancelabl
     }
 }
 
+/**
+ * BasicAttributeFilter accepts the actual type of onSuccess callback as template parameter.
+ * It will check whether the type of the TLV data is expected by onSuccess callback.
+ * If a non expected value received, onFailure callback will be called with EMBER_ZCL_STATUS_INVALID_VALUE.
+ */
+template <typename CallbackType>
+void BasicAttributeReportingFilter(chip::TLV::TLVReader * data, chip::Callback::Cancelable * onValue)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    typename chip::FunctionTraits<CallbackType>::template ArgType<1> value;
+
+    if ((err = data->Get(value)) == CHIP_NO_ERROR)
+    {
+        chip::Callback::Callback<CallbackType> * cb = chip::Callback::Callback<CallbackType>::FromCancelable(onValue);
+        cb->mCall(cb->mContext, value);
+        return;
+    }
+}
+
 typedef void (*ReadReportingConfigurationReportedCallback)(void* context, uint16_t minInterval, uint16_t maxInterval);
 typedef void (*ReadReportingConfigurationReceivedCallback)(void* context, uint16_t timeout);
 

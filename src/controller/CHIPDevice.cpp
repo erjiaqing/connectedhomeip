@@ -668,9 +668,9 @@ void Device::CancelIMResponseHandler(app::CommandSender * commandObj)
 }
 
 void Device::AddReportHandler(EndpointId endpoint, ClusterId cluster, AttributeId attribute,
-                              Callback::Cancelable * onReportCallback)
+                              Callback::Cancelable * onReportCallback, app::TLVSubscribeDataFilter tlvDataFilter)
 {
-    mCallbacksMgr.AddReportCallback(mDeviceId, endpoint, cluster, attribute, onReportCallback);
+    mCallbacksMgr.AddReportCallback(mDeviceId, endpoint, cluster, attribute, onReportCallback, tlvDataFilter);
 }
 
 CHIP_ERROR Device::SendReadAttributeRequest(app::AttributePathParams aPath, Callback::Cancelable * onSuccessCallback,

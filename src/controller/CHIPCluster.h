@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <app/util/CHIPDeviceCallbacksMgr.h>
 #include <controller/CHIPDevice.h>
 
 namespace chip {
@@ -69,7 +70,8 @@ protected:
      *                              is active. The user can stop the reporting by cancelling the callback.
      *                              Reference: chip::Callback::Cancel()
      */
-    CHIP_ERROR RequestAttributeReporting(AttributeId attributeId, Callback::Cancelable * reportHandler);
+    CHIP_ERROR RequestAttributeReporting(AttributeId attributeId, Callback::Cancelable * reportHandler,
+                                         app::TLVSubscribeDataFilter tlvDataFilter);
 
     const ClusterId mClusterId;
     Device * mDevice;

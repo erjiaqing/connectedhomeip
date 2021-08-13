@@ -439,21 +439,34 @@ CHIP_ERROR Engine::SetDirty(ClusterInfo & aClusterInfo)
 #if !CHIP_SYSTEM_CONFIG_NO_LOCKING
     ScopedLock lock(*this);
 #endif // !CHIP_SYSTEM_CONFIG_NO_LOCKING
+
+    ChipLogDetail(DataManagement, "SetDirty endpoint=%" PRIx16 ", cluster=%" PRIx32 ", attr=%" PRIx32, aClusterInfo.mEndpointId,
+                  aClusterInfo.mClusterId, aClusterInfo.mFieldId);
+
     for (int i = 0; i < CHIP_IM_MAX_NUM_SUBSCRIBE_HANDLER; ++i)
     {
         SubscribeHandler * subscribeHandler = &imEngine->mSubscribeHandlers[i];
 
         if (subscribeHandler->IsReportable())
         {
-            ClusterInfo * clusterInstance = subscribeHandler->GetAttributeClusterInfolist();
-
-            while (clusterInstance != nullptr && clusterInstance->mpNext != nullptr)
+            for (ClusterInfo * clusterInstance = subscribeHandler->GetAttributeClusterInfolist(); clusterInstance != nullptr;
+                 clusterInstance               = clusterInstance->mpNext)
             {
+                ChipLogDetail(DataManagement,
+                              "subscribeHandler %d clusterInstance %p (node=%" PRIx64 ", endpoint=%" PRIx16 ", cluster=%" PRIx32
+                              ", attr=%" PRIx32 ") trying to match!",
+                              i, clusterInstance, clusterInstance->mNodeId, clusterInstance->mEndpointId,
+                              clusterInstance->mClusterId, clusterInstance->mFieldId);
+
                 if (clusterInstance->IsAttributePathIncluded(aClusterInfo))
                 {
+                    ChipLogDetail(DataManagement,
+                                  "subscribeHandler %d clusterInstance %p (node=%" PRIx64 ", endpoint=%" PRIx16 ", cluster=%" PRIx32
+                                  ", attr=%" PRIx32 ") marked dirty!",
+                                  i, clusterInstance, clusterInstance->mNodeId, clusterInstance->mEndpointId,
+                                  clusterInstance->mClusterId, clusterInstance->mFieldId);
                     clusterInstance->SetDirty();
                 }
-                clusterInstance = clusterInstance->mpNext;
             }
         }
     }

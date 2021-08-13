@@ -481,7 +481,7 @@ CHIP_ERROR InteractionModelEngine::SendSubscribeRequest(const SubscribePreparePa
     SubscribeClient * client = nullptr;
     CHIP_ERROR err           = CHIP_NO_ERROR;
     ReturnErrorOnFailure(NewSubscribeClient(&client, aAppIdentifier));
-    err = client->SendSubscribeRequest();
+    err = client->SendSubscribeRequest(aSubscribePrepareParams);
     if (err != CHIP_NO_ERROR)
     {
         client->Shutdown();

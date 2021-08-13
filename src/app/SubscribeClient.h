@@ -25,6 +25,7 @@
 #pragma once
 
 #include <app/ReadClient.h>
+#include <app/SubscribePrepareParams.h>
 
 namespace chip {
 namespace app {
@@ -49,7 +50,7 @@ public:
      *  @retval #others fail to send read request
      *  @retval #CHIP_NO_ERROR On success.
      */
-    CHIP_ERROR SendSubscribeRequest();
+    CHIP_ERROR SendSubscribeRequest(const SubscribePrepareParams & aSubscribePrepareParams);
 
     void ResetResubscribe();
     void EnableResubscribe(bool aEnable);

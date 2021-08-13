@@ -172,7 +172,7 @@ CHIP_ERROR {{asUpperCamelCase parent.name}}Cluster::ConfigureAttribute{{asUpperC
 
 CHIP_ERROR {{asUpperCamelCase parent.name}}Cluster::ReportAttribute{{asUpperCamelCase name}}(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting({{asHex code 4}}, onReportCallback);
+    return RequestAttributeReporting({{asHex code 4}}, onReportCallback, BasicAttributeReportingFilter<{{chipCallback.name}}AttributeCallback>);
 }
 
 {{/if}}
