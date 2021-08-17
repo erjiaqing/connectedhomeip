@@ -33,6 +33,7 @@
 bool IMDefaultResponseCallback(const chip::app::Command * commandObj, EmberAfStatus status);
 bool IMReadReportAttributesResponseCallback(const chip::app::ReadClient * apReadClient, const chip::app::ClusterInfo & aPath,
                                             chip::TLV::TLVReader * apData, chip::Protocols::InteractionModel::ProtocolCode status);
+bool IMSubscribeResponseCallback(const chip::app::SubscribeClient * apSubscribeClient, EmberAfStatus status);
 bool IMWriteResponseCallback(const chip::app::WriteClient * writeClient, EmberAfStatus status);
 
 // Global Response Callbacks
@@ -75,6 +76,25 @@ void BasicAttributeFilter(chip::TLV::TLVReader * data, chip::Callback::Cancelabl
         chip::Callback::Callback<DefaultFailureCallback> * cb =
             chip::Callback::Callback<DefaultFailureCallback>::FromCancelable(onFailure);
         cb->mCall(cb->mContext, EMBER_ZCL_STATUS_INVALID_VALUE);
+    }
+}
+
+/**
+ * BasicAttributeFilter accepts the actual type of onSuccess callback as template parameter.
+ * It will check whether the type of the TLV data is expected by onSuccess callback.
+ * If a non expected value received, onFailure callback will be called with EMBER_ZCL_STATUS_INVALID_VALUE.
+ */
+template <typename CallbackType>
+void BasicAttributeReportingFilter(chip::TLV::TLVReader * data, chip::Callback::Cancelable * onValue)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    typename chip::FunctionTraits<CallbackType>::template ArgType<1> value;
+
+    if ((err = data->Get(value)) == CHIP_NO_ERROR)
+    {
+        chip::Callback::Callback<CallbackType> * cb = chip::Callback::Callback<CallbackType>::FromCancelable(onValue);
+        cb->mCall(cb->mContext, value);
+        return;
     }
 }
 

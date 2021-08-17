@@ -69,9 +69,7 @@ constexpr uint16_t kMaxBufferSize = 1024;
 constexpr uint8_t kFrameControlGlobalCommand = 0x00;
 
 // Pick source endpoint as 1 for now
-constexpr EndpointId kSourceEndpoint = 1;
-
-const uint8_t kReportingDirectionReported = 0x00;
+constexpr chip::EndpointId kSourceEndpoint = 1;
 } // namespace
 
 using namespace app::Clusters;
@@ -1271,21 +1269,18 @@ CHIP_ERROR BinaryInputBasicCluster::ConfigureAttributePresentValue(Callback::Can
                                                                    Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                                    uint16_t maxInterval)
 {
-    COMMAND_HEADER("ReportBinaryInputBasicPresentValue", BinaryInputBasic::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(BinaryInputBasic::Attributes::Ids::PresentValue)
-        .Put8(16)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    COMMAND_FOOTER();
+
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000055;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR BinaryInputBasicCluster::ReportAttributePresentValue(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0055, onReportCallback);
+    return RequestAttributeReporting(0x0055, onReportCallback, BasicAttributeReportingFilter<BooleanAttributeCallback>);
 }
 
 CHIP_ERROR BinaryInputBasicCluster::ReadAttributeStatusFlags(Callback::Cancelable * onSuccessCallback,
@@ -1304,21 +1299,18 @@ CHIP_ERROR BinaryInputBasicCluster::ConfigureAttributeStatusFlags(Callback::Canc
                                                                   Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                                   uint16_t maxInterval)
 {
-    COMMAND_HEADER("ReportBinaryInputBasicStatusFlags", BinaryInputBasic::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(BinaryInputBasic::Attributes::Ids::StatusFlags)
-        .Put8(24)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    COMMAND_FOOTER();
+
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x0000006F;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR BinaryInputBasicCluster::ReportAttributeStatusFlags(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x006F, onReportCallback);
+    return RequestAttributeReporting(0x006F, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR BinaryInputBasicCluster::ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2625,22 +2617,18 @@ CHIP_ERROR ColorControlCluster::ConfigureAttributeCurrentHue(Callback::Cancelabl
                                                              Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                              uint16_t maxInterval, uint8_t change)
 {
-    COMMAND_HEADER("ReportColorControlCurrentHue", ColorControl::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(ColorControl::Attributes::Ids::CurrentHue)
-        .Put8(32)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put8(static_cast<uint8_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR ColorControlCluster::ReportAttributeCurrentHue(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR ColorControlCluster::ReadAttributeCurrentSaturation(Callback::Cancelable * onSuccessCallback,
@@ -2659,22 +2647,18 @@ CHIP_ERROR ColorControlCluster::ConfigureAttributeCurrentSaturation(Callback::Ca
                                                                     Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                                     uint16_t maxInterval, uint8_t change)
 {
-    COMMAND_HEADER("ReportColorControlCurrentSaturation", ColorControl::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(ColorControl::Attributes::Ids::CurrentSaturation)
-        .Put8(32)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put8(static_cast<uint8_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000001;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR ColorControlCluster::ReportAttributeCurrentSaturation(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0001, onReportCallback);
+    return RequestAttributeReporting(0x0001, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR ColorControlCluster::ReadAttributeRemainingTime(Callback::Cancelable * onSuccessCallback,
@@ -2705,22 +2689,18 @@ CHIP_ERROR ColorControlCluster::ConfigureAttributeCurrentX(Callback::Cancelable 
                                                            Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                            uint16_t maxInterval, uint16_t change)
 {
-    COMMAND_HEADER("ReportColorControlCurrentX", ColorControl::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(ColorControl::Attributes::Ids::CurrentX)
-        .Put8(33)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000003;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR ColorControlCluster::ReportAttributeCurrentX(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0003, onReportCallback);
+    return RequestAttributeReporting(0x0003, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR ColorControlCluster::ReadAttributeCurrentY(Callback::Cancelable * onSuccessCallback,
@@ -2739,22 +2719,18 @@ CHIP_ERROR ColorControlCluster::ConfigureAttributeCurrentY(Callback::Cancelable 
                                                            Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                            uint16_t maxInterval, uint16_t change)
 {
-    COMMAND_HEADER("ReportColorControlCurrentY", ColorControl::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(ColorControl::Attributes::Ids::CurrentY)
-        .Put8(33)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000004;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR ColorControlCluster::ReportAttributeCurrentY(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0004, onReportCallback);
+    return RequestAttributeReporting(0x0004, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR ColorControlCluster::ReadAttributeDriftCompensation(Callback::Cancelable * onSuccessCallback,
@@ -2797,22 +2773,18 @@ CHIP_ERROR ColorControlCluster::ConfigureAttributeColorTemperature(Callback::Can
                                                                    Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                                    uint16_t maxInterval, uint16_t change)
 {
-    COMMAND_HEADER("ReportColorControlColorTemperature", ColorControl::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(ColorControl::Attributes::Ids::ColorTemperature)
-        .Put8(33)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000007;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR ColorControlCluster::ReportAttributeColorTemperature(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0007, onReportCallback);
+    return RequestAttributeReporting(0x0007, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR ColorControlCluster::ReadAttributeColorMode(Callback::Cancelable * onSuccessCallback,
@@ -4847,21 +4819,18 @@ CHIP_ERROR DoorLockCluster::ConfigureAttributeLockState(Callback::Cancelable * o
                                                         Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                         uint16_t maxInterval)
 {
-    COMMAND_HEADER("ReportDoorLockLockState", DoorLock::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(DoorLock::Attributes::Ids::LockState)
-        .Put8(48)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    COMMAND_FOOTER();
+
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR DoorLockCluster::ReportAttributeLockState(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR DoorLockCluster::ReadAttributeLockType(Callback::Cancelable * onSuccessCallback,
@@ -6414,22 +6383,18 @@ CHIP_ERROR LevelControlCluster::ConfigureAttributeCurrentLevel(Callback::Cancela
                                                                Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                                uint16_t maxInterval, uint8_t change)
 {
-    COMMAND_HEADER("ReportLevelControlCurrentLevel", LevelControl::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(LevelControl::Attributes::Ids::CurrentLevel)
-        .Put8(32)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put8(static_cast<uint8_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR LevelControlCluster::ReportAttributeCurrentLevel(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR LevelControlCluster::ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -7815,21 +7780,18 @@ CHIP_ERROR OccupancySensingCluster::ConfigureAttributeOccupancy(Callback::Cancel
                                                                 Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                                 uint16_t maxInterval)
 {
-    COMMAND_HEADER("ReportOccupancySensingOccupancy", OccupancySensing::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(OccupancySensing::Attributes::Ids::Occupancy)
-        .Put8(24)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    COMMAND_FOOTER();
+
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR OccupancySensingCluster::ReportAttributeOccupancy(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR OccupancySensingCluster::ReadAttributeOccupancySensorType(Callback::Cancelable * onSuccessCallback,
@@ -8131,21 +8093,18 @@ CHIP_ERROR OnOffCluster::ReadAttributeOnOff(Callback::Cancelable * onSuccessCall
 CHIP_ERROR OnOffCluster::ConfigureAttributeOnOff(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                                  uint16_t minInterval, uint16_t maxInterval)
 {
-    COMMAND_HEADER("ReportOnOffOnOff", OnOff::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(OnOff::Attributes::Ids::OnOff)
-        .Put8(16)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    COMMAND_FOOTER();
+
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR OnOffCluster::ReportAttributeOnOff(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<BooleanAttributeCallback>);
 }
 
 CHIP_ERROR OnOffCluster::ReadAttributeGlobalSceneControl(Callback::Cancelable * onSuccessCallback,
@@ -8654,22 +8613,18 @@ CHIP_ERROR PressureMeasurementCluster::ConfigureAttributeMeasuredValue(Callback:
                                                                        Callback::Cancelable * onFailureCallback,
                                                                        uint16_t minInterval, uint16_t maxInterval, int16_t change)
 {
-    COMMAND_HEADER("ReportPressureMeasurementMeasuredValue", PressureMeasurement::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(PressureMeasurement::Attributes::Ids::MeasuredValue)
-        .Put8(41)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR PressureMeasurementCluster::ReportAttributeMeasuredValue(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<Int16sAttributeCallback>);
 }
 
 CHIP_ERROR PressureMeasurementCluster::ReadAttributeMinMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -8795,22 +8750,18 @@ CHIP_ERROR PumpConfigurationAndControlCluster::ConfigureAttributeCapacity(Callba
                                                                           uint16_t minInterval, uint16_t maxInterval,
                                                                           int16_t change)
 {
-    COMMAND_HEADER("ReportPumpConfigurationAndControlCapacity", PumpConfigurationAndControl::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(PumpConfigurationAndControl::Attributes::Ids::Capacity)
-        .Put8(41)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000013;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR PumpConfigurationAndControlCluster::ReportAttributeCapacity(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0013, onReportCallback);
+    return RequestAttributeReporting(0x0013, onReportCallback, BasicAttributeReportingFilter<Int16sAttributeCallback>);
 }
 
 CHIP_ERROR PumpConfigurationAndControlCluster::ReadAttributeOperationMode(Callback::Cancelable * onSuccessCallback,
@@ -8881,22 +8832,18 @@ CHIP_ERROR RelativeHumidityMeasurementCluster::ConfigureAttributeMeasuredValue(C
                                                                                uint16_t minInterval, uint16_t maxInterval,
                                                                                uint16_t change)
 {
-    COMMAND_HEADER("ReportRelativeHumidityMeasurementMeasuredValue", RelativeHumidityMeasurement::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(RelativeHumidityMeasurement::Attributes::Ids::MeasuredValue)
-        .Put8(33)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR RelativeHumidityMeasurementCluster::ReportAttributeMeasuredValue(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR RelativeHumidityMeasurementCluster::ReadAttributeMinMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -9437,22 +9384,18 @@ CHIP_ERROR SwitchCluster::ConfigureAttributeCurrentPosition(Callback::Cancelable
                                                             Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                             uint16_t maxInterval, uint8_t change)
 {
-    COMMAND_HEADER("ReportSwitchCurrentPosition", Switch::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(Switch::Attributes::Ids::CurrentPosition)
-        .Put8(32)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put8(static_cast<uint8_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000001;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR SwitchCluster::ReportAttributeCurrentPosition(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0001, onReportCallback);
+    return RequestAttributeReporting(0x0001, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR SwitchCluster::ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -9754,22 +9697,18 @@ CHIP_ERROR TemperatureMeasurementCluster::ConfigureAttributeMeasuredValue(Callba
                                                                           uint16_t minInterval, uint16_t maxInterval,
                                                                           int16_t change)
 {
-    COMMAND_HEADER("ReportTemperatureMeasurementMeasuredValue", TemperatureMeasurement::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(TemperatureMeasurement::Attributes::Ids::MeasuredValue)
-        .Put8(41)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR TemperatureMeasurementCluster::ReportAttributeMeasuredValue(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<Int16sAttributeCallback>);
 }
 
 CHIP_ERROR TemperatureMeasurementCluster::ReadAttributeMinMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -10878,22 +10817,18 @@ CHIP_ERROR ThermostatCluster::ConfigureAttributeLocalTemperature(Callback::Cance
                                                                  Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                                  uint16_t maxInterval, int16_t change)
 {
-    COMMAND_HEADER("ReportThermostatLocalTemperature", Thermostat::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(Thermostat::Attributes::Ids::LocalTemperature)
-        .Put8(41)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000000;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR ThermostatCluster::ReportAttributeLocalTemperature(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0000, onReportCallback);
+    return RequestAttributeReporting(0x0000, onReportCallback, BasicAttributeReportingFilter<Int16sAttributeCallback>);
 }
 
 CHIP_ERROR ThermostatCluster::ReadAttributeOccupiedCoolingSetpoint(Callback::Cancelable * onSuccessCallback,
@@ -12480,22 +12415,18 @@ CHIP_ERROR WindowCoveringCluster::ConfigureAttributeCurrentPositionLiftPercentag
                                                                                   uint16_t minInterval, uint16_t maxInterval,
                                                                                   uint8_t change)
 {
-    COMMAND_HEADER("ReportWindowCoveringCurrentPositionLiftPercentage", WindowCovering::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(WindowCovering::Attributes::Ids::CurrentPositionLiftPercentage)
-        .Put8(32)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put8(static_cast<uint8_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000008;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReportAttributeCurrentPositionLiftPercentage(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0008, onReportCallback);
+    return RequestAttributeReporting(0x0008, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReadAttributeCurrentPositionTiltPercentage(Callback::Cancelable * onSuccessCallback,
@@ -12515,22 +12446,18 @@ CHIP_ERROR WindowCoveringCluster::ConfigureAttributeCurrentPositionTiltPercentag
                                                                                   uint16_t minInterval, uint16_t maxInterval,
                                                                                   uint8_t change)
 {
-    COMMAND_HEADER("ReportWindowCoveringCurrentPositionTiltPercentage", WindowCovering::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(WindowCovering::Attributes::Ids::CurrentPositionTiltPercentage)
-        .Put8(32)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put8(static_cast<uint8_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x00000009;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReportAttributeCurrentPositionTiltPercentage(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x0009, onReportCallback);
+    return RequestAttributeReporting(0x0009, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReadAttributeOperationalStatus(Callback::Cancelable * onSuccessCallback,
@@ -12549,21 +12476,18 @@ CHIP_ERROR WindowCoveringCluster::ConfigureAttributeOperationalStatus(Callback::
                                                                       Callback::Cancelable * onFailureCallback,
                                                                       uint16_t minInterval, uint16_t maxInterval)
 {
-    COMMAND_HEADER("ReportWindowCoveringOperationalStatus", WindowCovering::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(WindowCovering::Attributes::Ids::OperationalStatus)
-        .Put8(24)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    COMMAND_FOOTER();
+
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x0000000A;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReportAttributeOperationalStatus(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x000A, onReportCallback);
+    return RequestAttributeReporting(0x000A, onReportCallback, BasicAttributeReportingFilter<Int8uAttributeCallback>);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReadAttributeTargetPositionLiftPercent100ths(Callback::Cancelable * onSuccessCallback,
@@ -12583,22 +12507,18 @@ CHIP_ERROR WindowCoveringCluster::ConfigureAttributeTargetPositionLiftPercent100
                                                                                     uint16_t minInterval, uint16_t maxInterval,
                                                                                     uint16_t change)
 {
-    COMMAND_HEADER("ReportWindowCoveringTargetPositionLiftPercent100ths", WindowCovering::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(WindowCovering::Attributes::Ids::TargetPositionLiftPercent100ths)
-        .Put8(33)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x0000000B;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReportAttributeTargetPositionLiftPercent100ths(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x000B, onReportCallback);
+    return RequestAttributeReporting(0x000B, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReadAttributeTargetPositionTiltPercent100ths(Callback::Cancelable * onSuccessCallback,
@@ -12618,22 +12538,18 @@ CHIP_ERROR WindowCoveringCluster::ConfigureAttributeTargetPositionTiltPercent100
                                                                                     uint16_t minInterval, uint16_t maxInterval,
                                                                                     uint16_t change)
 {
-    COMMAND_HEADER("ReportWindowCoveringTargetPositionTiltPercent100ths", WindowCovering::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(WindowCovering::Attributes::Ids::TargetPositionTiltPercent100ths)
-        .Put8(33)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x0000000C;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReportAttributeTargetPositionTiltPercent100ths(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x000C, onReportCallback);
+    return RequestAttributeReporting(0x000C, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReadAttributeEndProductType(Callback::Cancelable * onSuccessCallback,
@@ -12665,22 +12581,18 @@ CHIP_ERROR WindowCoveringCluster::ConfigureAttributeCurrentPositionLiftPercent10
                                                                                      uint16_t minInterval, uint16_t maxInterval,
                                                                                      uint16_t change)
 {
-    COMMAND_HEADER("ReportWindowCoveringCurrentPositionLiftPercent100ths", WindowCovering::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(WindowCovering::Attributes::Ids::CurrentPositionLiftPercent100ths)
-        .Put8(33)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x0000000E;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReportAttributeCurrentPositionLiftPercent100ths(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x000E, onReportCallback);
+    return RequestAttributeReporting(0x000E, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReadAttributeCurrentPositionTiltPercent100ths(Callback::Cancelable * onSuccessCallback,
@@ -12700,22 +12612,18 @@ CHIP_ERROR WindowCoveringCluster::ConfigureAttributeCurrentPositionTiltPercent10
                                                                                      uint16_t minInterval, uint16_t maxInterval,
                                                                                      uint16_t change)
 {
-    COMMAND_HEADER("ReportWindowCoveringCurrentPositionTiltPercent100ths", WindowCovering::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(WindowCovering::Attributes::Ids::CurrentPositionTiltPercent100ths)
-        .Put8(33)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    buf.Put16(static_cast<uint16_t>(change));
-    COMMAND_FOOTER();
+    IgnoreUnusedVariable(change);
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x0000000F;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReportAttributeCurrentPositionTiltPercent100ths(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x000F, onReportCallback);
+    return RequestAttributeReporting(0x000F, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReadAttributeInstalledOpenLimitLift(Callback::Cancelable * onSuccessCallback,
@@ -12811,21 +12719,18 @@ CHIP_ERROR WindowCoveringCluster::ConfigureAttributeSafetyStatus(Callback::Cance
                                                                  Callback::Cancelable * onFailureCallback, uint16_t minInterval,
                                                                  uint16_t maxInterval)
 {
-    COMMAND_HEADER("ReportWindowCoveringSafetyStatus", WindowCovering::Id);
-    buf.Put8(kFrameControlGlobalCommand)
-        .Put8(seqNum)
-        .Put32(Globals::Commands::Ids::ConfigureReporting)
-        .Put8(kReportingDirectionReported)
-        .Put32(WindowCovering::Attributes::Ids::SafetyStatus)
-        .Put8(25)
-        .Put16(minInterval)
-        .Put16(maxInterval);
-    COMMAND_FOOTER();
+
+    chip::app::AttributePathParams attributePath;
+    attributePath.mEndpointId = mEndpoint;
+    attributePath.mClusterId  = mClusterId;
+    attributePath.mFieldId    = 0x0000001A;
+    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
+    return mDevice->SendSubscribeAttributeRequest(attributePath, minInterval, maxInterval, onSuccessCallback, onFailureCallback);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReportAttributeSafetyStatus(Callback::Cancelable * onReportCallback)
 {
-    return RequestAttributeReporting(0x001A, onReportCallback);
+    return RequestAttributeReporting(0x001A, onReportCallback, BasicAttributeReportingFilter<Int16uAttributeCallback>);
 }
 
 CHIP_ERROR WindowCoveringCluster::ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
