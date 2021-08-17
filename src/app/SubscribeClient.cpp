@@ -267,6 +267,7 @@ CHIP_ERROR SubscribeClient::SendStatusReport(CHIP_ERROR aError)
 CHIP_ERROR SubscribeClient::ProcessReportData(System::PacketBufferHandle && aPayload)
 {
     ReturnLogErrorOnFailure(ReadClient::ProcessReportData(std::move(aPayload)));
+    ReturnLogErrorOnFailure(SendStatusReport(CHIP_NO_ERROR));
     ReturnLogErrorOnFailure(RefreshLivenessCheckTimer());
     return CHIP_NO_ERROR;
 }
