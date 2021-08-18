@@ -140,8 +140,14 @@ class BaseTestHelper:
             "Resolve {} with fabric id: {}".format(nodeid, fabricid))
         try:
             self.devCtrl.ResolveNode(fabricid=fabricid, nodeid=nodeid)
+            addr = self.devCtrl.GetAddressAndPort(nodeid)
+            if not addr:
+                return False
+            self.logger.info(f"Resolved address: {addr[0]}:{addr[1]}")
+            return True
         except Exception as ex:
             self.logger.exception("Failed to resolve. {}".format(ex))
+            return False
 
     def TestReadBasicAttribiutes(self, nodeid: int, endpoint: int, group: int):
         basic_cluster_attrs = {
