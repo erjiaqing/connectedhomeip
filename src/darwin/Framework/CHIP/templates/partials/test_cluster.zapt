@@ -5,7 +5,10 @@ bool testSendCluster{{parent.filename}}_{{asTestIndex index}}_{{asUpperCamelCase
 {{/if}}
 - (void)testSendCluster{{parent.filename}}_{{asTestIndex index}}_{{asUpperCamelCase command}}
 {
+    {{#unless async}}
     XCTestExpectation * expectation = [self expectationWithDescription:@"{{label}}"];
+    {{/unless}}
+
 {{#if (isTestOnlyCluster cluster)}}
     dispatch_queue_t queue = dispatch_get_main_queue();
     {{command}}(expectation, queue{{#chip_tests_item_parameters}}, {{definedValue}}{{/chip_tests_item_parameters}});
@@ -65,18 +68,16 @@ testSendCluster{{parent.filename}}_{{asTestIndex index}}_{{asUpperCamelCase comm
         {{#unless isSubscribeAttribute}}
         {{> process_response_value}}
         {{else}}
-        XCTAssertEqual(testSendCluster{{parent.filename}}_{{asTestIndex waitForReport.index}}_{{asUpperCamelCase waitForReport.command}}_Finished = true;, true);
+        XCTAssertEqual(testSendCluster{{parent.filename}}_{{asTestIndex waitForReport.index}}_{{asUpperCamelCase waitForReport.command}}_Finished, true);
         {{/unless}}
         {{> FulfillOrSetFinishFlag}}
         {{/unless}}
     }];
 
 {{/if}}
-    {{#if async}}
-    [expectation fulfill];
-    {{else}}
+    {{#unless async}}
     [self waitForExpectationsWithTimeout:kTimeoutInSeconds handler:nil];
-    {{/if}}
+    {{/unless}}
 }
 {{/chip_tests_items}}
 
