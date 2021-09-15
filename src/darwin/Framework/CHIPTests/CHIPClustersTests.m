@@ -2365,7 +2365,26 @@ CHIPDevice * GetPairedDevice(uint64_t deviceId)
 
     [self waitForExpectationsWithTimeout:kTimeoutInSeconds handler:nil];
 }
-- (void)testSendClusterTestSubscribe_OnOff_000001_SubscribeAttribute
+bool testSendClusterTestSubscribe_OnOff_000001_WaitForReport_Finished = false;
+- (void)testSendClusterTestSubscribe_OnOff_000001_WaitForReport
+{
+    XCTestExpectation * expectation = [self expectationWithDescription:@"Report: Subscribe OnOff Attribute"];
+    CHIPDevice * device = GetPairedDevice(kDeviceId);
+    dispatch_queue_t queue = dispatch_get_main_queue();
+    CHIPOnOff * cluster = [[CHIPOnOff alloc] initWithDevice:device endpoint:1 queue:queue];
+    XCTAssertNotNil(cluster);
+
+    [cluster reportAttributeOnOffWithResponseHandler:^(NSError * err, NSDictionary * values) {
+        NSLog(@"Report: Subscribe OnOff Attribute Error: %@", err);
+
+        XCTAssertEqual(err.code, 0);
+        XCTAssertEqual([values[@"value"] boolValue], false);
+        testSendClusterTestSubscribe_OnOff_000001_WaitForReport_Finished = true;
+    }];
+
+    [expectation fulfill];
+}
+- (void)testSendClusterTestSubscribe_OnOff_000002_SubscribeAttribute
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Subscribe OnOff Attribute"];
     CHIPDevice * device = GetPairedDevice(kDeviceId);
@@ -2373,27 +2392,20 @@ CHIPDevice * GetPairedDevice(uint64_t deviceId)
     CHIPOnOff * cluster = [[CHIPOnOff alloc] initWithDevice:device endpoint:1 queue:queue];
     XCTAssertNotNil(cluster);
 
-    __block bool initialReportReceived = false;
-    [cluster reportAttributeOnOffWithResponseHandler:^(NSError * err, NSDictionary * values) {
-        NSLog(@"Reporting Test Report: %@", err);
-        XCTAssertEqual(err.code, 0);
-        XCTAssertEqual([values[@"value"] boolValue], false);
-        initialReportReceived = true;
-    }];
+    [cluster
+        configureAttributeOnOffWithMinInterval:2
+                                   maxInterval:10
+                               responseHandler:^(NSError * err, NSDictionary * values) {
+                                   NSLog(@"Subscribe OnOff Attribute Error: %@", err);
 
-    [cluster configureAttributeOnOffWithMinInterval:2
-                                        maxInterval:10
-                                    responseHandler:^(NSError * err, NSDictionary * values) {
-                                        NSLog(@"Subscribe OnOff Attribute Error: %@", err);
-
-                                        XCTAssertEqual(err.code, 0);
-                                        XCTAssertEqual(initialReportReceived, true);
-                                        [expectation fulfill];
-                                    }];
+                                   XCTAssertEqual(err.code, 0);
+                                   XCTAssertEqual(testSendClusterTestSubscribe_OnOff_000001_WaitForReport_Finished = true;, true);
+                                   [expectation fulfill];
+                               }];
 
     [self waitForExpectationsWithTimeout:kTimeoutInSeconds handler:nil];
 }
-- (void)testSendClusterTestSubscribe_OnOff_000002_On
+- (void)testSendClusterTestSubscribe_OnOff_000003_On
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Turn On the light to see attribute change"];
     CHIPDevice * device = GetPairedDevice(kDeviceId);
@@ -2410,7 +2422,7 @@ CHIPDevice * GetPairedDevice(uint64_t deviceId)
 
     [self waitForExpectationsWithTimeout:kTimeoutInSeconds handler:nil];
 }
-- (void)testSendClusterTestSubscribe_OnOff_000003_WaitForAttributeReport
+- (void)testSendClusterTestSubscribe_OnOff_000004_WaitForReport
 {
     XCTestExpectation * expectation = [self expectationWithDescription:@"Check for attribute report"];
     CHIPDevice * device = GetPairedDevice(kDeviceId);
@@ -2419,12 +2431,48 @@ CHIPDevice * GetPairedDevice(uint64_t deviceId)
     XCTAssertNotNil(cluster);
 
     [cluster reportAttributeOnOffWithResponseHandler:^(NSError * err, NSDictionary * values) {
-        NSLog(@"Reporting Test Report: %@", err);
-        XCTAssertEqual(err.code, 0);
+        NSLog(@"Check for attribute report Error: %@", err);
 
+        XCTAssertEqual(err.code, 0);
         XCTAssertEqual([values[@"value"] boolValue], true);
         [expectation fulfill];
     }];
+
+    [self waitForExpectationsWithTimeout:kTimeoutInSeconds handler:nil];
+}
+- (void)testSendClusterTestSubscribe_OnOff_000005_Off
+{
+    XCTestExpectation * expectation = [self expectationWithDescription:@"Turn Off the light to see attribute change"];
+    CHIPDevice * device = GetPairedDevice(kDeviceId);
+    dispatch_queue_t queue = dispatch_get_main_queue();
+    CHIPOnOff * cluster = [[CHIPOnOff alloc] initWithDevice:device endpoint:1 queue:queue];
+    XCTAssertNotNil(cluster);
+
+    [cluster off:^(NSError * err, NSDictionary * values) {
+        NSLog(@"Turn Off the light to see attribute change Error: %@", err);
+
+        XCTAssertEqual(err.code, 0);
+        [expectation fulfill];
+    }];
+
+    [self waitForExpectationsWithTimeout:kTimeoutInSeconds handler:nil];
+}
+- (void)testSendClusterTestSubscribe_OnOff_000006_WaitForReport
+{
+    XCTestExpectation * expectation = [self expectationWithDescription:@"Check for attribute report"];
+    CHIPDevice * device = GetPairedDevice(kDeviceId);
+    dispatch_queue_t queue = dispatch_get_main_queue();
+    CHIPOnOff * cluster = [[CHIPOnOff alloc] initWithDevice:device endpoint:1 queue:queue];
+    XCTAssertNotNil(cluster);
+
+    [cluster reportAttributeOnOffWithResponseHandler:^(NSError * err, NSDictionary * values) {
+        NSLog(@"Check for attribute report Error: %@", err);
+
+        XCTAssertEqual(err.code, 0);
+        XCTAssertEqual([values[@"value"] boolValue], false);
+        [expectation fulfill];
+    }];
+
     [self waitForExpectationsWithTimeout:kTimeoutInSeconds handler:nil];
 }
 
