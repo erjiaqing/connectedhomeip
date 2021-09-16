@@ -26,6 +26,7 @@ class Platform(IntEnum):
     INFINEON = auto()
     TELINK = auto()
     TIZEN = auto()
+    LINUX = auto()
 
     @property
     def ArgName(self):
@@ -62,7 +63,7 @@ class Board(IntEnum):
     # Telink platform
     TLSR9518ADK80D = auto()
 
-    # Android, Tizen platform
+    # Linux, Android, Tizen platform
     ARM = auto()
     ARM64 = auto()
     X64 = auto()

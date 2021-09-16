@@ -23,6 +23,7 @@ from builders.qpg import QpgBuilder
 from builders.infineon import InfineonBuilder, InfineonApp, InfineonBoard
 from builders.telink import TelinkApp, TelinkBoard, TelinkBuilder
 from builders.tizen import TizenApp, TizenBoard, TizenBuilder
+from builders.linux import LinuxCPU, LinuxBuilder, LinuxApp
 
 from .targets import Application, Board, Platform
 
@@ -89,6 +90,7 @@ _MATCHERS = {
     Platform.INFINEON: Matcher(InfineonBuilder),
     Platform.TELINK: Matcher(TelinkBuilder),
     Platform.TIZEN: Matcher(TizenBuilder),
+    Platform.LINUX: Matcher(LinuxBuilder),
 }
 
 # Matrix of what can be compiled and what build options are required
@@ -155,6 +157,16 @@ _MATCHERS[Platform.INFINEON].AcceptBoard(
 _MATCHERS[Platform.TIZEN].AcceptBoard(Board.ARM, board=TizenBoard.ARM)
 _MATCHERS[Platform.TIZEN].AcceptApplication(
     Application.LIGHT, app=TizenApp.LIGHT)
+
+_MATCHERS[Platform.LINUX].AcceptBoard(Board.ARM, board=LinuxCPU.ARM)
+_MATCHERS[Platform.LINUX].AcceptBoard(Board.ARM64, board=LinuxCPU.ARM64)
+_MATCHERS[Platform.LINUX].AcceptBoard(Board.X64, board=LinuxCPU.X64)
+_MATCHERS[Platform.LINUX].AcceptApplication(
+    Application.ALL_CLUSTERS, app=LinuxApp.ALL_CLUSTERS)
+_MATCHERS[Platform.LINUX].AcceptApplication(
+    Application.CHIP_TOOL, app=LinuxApp.CHIP_TOOL)
+_MATCHERS[Platform.LINUX].AcceptApplication(
+    Application.THERMOSTAT, app=LinuxApp.THERMOSTAT)
 
 
 class BuilderFactory:
