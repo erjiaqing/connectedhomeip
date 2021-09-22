@@ -7,9 +7,13 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app-common/zap-generated/ids/Commands.h>
 
+#include <zap-generated/cluster_objects_commands.h>
+
 #include <controller/CHIPCluster.h>
 #include <lib/core/CHIPCallback.h>
 #include <lib/support/Span.h>
+
+#include <functional>
 
 namespace chip {
 namespace Controller {
@@ -26,6 +30,21 @@ public:
     // Cluster Commands
     {{/first}}
     CHIP_ERROR {{asUpperCamelCase name}}(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback{{#chip_cluster_command_arguments}}, {{chipType}} {{asLowerCamelCase label}}{{/chip_cluster_command_arguments}});
+    {{/chip_cluster_commands}}
+
+    {{#chip_cluster_commands}}
+    {{#first}}
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    {{/first}}
+    using On{{asUpperCamelCase name}}CommandResponseCallbackFunct =
+    {{#if hasSpecificResponse}}
+      std::function<void(const app::clusters::{{asUpperCamelCase parent.name}}::{{asUpperCamelCase responseName}}CommandParams::Type&)>;
+    {{else}}
+      std::function<void(void)>;
+    {{/if}}
+    CHIP_ERROR {{asUpperCamelCase name}}(On{{asUpperCamelCase name}}CommandResponseCallbackFunct, OnCommandErrorCallbackFunct, const app::clusters::{{asUpperCamelCase parent.name}}::{{name}}CommandParams::Type& params);
     {{/chip_cluster_commands}}
 
     // Cluster Attributes

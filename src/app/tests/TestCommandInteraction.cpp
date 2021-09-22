@@ -25,7 +25,9 @@
 #include <cinttypes>
 
 #include <app/AppBuildConfig.h>
+#include <app/ClusterObjectCommandSenderCallback.h>
 #include <app/InteractionModelEngine.h>
+#include <app/common/StatusElement.h>
 #include <lib/core/CHIPCore.h>
 #include <lib/core/CHIPTLV.h>
 #include <lib/core/CHIPTLVDebug.hpp>
@@ -130,6 +132,7 @@ public:
     static void TestCommandHandlerWithSendEmptyResponse(nlTestSuite * apSuite, void * apContext);
     static void TestCommandHandlerWithProcessReceivedMsg(nlTestSuite * apSuite, void * apContext);
     static void TestCommandHandlerWithProcessReceivedEmptyDataMsg(nlTestSuite * apSuite, void * apContext);
+    static void TestCommandSenderWithClusterObjects(nlTestSuite * apSuite, void * apContext);
 
 private:
     static void GenerateReceivedCommand(nlTestSuite * apSuite, void * apContext, System::PacketBufferHandle & aPayload,
@@ -416,6 +419,21 @@ void TestCommandInteraction::TestCommandHandlerWithProcessReceivedEmptyDataMsg(n
     commandHandler.Shutdown();
 }
 
+void TestCommandInteraction::TestCommandSenderWithClusterObjects(nlTestSuite * apSuite, void * apContext)
+{
+    CHIP_ERROR err          = CHIP_NO_ERROR;
+    CHIP_ERROR commandError = CHIP_NO_ERROR;
+    bool testSuccess        = false;
+    app::ClusterObjectCommandSenderCallback<StatusElement> delegate(
+        [&](app::CommandSender * apSender, const CommandPath::Type & aCommandPath,
+            const Structs::StatusElement::Type & statusElement, StatusElement & response) { testSuccess = true; },
+        [&](app::CommandSender * apSender, CHIP_ERROR err) { commandError = err; },
+        [&](app::CommandSender * apSender, app::ClusterObjectCommandSenderCallback<StatusElement> * apDeleger) {
+            // Do nothing
+        });
+    app::CommandSender commandSender(&delegate);
+}
+
 } // namespace app
 } // namespace chip
 
@@ -458,6 +476,7 @@ const nlTest sTests[] =
     NL_TEST_DEF("TestCommandHandlerWithProcessReceivedMsg", chip::app::TestCommandInteraction::TestCommandHandlerWithProcessReceivedMsg),
     NL_TEST_DEF("TestCommandHandlerWithProcessReceivedNotExistCommand", chip::app::TestCommandInteraction::TestCommandHandlerWithProcessReceivedNotExistCommand),
     NL_TEST_DEF("TestCommandHandlerWithProcessReceivedEmptyDataMsg", chip::app::TestCommandInteraction::TestCommandHandlerWithProcessReceivedEmptyDataMsg),
+    NL_TEST_DEF("TestCommandSenderWithClusterObjects", chip::app::TestCommandInteraction::TestCommandSenderWithClusterObjects),
     NL_TEST_SENTINEL()
 };
 // clang-format on

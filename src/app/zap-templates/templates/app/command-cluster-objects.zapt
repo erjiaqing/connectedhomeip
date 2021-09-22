@@ -1,0 +1,66 @@
+{{> header}}
+
+#pragma once
+
+#include <app/data-model/DecodableList.h>
+#include <app/data-model/Decode.h>
+#include <app/data-model/Encode.h>
+#include <app/data-model/List.h>
+#include <app/util/basic-types.h>
+#include <app-common/zap-generated/cluster-objects.h>
+
+namespace chip {
+namespace app {
+namespace clusters {
+
+{{#chip_client_clusters}}
+
+// {{asUpperCamelCase name}} Cluster Commands
+namespace {{asCamelCased name false}} {
+
+{{#chip_cluster_commands}}
+namespace {{name}}CommandParams {
+    enum FieldId {
+    {{#chip_cluster_command_arguments}}
+    k{{asUpperCamelCase label}}FieldId = {{index}},
+    {{/chip_cluster_command_arguments}}
+    };
+
+    struct Type {
+    public:
+        {{#chip_cluster_command_arguments}}
+        {{#if isArray}}
+        DataModel::List<{{#if_is_enum type}}{{type}}{{else}}{{asChipZapType type}}{{/if_is_enum}}> {{asLowerCamelCase label}};
+        {{else}}
+        {{#if_is_enum type}}{{type}}{{else}}{{asChipZapType type}}{{/if_is_enum}} {{asLowerCamelCase label}};
+        {{/if}}
+        {{/chip_cluster_command_arguments}}
+
+        CHIP_ERROR Encode(TLV::TLVWriter &writer, uint64_t tag) const;
+    };
+}// namespace for {{name}}
+{{/chip_cluster_commands}}
+
+{{#chip_cluster_responses}}
+namespace {{name}}CommandParams {
+    enum FieldId {
+    {{#chip_cluster_response_arguments}}
+    k{{asUpperCamelCase label}}FieldId = {{index}},
+    {{/chip_cluster_response_arguments}}
+    };
+
+    struct Type {
+    public:
+        // TODO
+
+        CHIP_ERROR Decode(TLV::TLVWriter &writer, uint64_t tag) const;
+    };
+}// namespace for {{name}}
+{{/chip_cluster_responses}}
+
+}// namespace for {{name}}
+{{/chip_client_clusters}}
+
+} // namespace clusters
+} // namespace app
+} // namespace chip

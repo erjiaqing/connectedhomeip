@@ -29,6 +29,7 @@
 #include <app/MessageDef/CommandDataElement.h>
 #include <app/MessageDef/CommandList.h>
 #include <app/MessageDef/InvokeCommand.h>
+#include <app/data-model/Encode.h>
 #include <lib/core/CHIPCore.h>
 #include <lib/support/BitFlags.h>
 #include <lib/support/CodeUtils.h>
@@ -40,6 +41,8 @@
 #include <protocols/Protocols.h>
 #include <system/SystemPacketBuffer.h>
 #include <system/TLVPacketBufferBackingStore.h>
+
+#include <functional>
 
 namespace chip {
 namespace app {
@@ -76,6 +79,9 @@ public:
      *
      */
     CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr);
+
+    template <typename ClusterObjectT>
+    CHIP_ERROR EncodeFullCommand(const CommandPathParams & aCommandPathParams, const ClusterObjectT & aPayload);
 
     /**
      * Finalize Command Message TLV Builder and finalize command message
@@ -130,5 +136,27 @@ private:
     friend class TestCommandInteraction;
     TLV::TLVType mDataElementContainerType = TLV::kTLVType_NotSpecified;
 };
+
+template <typename ClusterObjectT>
+CHIP_ERROR Command::EncodeFullCommand(const CommandPathParams & aCommandPathParams, const ClusterObjectT & aPayload)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    CommandDataElement::Builder commandDataElement;
+
+    VerifyOrReturnError(mState == CommandState::Initialized || mState == CommandState::AddCommand,
+                        err = CHIP_ERROR_INCORRECT_STATE);
+
+    commandDataElement = mInvokeCommandBuilder.GetCommandListBuilder().CreateCommandDataElementBuilder();
+    ReturnErrorOnFailure(commandDataElement.GetError());
+    ReturnErrorOnFailure(ConstructCommandPath(aCommandPathParams, commandDataElement));
+    ReturnErrorOnFailure(
+        DataModel::Encode(*commandDataElement.GetWriter(), TLV::ContextTag(CommandDataElement::kCsTag_Data), aPayload));
+
+    commandDataElement.EndOfCommandDataElement();
+    ReturnErrorOnFailure(commandDataElement.GetError());
+    MoveToState(CommandState::AddCommand);
+    return CHIP_NO_ERROR;
+}
+
 } // namespace app
 } // namespace chip

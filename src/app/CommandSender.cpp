@@ -27,6 +27,7 @@
 #include "CommandHandler.h"
 #include "InteractionModelEngine.h"
 
+#include <app/common/StatusElement.h>
 #include <protocols/secure_channel/Constants.h>
 
 using GeneralStatusCode = chip::Protocols::SecureChannel::GeneralStatusCode;
