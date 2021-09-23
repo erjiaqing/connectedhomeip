@@ -3,10 +3,34 @@
 '''
 
 import ctypes
+from dataclasses import dataclass
 from chip.ChipStack import *
 from chip.exceptions import *
+import typing
+from . import ClusterObjects
 
 __all__ = ["ChipClusters"]
+
+{{#chip_client_clusters}}
+{{#chip_cluster_commands}}
+
+@dataclass
+class {{asUpperCamelCase parent.name}}Cluster{{asUpperCamelCase name}}RequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = {{ parent.code }}
+    CommandId: typing.ClassVar[int] = {{ code }}
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        {{#chip_cluster_command_arguments}}
+           ClusterObjects.ClusterObjectFieldDescriptor("{{asLowerCamelCase label}}", {{ index }}, {{#if (isCharString type)}}str{{else}}{{asPythonType chipType}}{{/if}}),
+        {{/chip_cluster_command_arguments}}
+        ]
+    )
+{{#chip_cluster_command_arguments}}
+    {{asLowerCamelCase label}}: {{#if (isCharString type)}}str{{else}}{{asPythonType chipType}}{{/if}}
+{{/chip_cluster_command_arguments}}
+{{/chip_cluster_commands}}
+{{/chip_client_clusters}}
+
 
 class ChipClusters:
     SUCCESS_DELEGATE = ctypes.CFUNCTYPE(None)

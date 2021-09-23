@@ -116,6 +116,7 @@ try:
     requiredPackages = [
         "coloredlogs",
         'construct',
+        'dacite',
         'ipython',
     ]
 

@@ -20,10 +20,2022 @@
 '''
 
 import ctypes
+from dataclasses import dataclass
 from chip.ChipStack import *
 from chip.exceptions import *
+import typing
+from . import ClusterObjects
 
 __all__ = ["ChipClusters"]
+
+
+@dataclass
+class AccountLoginClusterGetSetupPINRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1294
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("tempAccountIdentifier", 0, str),
+        ]
+    )
+    tempAccountIdentifier: str
+
+@dataclass
+class AccountLoginClusterLoginRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1294
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("tempAccountIdentifier", 0, str),
+           ClusterObjects.ClusterObjectFieldDescriptor("setupPIN", 1, str),
+        ]
+    )
+    tempAccountIdentifier: str
+    setupPIN: str
+
+@dataclass
+class AdministratorCommissioningClusterOpenBasicCommissioningWindowRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 60
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("commissioningTimeout", 0, int),
+        ]
+    )
+    commissioningTimeout: int
+
+@dataclass
+class AdministratorCommissioningClusterOpenCommissioningWindowRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 60
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("commissioningTimeout", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("pAKEVerifier", 1, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("discriminator", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("iterations", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("salt", 4, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("passcodeID", 5, int),
+        ]
+    )
+    commissioningTimeout: int
+    pAKEVerifier: bytes
+    discriminator: int
+    iterations: int
+    salt: bytes
+    passcodeID: int
+
+@dataclass
+class AdministratorCommissioningClusterRevokeCommissioningRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 60
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class ApplicationBasicClusterChangeStatusRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1293
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("status", 0, int),
+        ]
+    )
+    status: int
+
+@dataclass
+class ApplicationLauncherClusterLaunchAppRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1292
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("data", 0, str),
+           ClusterObjects.ClusterObjectFieldDescriptor("catalogVendorId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("applicationId", 2, str),
+        ]
+    )
+    data: str
+    catalogVendorId: int
+    applicationId: str
+
+@dataclass
+class AudioOutputClusterRenameOutputRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1291
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("index", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("name", 1, str),
+        ]
+    )
+    index: int
+    name: str
+
+@dataclass
+class AudioOutputClusterSelectOutputRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1291
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("index", 0, int),
+        ]
+    )
+    index: int
+
+@dataclass
+class BarrierControlClusterBarrierControlGoToPercentRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 259
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("percentOpen", 0, int),
+        ]
+    )
+    percentOpen: int
+
+@dataclass
+class BarrierControlClusterBarrierControlStopRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 259
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class BasicClusterMfgSpecificPingRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 40
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class BindingClusterBindRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 61440
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("nodeId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("endpointId", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("clusterId", 3, int),
+        ]
+    )
+    nodeId: int
+    groupId: int
+    endpointId: int
+    clusterId: int
+
+@dataclass
+class BindingClusterUnbindRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 61440
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("nodeId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("endpointId", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("clusterId", 3, int),
+        ]
+    )
+    nodeId: int
+    groupId: int
+    endpointId: int
+    clusterId: int
+
+@dataclass
+class ColorControlClusterColorLoopSetRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 68
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("updateFlags", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("action", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("direction", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("time", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("startHue", 4, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 5, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 6, int),
+        ]
+    )
+    updateFlags: int
+    action: int
+    direction: int
+    time: int
+    startHue: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterEnhancedMoveHueRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 65
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("moveMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("rate", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 3, int),
+        ]
+    )
+    moveMode: int
+    rate: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterEnhancedMoveToHueRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 64
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("enhancedHue", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("direction", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    enhancedHue: int
+    direction: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterEnhancedMoveToHueAndSaturationRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 67
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("enhancedHue", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("saturation", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    enhancedHue: int
+    saturation: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterEnhancedStepHueRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 66
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("stepMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("stepSize", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    stepMode: int
+    stepSize: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveColorRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 8
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("rateX", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("rateY", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 3, int),
+        ]
+    )
+    rateX: int
+    rateY: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveColorTemperatureRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 75
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("moveMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("rate", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("colorTemperatureMinimum", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("colorTemperatureMaximum", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 4, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 5, int),
+        ]
+    )
+    moveMode: int
+    rate: int
+    colorTemperatureMinimum: int
+    colorTemperatureMaximum: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveHueRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("moveMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("rate", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 3, int),
+        ]
+    )
+    moveMode: int
+    rate: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveSaturationRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("moveMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("rate", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 3, int),
+        ]
+    )
+    moveMode: int
+    rate: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveToColorRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 7
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("colorX", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("colorY", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    colorX: int
+    colorY: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveToColorTemperatureRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 10
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("colorTemperature", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 3, int),
+        ]
+    )
+    colorTemperature: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveToHueRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("hue", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("direction", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    hue: int
+    direction: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveToHueAndSaturationRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 6
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("hue", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("saturation", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    hue: int
+    saturation: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterMoveToSaturationRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("saturation", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 3, int),
+        ]
+    )
+    saturation: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterStepColorRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 9
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("stepX", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("stepY", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    stepX: int
+    stepY: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterStepColorTemperatureRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 76
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("stepMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("stepSize", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("colorTemperatureMinimum", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("colorTemperatureMaximum", 4, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 5, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 6, int),
+        ]
+    )
+    stepMode: int
+    stepSize: int
+    transitionTime: int
+    colorTemperatureMinimum: int
+    colorTemperatureMaximum: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterStepHueRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("stepMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("stepSize", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    stepMode: int
+    stepSize: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterStepSaturationRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 5
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("stepMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("stepSize", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 4, int),
+        ]
+    )
+    stepMode: int
+    stepSize: int
+    transitionTime: int
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ColorControlClusterStopMoveStepRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 768
+    CommandId: typing.ClassVar[int] = 71
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsMask", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionsOverride", 1, int),
+        ]
+    )
+    optionsMask: int
+    optionsOverride: int
+
+@dataclass
+class ContentLauncherClusterLaunchContentRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1290
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("autoPlay", 0, bool),
+           ClusterObjects.ClusterObjectFieldDescriptor("data", 1, str),
+        ]
+    )
+    autoPlay: bool
+    data: str
+
+@dataclass
+class ContentLauncherClusterLaunchURLRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1290
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("contentURL", 0, str),
+           ClusterObjects.ClusterObjectFieldDescriptor("displayString", 1, str),
+        ]
+    )
+    contentURL: str
+    displayString: str
+
+@dataclass
+class DiagnosticLogsClusterRetrieveLogsRequestRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 50
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("intent", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("requestedProtocol", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transferFileDesignator", 2, bytes),
+        ]
+    )
+    intent: int
+    requestedProtocol: int
+    transferFileDesignator: bytes
+
+@dataclass
+class DoorLockClusterClearAllPinsRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 8
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class DoorLockClusterClearAllRfidsRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 25
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class DoorLockClusterClearHolidayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 19
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+        ]
+    )
+    scheduleId: int
+
+@dataclass
+class DoorLockClusterClearPinRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 7
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 0, int),
+        ]
+    )
+    userId: int
+
+@dataclass
+class DoorLockClusterClearRfidRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 24
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 0, int),
+        ]
+    )
+    userId: int
+
+@dataclass
+class DoorLockClusterClearWeekdayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 13
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 1, int),
+        ]
+    )
+    scheduleId: int
+    userId: int
+
+@dataclass
+class DoorLockClusterClearYeardayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 16
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 1, int),
+        ]
+    )
+    scheduleId: int
+    userId: int
+
+@dataclass
+class DoorLockClusterGetHolidayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 18
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+        ]
+    )
+    scheduleId: int
+
+@dataclass
+class DoorLockClusterGetLogRecordRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("logIndex", 0, int),
+        ]
+    )
+    logIndex: int
+
+@dataclass
+class DoorLockClusterGetPinRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 6
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 0, int),
+        ]
+    )
+    userId: int
+
+@dataclass
+class DoorLockClusterGetRfidRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 23
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 0, int),
+        ]
+    )
+    userId: int
+
+@dataclass
+class DoorLockClusterGetUserTypeRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 21
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 0, int),
+        ]
+    )
+    userId: int
+
+@dataclass
+class DoorLockClusterGetWeekdayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 12
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 1, int),
+        ]
+    )
+    scheduleId: int
+    userId: int
+
+@dataclass
+class DoorLockClusterGetYeardayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 15
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 1, int),
+        ]
+    )
+    scheduleId: int
+    userId: int
+
+@dataclass
+class DoorLockClusterLockDoorRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("pin", 0, str),
+        ]
+    )
+    pin: str
+
+@dataclass
+class DoorLockClusterSetHolidayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 17
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("localStartTime", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("localEndTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("operatingModeDuringHoliday", 3, int),
+        ]
+    )
+    scheduleId: int
+    localStartTime: int
+    localEndTime: int
+    operatingModeDuringHoliday: int
+
+@dataclass
+class DoorLockClusterSetPinRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 5
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userStatus", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userType", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("pin", 3, str),
+        ]
+    )
+    userId: int
+    userStatus: int
+    userType: int
+    pin: str
+
+@dataclass
+class DoorLockClusterSetRfidRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 22
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userStatus", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userType", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("id", 3, str),
+        ]
+    )
+    userId: int
+    userStatus: int
+    userType: int
+    id: str
+
+@dataclass
+class DoorLockClusterSetUserTypeRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 20
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userType", 1, int),
+        ]
+    )
+    userId: int
+    userType: int
+
+@dataclass
+class DoorLockClusterSetWeekdayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 11
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("daysMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("startHour", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("startMinute", 4, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("endHour", 5, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("endMinute", 6, int),
+        ]
+    )
+    scheduleId: int
+    userId: int
+    daysMask: int
+    startHour: int
+    startMinute: int
+    endHour: int
+    endMinute: int
+
+@dataclass
+class DoorLockClusterSetYeardayScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 14
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("scheduleId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("userId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("localStartTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("localEndTime", 3, int),
+        ]
+    )
+    scheduleId: int
+    userId: int
+    localStartTime: int
+    localEndTime: int
+
+@dataclass
+class DoorLockClusterUnlockDoorRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("pin", 0, str),
+        ]
+    )
+    pin: str
+
+@dataclass
+class DoorLockClusterUnlockWithTimeoutRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 257
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutInSeconds", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("pin", 1, str),
+        ]
+    )
+    timeoutInSeconds: int
+    pin: str
+
+@dataclass
+class EthernetNetworkDiagnosticsClusterResetCountsRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 55
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class GeneralCommissioningClusterArmFailSafeRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 48
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("expiryLengthSeconds", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 2, int),
+        ]
+    )
+    expiryLengthSeconds: int
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class GeneralCommissioningClusterCommissioningCompleteRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 48
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class GeneralCommissioningClusterSetRegulatoryConfigRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 48
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("location", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("countryCode", 1, str),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 3, int),
+        ]
+    )
+    location: int
+    countryCode: str
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class GroupsClusterAddGroupRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 4
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("groupName", 1, str),
+        ]
+    )
+    groupId: int
+    groupName: str
+
+@dataclass
+class GroupsClusterAddGroupIfIdentifyingRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 4
+    CommandId: typing.ClassVar[int] = 5
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("groupName", 1, str),
+        ]
+    )
+    groupId: int
+    groupName: str
+
+@dataclass
+class GroupsClusterGetGroupMembershipRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 4
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupCount", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("groupList", 1, int),
+        ]
+    )
+    groupCount: int
+    groupList: int
+
+@dataclass
+class GroupsClusterRemoveAllGroupsRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 4
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class GroupsClusterRemoveGroupRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 4
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+        ]
+    )
+    groupId: int
+
+@dataclass
+class GroupsClusterViewGroupRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 4
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+        ]
+    )
+    groupId: int
+
+@dataclass
+class IdentifyClusterIdentifyRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 3
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("identifyTime", 0, int),
+        ]
+    )
+    identifyTime: int
+
+@dataclass
+class IdentifyClusterIdentifyQueryRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 3
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class KeypadInputClusterSendKeyRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1289
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("keyCode", 0, int),
+        ]
+    )
+    keyCode: int
+
+@dataclass
+class LevelControlClusterMoveRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 8
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("moveMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("rate", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionOverride", 3, int),
+        ]
+    )
+    moveMode: int
+    rate: int
+    optionMask: int
+    optionOverride: int
+
+@dataclass
+class LevelControlClusterMoveToLevelRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 8
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("level", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionMask", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionOverride", 3, int),
+        ]
+    )
+    level: int
+    transitionTime: int
+    optionMask: int
+    optionOverride: int
+
+@dataclass
+class LevelControlClusterMoveToLevelWithOnOffRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 8
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("level", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 1, int),
+        ]
+    )
+    level: int
+    transitionTime: int
+
+@dataclass
+class LevelControlClusterMoveWithOnOffRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 8
+    CommandId: typing.ClassVar[int] = 5
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("moveMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("rate", 1, int),
+        ]
+    )
+    moveMode: int
+    rate: int
+
+@dataclass
+class LevelControlClusterStepRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 8
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("stepMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("stepSize", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionMask", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionOverride", 4, int),
+        ]
+    )
+    stepMode: int
+    stepSize: int
+    transitionTime: int
+    optionMask: int
+    optionOverride: int
+
+@dataclass
+class LevelControlClusterStepWithOnOffRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 8
+    CommandId: typing.ClassVar[int] = 6
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("stepMode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("stepSize", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+        ]
+    )
+    stepMode: int
+    stepSize: int
+    transitionTime: int
+
+@dataclass
+class LevelControlClusterStopRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 8
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("optionMask", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("optionOverride", 1, int),
+        ]
+    )
+    optionMask: int
+    optionOverride: int
+
+@dataclass
+class LevelControlClusterStopWithOnOffRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 8
+    CommandId: typing.ClassVar[int] = 7
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class LowPowerClusterSleepRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1288
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaInputClusterHideInputStatusRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1287
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaInputClusterRenameInputRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1287
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("index", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("name", 1, str),
+        ]
+    )
+    index: int
+    name: str
+
+@dataclass
+class MediaInputClusterSelectInputRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1287
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("index", 0, int),
+        ]
+    )
+    index: int
+
+@dataclass
+class MediaInputClusterShowInputStatusRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1287
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaPlaybackClusterMediaFastForwardRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 7
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaPlaybackClusterMediaNextRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 5
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaPlaybackClusterMediaPauseRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaPlaybackClusterMediaPlayRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaPlaybackClusterMediaPreviousRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaPlaybackClusterMediaRewindRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 6
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaPlaybackClusterMediaSeekRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 10
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("position", 0, int),
+        ]
+    )
+    position: int
+
+@dataclass
+class MediaPlaybackClusterMediaSkipBackwardRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 9
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("deltaPositionMilliseconds", 0, int),
+        ]
+    )
+    deltaPositionMilliseconds: int
+
+@dataclass
+class MediaPlaybackClusterMediaSkipForwardRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 8
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("deltaPositionMilliseconds", 0, int),
+        ]
+    )
+    deltaPositionMilliseconds: int
+
+@dataclass
+class MediaPlaybackClusterMediaStartOverRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class MediaPlaybackClusterMediaStopRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1286
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class NetworkCommissioningClusterAddThreadNetworkRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 6
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("operationalDataset", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 2, int),
+        ]
+    )
+    operationalDataset: bytes
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class NetworkCommissioningClusterAddWiFiNetworkRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("ssid", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("credentials", 1, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 3, int),
+        ]
+    )
+    ssid: bytes
+    credentials: bytes
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class NetworkCommissioningClusterDisableNetworkRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 14
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("networkID", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 2, int),
+        ]
+    )
+    networkID: bytes
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class NetworkCommissioningClusterEnableNetworkRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 12
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("networkID", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 2, int),
+        ]
+    )
+    networkID: bytes
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class NetworkCommissioningClusterGetLastNetworkCommissioningResultRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 16
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 0, int),
+        ]
+    )
+    timeoutMs: int
+
+@dataclass
+class NetworkCommissioningClusterRemoveNetworkRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 10
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("networkID", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 2, int),
+        ]
+    )
+    networkID: bytes
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class NetworkCommissioningClusterScanNetworksRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("ssid", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 2, int),
+        ]
+    )
+    ssid: bytes
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class NetworkCommissioningClusterUpdateThreadNetworkRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 8
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("operationalDataset", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 2, int),
+        ]
+    )
+    operationalDataset: bytes
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class NetworkCommissioningClusterUpdateWiFiNetworkRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 49
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("ssid", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("credentials", 1, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("breadcrumb", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("timeoutMs", 3, int),
+        ]
+    )
+    ssid: bytes
+    credentials: bytes
+    breadcrumb: int
+    timeoutMs: int
+
+@dataclass
+class OtaSoftwareUpdateProviderClusterApplyUpdateRequestRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 41
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("updateToken", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("newVersion", 1, int),
+        ]
+    )
+    updateToken: bytes
+    newVersion: int
+
+@dataclass
+class OtaSoftwareUpdateProviderClusterNotifyUpdateAppliedRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 41
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("updateToken", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("currentVersion", 1, int),
+        ]
+    )
+    updateToken: bytes
+    currentVersion: int
+
+@dataclass
+class OtaSoftwareUpdateProviderClusterQueryImageRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 41
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("vendorId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("productId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("imageType", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("hardwareVersion", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("currentVersion", 4, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("protocolsSupported", 5, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("location", 6, str),
+           ClusterObjects.ClusterObjectFieldDescriptor("requestorCanConsent", 7, bool),
+           ClusterObjects.ClusterObjectFieldDescriptor("metadataForProvider", 8, bytes),
+        ]
+    )
+    vendorId: int
+    productId: int
+    imageType: int
+    hardwareVersion: int
+    currentVersion: int
+    protocolsSupported: int
+    location: str
+    requestorCanConsent: bool
+    metadataForProvider: bytes
+
+@dataclass
+class OtaSoftwareUpdateRequestorClusterAnnounceOtaProviderRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 42
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("serverLocation", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("vendorId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("announcementReason", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("metadataForNode", 3, bytes),
+        ]
+    )
+    serverLocation: bytes
+    vendorId: int
+    announcementReason: int
+    metadataForNode: bytes
+
+@dataclass
+class OnOffClusterOffRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 6
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class OnOffClusterOffWithEffectRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 6
+    CommandId: typing.ClassVar[int] = 64
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("effectId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("effectVariant", 1, int),
+        ]
+    )
+    effectId: int
+    effectVariant: int
+
+@dataclass
+class OnOffClusterOnRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 6
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class OnOffClusterOnWithRecallGlobalSceneRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 6
+    CommandId: typing.ClassVar[int] = 65
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class OnOffClusterOnWithTimedOffRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 6
+    CommandId: typing.ClassVar[int] = 66
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("onOffControl", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("onTime", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("offWaitTime", 2, int),
+        ]
+    )
+    onOffControl: int
+    onTime: int
+    offWaitTime: int
+
+@dataclass
+class OnOffClusterToggleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 6
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class OperationalCredentialsClusterAddNOCRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 62
+    CommandId: typing.ClassVar[int] = 6
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("nOCValue", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("iCACValue", 1, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("iPKValue", 2, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("caseAdminNode", 3, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("adminVendorId", 4, int),
+        ]
+    )
+    nOCValue: bytes
+    iCACValue: bytes
+    iPKValue: bytes
+    caseAdminNode: int
+    adminVendorId: int
+
+@dataclass
+class OperationalCredentialsClusterAddTrustedRootCertificateRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 62
+    CommandId: typing.ClassVar[int] = 11
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("rootCertificate", 0, bytes),
+        ]
+    )
+    rootCertificate: bytes
+
+@dataclass
+class OperationalCredentialsClusterOpCSRRequestRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 62
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("cSRNonce", 0, bytes),
+        ]
+    )
+    cSRNonce: bytes
+
+@dataclass
+class OperationalCredentialsClusterRemoveFabricRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 62
+    CommandId: typing.ClassVar[int] = 10
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("fabricIndex", 0, int),
+        ]
+    )
+    fabricIndex: int
+
+@dataclass
+class OperationalCredentialsClusterRemoveTrustedRootCertificateRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 62
+    CommandId: typing.ClassVar[int] = 12
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("trustedRootIdentifier", 0, bytes),
+        ]
+    )
+    trustedRootIdentifier: bytes
+
+@dataclass
+class OperationalCredentialsClusterUpdateFabricLabelRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 62
+    CommandId: typing.ClassVar[int] = 9
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("label", 0, str),
+        ]
+    )
+    label: str
+
+@dataclass
+class OperationalCredentialsClusterUpdateNOCRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 62
+    CommandId: typing.ClassVar[int] = 7
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("nOCValue", 0, bytes),
+           ClusterObjects.ClusterObjectFieldDescriptor("iCACValue", 1, bytes),
+        ]
+    )
+    nOCValue: bytes
+    iCACValue: bytes
+
+@dataclass
+class ScenesClusterAddSceneRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 5
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("sceneId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("sceneName", 3, str),
+           ClusterObjects.ClusterObjectFieldDescriptor("clusterId", 4, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("length", 5, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("value", 6, int),
+        ]
+    )
+    groupId: int
+    sceneId: int
+    transitionTime: int
+    sceneName: str
+    clusterId: int
+    length: int
+    value: int
+
+@dataclass
+class ScenesClusterGetSceneMembershipRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 5
+    CommandId: typing.ClassVar[int] = 6
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+        ]
+    )
+    groupId: int
+
+@dataclass
+class ScenesClusterRecallSceneRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 5
+    CommandId: typing.ClassVar[int] = 5
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("sceneId", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("transitionTime", 2, int),
+        ]
+    )
+    groupId: int
+    sceneId: int
+    transitionTime: int
+
+@dataclass
+class ScenesClusterRemoveAllScenesRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 5
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+        ]
+    )
+    groupId: int
+
+@dataclass
+class ScenesClusterRemoveSceneRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 5
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("sceneId", 1, int),
+        ]
+    )
+    groupId: int
+    sceneId: int
+
+@dataclass
+class ScenesClusterStoreSceneRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 5
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("sceneId", 1, int),
+        ]
+    )
+    groupId: int
+    sceneId: int
+
+@dataclass
+class ScenesClusterViewSceneRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 5
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("groupId", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("sceneId", 1, int),
+        ]
+    )
+    groupId: int
+    sceneId: int
+
+@dataclass
+class SoftwareDiagnosticsClusterResetWatermarksRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 52
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class TvChannelClusterChangeChannelRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1284
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("match", 0, str),
+        ]
+    )
+    match: str
+
+@dataclass
+class TvChannelClusterChangeChannelByNumberRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1284
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("majorNumber", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("minorNumber", 1, int),
+        ]
+    )
+    majorNumber: int
+    minorNumber: int
+
+@dataclass
+class TvChannelClusterSkipChannelRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1284
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("count", 0, int),
+        ]
+    )
+    count: int
+
+@dataclass
+class TargetNavigatorClusterNavigateTargetRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1285
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("target", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("data", 1, str),
+        ]
+    )
+    target: int
+    data: str
+
+@dataclass
+class TestClusterClusterTestRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1295
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class TestClusterClusterTestAddArgumentsRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1295
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("arg1", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("arg2", 1, int),
+        ]
+    )
+    arg1: int
+    arg2: int
+
+@dataclass
+class TestClusterClusterTestNotHandledRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1295
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class TestClusterClusterTestSpecificRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1295
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class TestClusterClusterTestUnknownCommandRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 1295
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class ThermostatClusterClearWeeklyScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 513
+    CommandId: typing.ClassVar[int] = 3
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class ThermostatClusterGetRelayStatusLogRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 513
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class ThermostatClusterGetWeeklyScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 513
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("daysToReturn", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("modeToReturn", 1, int),
+        ]
+    )
+    daysToReturn: int
+    modeToReturn: int
+
+@dataclass
+class ThermostatClusterSetWeeklyScheduleRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 513
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("numberOfTransitionsForSequence", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("dayOfWeekForSequence", 1, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("modeForSequence", 2, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("payload", 3, int),
+        ]
+    )
+    numberOfTransitionsForSequence: int
+    dayOfWeekForSequence: int
+    modeForSequence: int
+    payload: int
+
+@dataclass
+class ThermostatClusterSetpointRaiseLowerRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 513
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("mode", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("amount", 1, int),
+        ]
+    )
+    mode: int
+    amount: int
+
+@dataclass
+class ThreadNetworkDiagnosticsClusterResetCountsRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 53
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class WiFiNetworkDiagnosticsClusterResetCountsRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 54
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class WindowCoveringClusterDownOrCloseRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 258
+    CommandId: typing.ClassVar[int] = 1
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class WindowCoveringClusterGoToLiftPercentageRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 258
+    CommandId: typing.ClassVar[int] = 5
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("liftPercentageValue", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("liftPercent100thsValue", 1, int),
+        ]
+    )
+    liftPercentageValue: int
+    liftPercent100thsValue: int
+
+@dataclass
+class WindowCoveringClusterGoToLiftValueRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 258
+    CommandId: typing.ClassVar[int] = 4
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("liftValue", 0, int),
+        ]
+    )
+    liftValue: int
+
+@dataclass
+class WindowCoveringClusterGoToTiltPercentageRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 258
+    CommandId: typing.ClassVar[int] = 8
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("tiltPercentageValue", 0, int),
+           ClusterObjects.ClusterObjectFieldDescriptor("tiltPercent100thsValue", 1, int),
+        ]
+    )
+    tiltPercentageValue: int
+    tiltPercent100thsValue: int
+
+@dataclass
+class WindowCoveringClusterGoToTiltValueRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 258
+    CommandId: typing.ClassVar[int] = 7
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+           ClusterObjects.ClusterObjectFieldDescriptor("tiltValue", 0, int),
+        ]
+    )
+    tiltValue: int
+
+@dataclass
+class WindowCoveringClusterStopMotionRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 258
+    CommandId: typing.ClassVar[int] = 2
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
+@dataclass
+class WindowCoveringClusterUpOrOpenRequestParams(ClusterObjects.ClusterObject):
+    ClusterId: typing.ClassVar[int] = 258
+    CommandId: typing.ClassVar[int] = 0
+    Descriptor: typing.ClassVar[ClusterObjects.ClusterObjectDescriptor] = ClusterObjects.ClusterObjectDescriptor(
+        Fields = [
+        ]
+    )
+
 
 class ChipClusters:
     SUCCESS_DELEGATE = ctypes.CFUNCTYPE(None)

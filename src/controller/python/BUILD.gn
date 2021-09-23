@@ -111,6 +111,7 @@ pw_python_action("python") {
         "chip/ble/scan_devices.py",
         "chip/ble/types.py",
         "chip/clusters/CHIPClusters.py",
+        "chip/clusters/ClusterObjects.py",
         "chip/clusters/__init__.py",
         "chip/configuration/__init__.py",
         "chip/discovery/__init__.py",
