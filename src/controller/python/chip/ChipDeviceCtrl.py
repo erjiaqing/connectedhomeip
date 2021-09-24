@@ -27,11 +27,14 @@
 
 from __future__ import absolute_import
 from __future__ import print_function
+import asyncio
 from ctypes import *
 from .ChipStack import *
 from .clusters.CHIPClusters import *
 from .interaction_model import delegate as im
 from .exceptions import *
+from .clusters import Command as ClusterCommand
+from .clusters import ClusterObjects as ClusterObjects
 import enum
 
 
@@ -129,6 +132,7 @@ class ChipDeviceController(object):
             self._ChipStack.completeEvent.set()
 
         im.InitIMDelegate()
+        ClusterCommand.Init()
 
         self.cbHandleKeyExchangeCompleteFunct = _DevicePairingDelegate_OnPairingCompleteFunct(
             HandleKeyExchangeComplete)
@@ -303,6 +307,29 @@ class ChipDeviceController(object):
 
     def GetClusterHandler(self):
         return self._Cluster
+
+    async def SendCommand(self, nodeId: int, endpointId: int, payload: ClusterObjects.ClusterCommand):
+        eventLoop = asyncio.get_running_loop()
+        future = eventLoop.create_future()
+
+        device = c_void_p(None)
+        # We should really use pychip_GetConnectedDeviceByNodeId and do the
+        # command off its callback....
+        res = self._ChipStack.Call(lambda: self._dmLib.pychip_GetDeviceByNodeId(
+            self.devCtrl, nodeId, pointer(device)))
+        if res != 0:
+            raise self._ChipStack.ErrorToException(res)
+
+        res = self._ChipStack.Call(
+            lambda: ClusterCommand.SendCommand(
+                future, eventLoop, payload.ResponseType, device, ClusterCommand.CommandPath(
+                    EndpointId=endpointId,
+                    ClusterId=payload.ClusterId,
+                    CommandId=payload.CommandId,
+                ), payload)
+        )
+        result = await future
+        return result
 
     def ZCLSend(self, cluster, command, nodeid, endpoint, groupid, args, blocking=False):
         device = c_void_p(None)

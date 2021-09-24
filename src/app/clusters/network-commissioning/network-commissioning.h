@@ -35,6 +35,9 @@ EmberAfNetworkCommissioningError OnAddWiFiNetworkCommandCallbackInternal(app::Co
                                                                          uint32_t timeoutMs);
 EmberAfNetworkCommissioningError OnEnableNetworkCommandCallbackInternal(app::CommandHandler *, EndpointId, ByteSpan networkID,
                                                                         uint64_t breadcrumb, uint32_t timeoutMs);
+
+void OnScanNetworkCommandCallbackInternal(app::CommandHandler *, EndpointId, ByteSpan ssid, uint64_t breadcrumb,
+                                          uint32_t timeoutMs);
 } // namespace NetworkCommissioning
 
 } // namespace Clusters

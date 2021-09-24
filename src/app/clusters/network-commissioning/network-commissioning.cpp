@@ -30,6 +30,8 @@
 #include <platform/ConnectivityManager.h>
 #include <platform/internal/DeviceControlServer.h>
 
+#include <app-common/app-common/zap-generated/cluster-objects.h>
+
 #if CHIP_DEVICE_CONFIG_ENABLE_THREAD
 #include <platform/ThreadStackManager.h>
 #endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD
@@ -278,6 +280,61 @@ exit:
         DeviceLayer::Internal::DeviceControlServer::DeviceControlSvr().EnableNetworkForOperational(networkID);
     }
     return err;
+}
+
+void OnScanNetworkCommandCallbackInternal(app::CommandHandler * command, EndpointId endpoint, ByteSpan ssid, uint64_t breadcrumb,
+                                          uint32_t timeoutMs)
+{
+    // Mock a response
+    chip::app::CommandPathParams returnCommandPathParam = { endpoint,
+                                                            0, // GroupId
+                                                            NetworkCommissioning::Id, 1,
+                                                            (chip::app::CommandPathFlags::kEndpointIdValid) };
+    command->PrepareCommand(returnCommandPathParam);
+    auto writer = command->GetCommandDataElementTLVWriter();
+    writer->Put(TLV::ContextTag(0), 0);
+    writer->PutString(TLV::ContextTag(1), "no-error test string");
+    {
+        TLV::TLVType outerType;
+        writer->StartContainer(TLV::ContextTag(2), TLV::TLVType::kTLVType_Array, outerType);
+        {
+            WiFiInterfaceScanResult::Type t1;
+            t1.security      = 0xab;
+            t1.ssid          = ByteSpan(reinterpret_cast<const uint8_t *>("abcde"), strlen("abcde"));
+            t1.bssid         = ByteSpan(reinterpret_cast<const uint8_t *>("some bssid"), strlen("some bssid"));
+            t1.channel       = 11;
+            t1.frequencyBand = 2485;
+            t1.Encode(*writer, TLV::AnonymousTag);
+        }
+        {
+            WiFiInterfaceScanResult::Type t1;
+            t1.security      = 0xcd;
+            t1.ssid          = ByteSpan(reinterpret_cast<const uint8_t *>("edcba"), strlen("edcba"));
+            t1.bssid         = ByteSpan(reinterpret_cast<const uint8_t *>("some other bssid"), strlen("some other bssid"));
+            t1.channel       = 1;
+            t1.frequencyBand = 2458;
+            t1.Encode(*writer, TLV::AnonymousTag);
+        }
+        writer->EndContainer(outerType);
+    }
+    {
+        TLV::TLVType outerType;
+        writer->StartContainer(TLV::ContextTag(3), TLV::TLVType::kTLVType_Array, outerType);
+        {
+            ThreadInterfaceScanResult::Type t1;
+            t1.discoveryResponse =
+                ByteSpan(reinterpret_cast<const uint8_t *>("this is a discovery response"), strlen("this is a discovery response"));
+            t1.Encode(*writer, TLV::AnonymousTag);
+        }
+        {
+            ThreadInterfaceScanResult::Type t1;
+            t1.discoveryResponse = ByteSpan(reinterpret_cast<const uint8_t *>("this is another discovery response"),
+                                            strlen("this is another discovery response"));
+            t1.Encode(*writer, TLV::AnonymousTag);
+        }
+        writer->EndContainer(outerType);
+    }
+    command->FinishCommand();
 }
 
 } // namespace NetworkCommissioning

@@ -104,7 +104,9 @@ bool emberAfNetworkCommissioningClusterScanNetworksCallback(app::CommandHandler 
                                                             ByteSpan ssid, uint64_t breadcrumb, uint32_t timeoutMs,
                                                             Commands::ScanNetworks::DecodableType & commandData)
 {
-    return false;
+    app::Clusters::NetworkCommissioning::OnScanNetworkCommandCallbackInternal(commandObj, emberAfCurrentEndpoint(), ssid,
+                                                                              breadcrumb, timeoutMs);
+    return true;
 }
 bool emberAfNetworkCommissioningClusterUpdateThreadNetworkCallback(app::CommandHandler * commandObj,
                                                                    const app::ConcreteCommandPath & commandPath,

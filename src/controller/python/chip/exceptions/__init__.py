@@ -34,7 +34,7 @@ class ChipStackException(Exception):
 class ChipStackError(ChipStackException):
     def __init__(self, err, msg=None):
         self.err = err
-        self.msg = msg if msg else "Chip Stack Error %d" % err
+        self.msg = msg if msg else f"Chip Stack Error {err}"
 
     def __str__(self):
         return self.msg
