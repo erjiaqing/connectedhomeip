@@ -21,7 +21,9 @@
 
 #include <cstdint>
 
+#include <app-common/zap-generated/cluster-objects.h>
 #include <app-common/zap-generated/ids/Attributes.h>
+#include <app/ClusterObjectCommandSenderCallback.h>
 #include <app/CommandSender.h>
 #include <app/InteractionModelEngine.h>
 #include <app/chip-zcl-zpro-codec.h>
@@ -34,10 +36,13 @@
 #include <lib/support/logging/CHIPLogging.h>
 #include <system/SystemPacketBuffer.h>
 #include <zap-generated/CHIPClientCallbacks.h>
+#include <zap-generated/cluster_objects_commands.h>
 
 namespace chip {
 
+using namespace app;
 using namespace app::Clusters;
+using namespace app::clusters;
 using namespace System;
 using namespace Encoding::LittleEndian;
 
@@ -47,7 +52,41 @@ namespace Controller {
 // TODO(#4503): length should be passed to commands when byte string is in argument list.
 // TODO(#4503): Commands should take group id as an argument.
 
+namespace {
+void onClusterObjectCommandSenderFinal(CommandSender * sender,
+                                       app::ClusterObjectCommandSenderCallback<ResponseCallbackType> * _this)
+{
+    Platform::Delete(sender);
+    Platform::Delete(_this);
+}
+} // namespace
+
 // GeneralCommissioning Cluster Commands
+CHIP_ERROR
+GeneralCommissioningCluster::ArmFailSafe(OnArmFailSafeCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+                                         const app::clusters::GeneralCommissioning::ArmFailSafeCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::GeneralCommissioning::ArmFailSafeResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId, GeneralCommissioning::Commands::Ids::ArmFailSafe,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR GeneralCommissioningCluster::ArmFailSafe(Callback::Cancelable * onSuccessCallback,
                                                     Callback::Cancelable * onFailureCallback, uint16_t expiryLengthSeconds,
                                                     uint64_t breadcrumb, uint32_t timeoutMs)
@@ -94,6 +133,32 @@ exit:
     return err;
 }
 
+CHIP_ERROR GeneralCommissioningCluster::CommissioningComplete(
+    OnCommissioningCompleteCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::GeneralCommissioning::CommissioningCompleteCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::GeneralCommissioning::CommissioningCompleteResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         GeneralCommissioning::Commands::Ids::CommissioningComplete,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR GeneralCommissioningCluster::CommissioningComplete(Callback::Cancelable * onSuccessCallback,
                                                               Callback::Cancelable * onFailureCallback)
 {
@@ -132,6 +197,32 @@ CHIP_ERROR GeneralCommissioningCluster::CommissioningComplete(Callback::Cancelab
     sender.release();
 exit:
     return err;
+}
+
+CHIP_ERROR GeneralCommissioningCluster::SetRegulatoryConfig(
+    OnSetRegulatoryConfigCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::GeneralCommissioning::SetRegulatoryConfigCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::GeneralCommissioning::SetRegulatoryConfigResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         GeneralCommissioning::Commands::Ids::SetRegulatoryConfig,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR GeneralCommissioningCluster::SetRegulatoryConfig(Callback::Cancelable * onSuccessCallback,
@@ -238,6 +329,33 @@ CHIP_ERROR GeneralCommissioningCluster::ReadAttributeClusterRevision(Callback::C
 }
 
 // NetworkCommissioning Cluster Commands
+CHIP_ERROR
+NetworkCommissioningCluster::DisableNetwork(OnDisableNetworkCommandResponseCallbackFunct onSuccess,
+                                            OnCommandErrorCallbackFunct onFailure,
+                                            const app::clusters::NetworkCommissioning::DisableNetworkCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::NetworkCommissioning::DisableNetworkResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         NetworkCommissioning::Commands::Ids::DisableNetwork,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR NetworkCommissioningCluster::DisableNetwork(Callback::Cancelable * onSuccessCallback,
                                                        Callback::Cancelable * onFailureCallback, chip::ByteSpan networkID,
                                                        uint64_t breadcrumb, uint32_t timeoutMs)
@@ -283,6 +401,33 @@ CHIP_ERROR NetworkCommissioningCluster::DisableNetwork(Callback::Cancelable * on
     sender.release();
 exit:
     return err;
+}
+
+CHIP_ERROR
+NetworkCommissioningCluster::EnableNetwork(OnEnableNetworkCommandResponseCallbackFunct onSuccess,
+                                           OnCommandErrorCallbackFunct onFailure,
+                                           const app::clusters::NetworkCommissioning::EnableNetworkCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::NetworkCommissioning::EnableNetworkResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         NetworkCommissioning::Commands::Ids::EnableNetwork,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR NetworkCommissioningCluster::EnableNetwork(Callback::Cancelable * onSuccessCallback,
@@ -332,6 +477,32 @@ exit:
     return err;
 }
 
+CHIP_ERROR NetworkCommissioningCluster::GetLastNetworkCommissioningResult(
+    OnGetLastNetworkCommissioningResultCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::NetworkCommissioning::GetLastNetworkCommissioningResultCommandParams::Type & params)
+{
+    using ResponseCallbackType = void;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         NetworkCommissioning::Commands::Ids::GetLastNetworkCommissioningResult,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR NetworkCommissioningCluster::GetLastNetworkCommissioningResult(Callback::Cancelable * onSuccessCallback,
                                                                           Callback::Cancelable * onFailureCallback,
                                                                           uint32_t timeoutMs)
@@ -373,6 +544,33 @@ CHIP_ERROR NetworkCommissioningCluster::GetLastNetworkCommissioningResult(Callba
     sender.release();
 exit:
     return err;
+}
+
+CHIP_ERROR
+NetworkCommissioningCluster::RemoveNetwork(OnRemoveNetworkCommandResponseCallbackFunct onSuccess,
+                                           OnCommandErrorCallbackFunct onFailure,
+                                           const app::clusters::NetworkCommissioning::RemoveNetworkCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::NetworkCommissioning::RemoveNetworkResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         NetworkCommissioning::Commands::Ids::RemoveNetwork,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR NetworkCommissioningCluster::RemoveNetwork(Callback::Cancelable * onSuccessCallback,
@@ -420,6 +618,32 @@ CHIP_ERROR NetworkCommissioningCluster::RemoveNetwork(Callback::Cancelable * onS
     sender.release();
 exit:
     return err;
+}
+
+CHIP_ERROR
+NetworkCommissioningCluster::ScanNetworks(OnScanNetworksCommandResponseCallbackFunct onSuccess,
+                                          OnCommandErrorCallbackFunct onFailure,
+                                          const app::clusters::NetworkCommissioning::ScanNetworksCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::NetworkCommissioning::ScanNetworksResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId, NetworkCommissioning::Commands::Ids::ScanNetworks,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR NetworkCommissioningCluster::ScanNetworks(Callback::Cancelable * onSuccessCallback,
@@ -482,6 +706,31 @@ CHIP_ERROR NetworkCommissioningCluster::ReadAttributeClusterRevision(Callback::C
 }
 
 // OperationalCredentials Cluster Commands
+CHIP_ERROR OperationalCredentialsCluster::AddNOC(OnAddNOCCommandResponseCallbackFunct onSuccess,
+                                                 OnCommandErrorCallbackFunct onFailure,
+                                                 const app::clusters::OperationalCredentials::AddNOCCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::OperationalCredentials::NOCResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId, OperationalCredentials::Commands::Ids::AddNOC,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR OperationalCredentialsCluster::AddNOC(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                                  chip::ByteSpan nOCValue, chip::ByteSpan iCACValue, chip::ByteSpan iPKValue,
                                                  chip::NodeId caseAdminNode, uint16_t adminVendorId)
@@ -532,6 +781,32 @@ exit:
     return err;
 }
 
+CHIP_ERROR OperationalCredentialsCluster::AddTrustedRootCertificate(
+    OnAddTrustedRootCertificateCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::OperationalCredentials::AddTrustedRootCertificateCommandParams::Type & params)
+{
+    using ResponseCallbackType = void;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OperationalCredentials::Commands::Ids::AddTrustedRootCertificate,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR OperationalCredentialsCluster::AddTrustedRootCertificate(Callback::Cancelable * onSuccessCallback,
                                                                     Callback::Cancelable * onFailureCallback,
                                                                     chip::ByteSpan rootCertificate)
@@ -575,14 +850,39 @@ exit:
     return err;
 }
 
+CHIP_ERROR OperationalCredentialsCluster::AttestationRequest(
+    OnAttestationRequestCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::OperationalCredentials::AttestationRequestCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::OperationalCredentials::AttestationResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OperationalCredentials::Commands::Ids::AttestationRequest,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR OperationalCredentialsCluster::AttestationRequest(Callback::Cancelable * onSuccessCallback,
                                                              Callback::Cancelable * onFailureCallback,
                                                              chip::ByteSpan attestationNonce)
 {
-    CHIP_ERROR err              = CHIP_NO_ERROR;
-    app::CommandSender * sender = nullptr;
-    TLV::TLVWriter * writer     = nullptr;
-    uint8_t argSeqNumber        = 0;
+    CHIP_ERROR err          = CHIP_NO_ERROR;
+    TLV::TLVWriter * writer = nullptr;
+    uint8_t argSeqNumber    = 0;
 
     // Used when encoding non-empty command. Suppress error message when encoding empty commands.
     (void) writer;
@@ -594,8 +894,11 @@ CHIP_ERROR OperationalCredentialsCluster::AttestationRequest(Callback::Cancelabl
                                          OperationalCredentials::Commands::Ids::AttestationRequest,
                                          (app::CommandPathFlags::kEndpointIdValid) };
 
-    SuccessOrExit(err = app::InteractionModelEngine::GetInstance()->NewCommandSender(&sender));
+    CommandSenderHandler sender(Platform::New<app::CommandSender>(mDevice->GetInteractionModelDelegate()));
 
+    VerifyOrReturnError(sender != nullptr, CHIP_ERROR_NO_MEMORY);
+
+    SuccessOrExit(err = sender->Init(mDevice->GetExchangeManager()));
     SuccessOrExit(err = sender->PrepareCommand(cmdParams));
 
     VerifyOrExit((writer = sender->GetCommandDataElementTLVWriter()) != nullptr, err = CHIP_ERROR_INCORRECT_STATE);
@@ -605,26 +908,49 @@ CHIP_ERROR OperationalCredentialsCluster::AttestationRequest(Callback::Cancelabl
     SuccessOrExit(err = sender->FinishCommand());
 
     // #6308: This is a temporary solution before we fully support IM on application side and should be replaced by IMDelegate.
-    mDevice->AddIMResponseHandler(sender, onSuccessCallback, onFailureCallback);
+    mDevice->AddIMResponseHandler(sender.get(), onSuccessCallback, onFailureCallback);
 
-    err = mDevice->SendCommands(sender);
+    SuccessOrExit(err = mDevice->SendCommands(sender.get()));
 
+    // We have successfully sent the command, and the callback handler will be responsible to free the object, release the object
+    // now.
+    sender.release();
 exit:
-    // On error, we are responsible to close the sender.
-    if (err != CHIP_NO_ERROR && sender != nullptr)
-    {
-        sender->Shutdown();
-    }
     return err;
+}
+
+CHIP_ERROR OperationalCredentialsCluster::CertificateChainRequest(
+    OnCertificateChainRequestCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::OperationalCredentials::CertificateChainRequestCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::OperationalCredentials::CertificateChainResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OperationalCredentials::Commands::Ids::CertificateChainRequest,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR OperationalCredentialsCluster::CertificateChainRequest(Callback::Cancelable * onSuccessCallback,
                                                                   Callback::Cancelable * onFailureCallback, uint8_t certificateType)
 {
-    CHIP_ERROR err              = CHIP_NO_ERROR;
-    app::CommandSender * sender = nullptr;
-    TLV::TLVWriter * writer     = nullptr;
-    uint8_t argSeqNumber        = 0;
+    CHIP_ERROR err          = CHIP_NO_ERROR;
+    TLV::TLVWriter * writer = nullptr;
+    uint8_t argSeqNumber    = 0;
 
     // Used when encoding non-empty command. Suppress error message when encoding empty commands.
     (void) writer;
@@ -636,8 +962,11 @@ CHIP_ERROR OperationalCredentialsCluster::CertificateChainRequest(Callback::Canc
                                          OperationalCredentials::Commands::Ids::CertificateChainRequest,
                                          (app::CommandPathFlags::kEndpointIdValid) };
 
-    SuccessOrExit(err = app::InteractionModelEngine::GetInstance()->NewCommandSender(&sender));
+    CommandSenderHandler sender(Platform::New<app::CommandSender>(mDevice->GetInteractionModelDelegate()));
 
+    VerifyOrReturnError(sender != nullptr, CHIP_ERROR_NO_MEMORY);
+
+    SuccessOrExit(err = sender->Init(mDevice->GetExchangeManager()));
     SuccessOrExit(err = sender->PrepareCommand(cmdParams));
 
     VerifyOrExit((writer = sender->GetCommandDataElementTLVWriter()) != nullptr, err = CHIP_ERROR_INCORRECT_STATE);
@@ -647,17 +976,42 @@ CHIP_ERROR OperationalCredentialsCluster::CertificateChainRequest(Callback::Canc
     SuccessOrExit(err = sender->FinishCommand());
 
     // #6308: This is a temporary solution before we fully support IM on application side and should be replaced by IMDelegate.
-    mDevice->AddIMResponseHandler(sender, onSuccessCallback, onFailureCallback);
+    mDevice->AddIMResponseHandler(sender.get(), onSuccessCallback, onFailureCallback);
 
-    err = mDevice->SendCommands(sender);
+    SuccessOrExit(err = mDevice->SendCommands(sender.get()));
 
+    // We have successfully sent the command, and the callback handler will be responsible to free the object, release the object
+    // now.
+    sender.release();
 exit:
-    // On error, we are responsible to close the sender.
-    if (err != CHIP_NO_ERROR && sender != nullptr)
-    {
-        sender->Shutdown();
-    }
     return err;
+}
+
+CHIP_ERROR
+OperationalCredentialsCluster::OpCSRRequest(OnOpCSRRequestCommandResponseCallbackFunct onSuccess,
+                                            OnCommandErrorCallbackFunct onFailure,
+                                            const app::clusters::OperationalCredentials::OpCSRRequestCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::OperationalCredentials::OpCSRResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OperationalCredentials::Commands::Ids::OpCSRRequest,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR OperationalCredentialsCluster::OpCSRRequest(Callback::Cancelable * onSuccessCallback,
@@ -702,6 +1056,33 @@ exit:
     return err;
 }
 
+CHIP_ERROR
+OperationalCredentialsCluster::RemoveFabric(OnRemoveFabricCommandResponseCallbackFunct onSuccess,
+                                            OnCommandErrorCallbackFunct onFailure,
+                                            const app::clusters::OperationalCredentials::RemoveFabricCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::OperationalCredentials::NOCResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OperationalCredentials::Commands::Ids::RemoveFabric,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR OperationalCredentialsCluster::RemoveFabric(Callback::Cancelable * onSuccessCallback,
                                                        Callback::Cancelable * onFailureCallback, uint8_t fabricIndex)
 {
@@ -742,6 +1123,32 @@ CHIP_ERROR OperationalCredentialsCluster::RemoveFabric(Callback::Cancelable * on
     sender.release();
 exit:
     return err;
+}
+
+CHIP_ERROR OperationalCredentialsCluster::UpdateFabricLabel(
+    OnUpdateFabricLabelCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::OperationalCredentials::UpdateFabricLabelCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::OperationalCredentials::NOCResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OperationalCredentials::Commands::Ids::UpdateFabricLabel,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR OperationalCredentialsCluster::UpdateFabricLabel(Callback::Cancelable * onSuccessCallback,

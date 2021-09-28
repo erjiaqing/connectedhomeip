@@ -21,7 +21,9 @@
 
 #include <cstdint>
 
+#include <app-common/zap-generated/cluster-objects.h>
 #include <app-common/zap-generated/ids/Attributes.h>
+#include <app/ClusterObjectCommandSenderCallback.h>
 #include <app/CommandSender.h>
 #include <app/InteractionModelEngine.h>
 #include <app/chip-zcl-zpro-codec.h>
@@ -34,10 +36,13 @@
 #include <lib/support/logging/CHIPLogging.h>
 #include <system/SystemPacketBuffer.h>
 #include <zap-generated/CHIPClientCallbacks.h>
+#include <zap-generated/cluster_objects_commands.h>
 
 namespace chip {
 
+using namespace app;
 using namespace app::Clusters;
+using namespace app::clusters;
 using namespace System;
 using namespace Encoding::LittleEndian;
 
@@ -47,7 +52,42 @@ namespace Controller {
 // TODO(#4503): length should be passed to commands when byte string is in argument list.
 // TODO(#4503): Commands should take group id as an argument.
 
+namespace {
+void onClusterObjectCommandSenderFinal(CommandSender * sender,
+                                       app::ClusterObjectCommandSenderCallback<ResponseCallbackType> * _this)
+{
+    Platform::Delete(sender);
+    Platform::Delete(_this);
+}
+} // namespace
+
 // OtaSoftwareUpdateProvider Cluster Commands
+CHIP_ERROR OtaSoftwareUpdateProviderCluster::ApplyUpdateRequest(
+    OnApplyUpdateRequestCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::OtaSoftwareUpdateProvider::ApplyUpdateRequestCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::OtaSoftwareUpdateProvider::ApplyUpdateRequestResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OtaSoftwareUpdateProvider::Commands::Ids::ApplyUpdateRequest,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR OtaSoftwareUpdateProviderCluster::ApplyUpdateRequest(Callback::Cancelable * onSuccessCallback,
                                                                 Callback::Cancelable * onFailureCallback,
                                                                 chip::ByteSpan updateToken, uint32_t newVersion)
@@ -93,6 +133,32 @@ exit:
     return err;
 }
 
+CHIP_ERROR OtaSoftwareUpdateProviderCluster::NotifyUpdateApplied(
+    OnNotifyUpdateAppliedCommandResponseCallbackFunct onSuccess, OnCommandErrorCallbackFunct onFailure,
+    const app::clusters::OtaSoftwareUpdateProvider::NotifyUpdateAppliedCommandParams::Type & params)
+{
+    using ResponseCallbackType = void;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OtaSoftwareUpdateProvider::Commands::Ids::NotifyUpdateApplied,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
+}
+
 CHIP_ERROR OtaSoftwareUpdateProviderCluster::NotifyUpdateApplied(Callback::Cancelable * onSuccessCallback,
                                                                  Callback::Cancelable * onFailureCallback,
                                                                  chip::ByteSpan updateToken, uint32_t currentVersion)
@@ -136,6 +202,33 @@ CHIP_ERROR OtaSoftwareUpdateProviderCluster::NotifyUpdateApplied(Callback::Cance
     sender.release();
 exit:
     return err;
+}
+
+CHIP_ERROR
+OtaSoftwareUpdateProviderCluster::QueryImage(OnQueryImageCommandResponseCallbackFunct onSuccess,
+                                             OnCommandErrorCallbackFunct onFailure,
+                                             const app::clusters::OtaSoftwareUpdateProvider::QueryImageCommandParams::Type & params)
+{
+    using ResponseCallbackType = clusters::OtaSoftwareUpdateProvider::QueryImageResponseCommandParams::Type;
+
+    app::CommandPathParams cmdParams = { mEndpoint, /* group id */ 0, mClusterId,
+                                         OtaSoftwareUpdateProvider::Commands::Ids::QueryImage,
+                                         (app::CommandPathFlags::kEndpointIdValid) };
+
+    auto callback = Platform::MakeUnique<app::ClusterObjectCommandSenderCallback<ResponseCallbackType>>(
+        onSuccess,
+        onFailure,
+        onClusterObjectCommandSenderFinal,
+    ));
+
+    auto sender = Platform::MakeUnique<app::CommandSender>(callback.get());
+
+    ReturnErrorOnFailure(sender->EncodeFullCommand(cmdParams, params));
+    ReturnErrorOnFailure(mDevice->SendCommands(sender.get()));
+
+    sender.release();
+    callback.release();
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR OtaSoftwareUpdateProviderCluster::QueryImage(Callback::Cancelable * onSuccessCallback,

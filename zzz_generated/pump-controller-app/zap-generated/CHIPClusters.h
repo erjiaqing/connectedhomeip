@@ -23,9 +23,13 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app-common/zap-generated/ids/Commands.h>
 
+#include <zap-generated/cluster_objects_commands.h>
+
 #include <controller/CHIPCluster.h>
 #include <lib/core/CHIPCallback.h>
 #include <lib/support/Span.h>
+
+#include <functional>
 
 namespace chip {
 namespace Controller {
@@ -69,6 +73,33 @@ public:
                     uint8_t optionOverride);
     CHIP_ERROR StopWithOnOff(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct        = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnMoveCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Move(OnMoveCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                    const app::clusters::LevelControl::MoveCommandParams::Type & params);
+    using OnMoveToLevelCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToLevel(OnMoveToLevelCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::LevelControl::MoveToLevelCommandParams::Type & params);
+    using OnMoveToLevelWithOnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToLevelWithOnOff(OnMoveToLevelWithOnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                    const app::clusters::LevelControl::MoveToLevelWithOnOffCommandParams::Type & params);
+    using OnMoveWithOnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveWithOnOff(OnMoveWithOnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::LevelControl::MoveWithOnOffCommandParams::Type & params);
+    using OnStepCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Step(OnStepCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                    const app::clusters::LevelControl::StepCommandParams::Type & params);
+    using OnStepWithOnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StepWithOnOff(OnStepWithOnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::LevelControl::StepWithOnOffCommandParams::Type & params);
+    using OnStopCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Stop(OnStopCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                    const app::clusters::LevelControl::StopCommandParams::Type & params);
+    using OnStopWithOnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StopWithOnOff(OnStopWithOnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::LevelControl::StopWithOnOffCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeCurrentLevel(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -89,6 +120,18 @@ public:
     CHIP_ERROR Off(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR On(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR Toggle(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct       = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Off(OnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                   const app::clusters::OnOff::OffCommandParams::Type & params);
+    using OnOnCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR On(OnOnCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                  const app::clusters::OnOff::OnCommandParams::Type & params);
+    using OnToggleCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Toggle(OnToggleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                      const app::clusters::OnOff::ToggleCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeOnOff(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);

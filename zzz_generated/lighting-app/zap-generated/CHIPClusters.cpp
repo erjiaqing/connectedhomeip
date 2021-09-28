@@ -21,7 +21,9 @@
 
 #include <cstdint>
 
+#include <app-common/zap-generated/cluster-objects.h>
 #include <app-common/zap-generated/ids/Attributes.h>
+#include <app/ClusterObjectCommandSenderCallback.h>
 #include <app/CommandSender.h>
 #include <app/InteractionModelEngine.h>
 #include <app/chip-zcl-zpro-codec.h>
@@ -34,10 +36,13 @@
 #include <lib/support/logging/CHIPLogging.h>
 #include <system/SystemPacketBuffer.h>
 #include <zap-generated/CHIPClientCallbacks.h>
+#include <zap-generated/cluster_objects_commands.h>
 
 namespace chip {
 
+using namespace app;
 using namespace app::Clusters;
+using namespace app::clusters;
 using namespace System;
 using namespace Encoding::LittleEndian;
 
@@ -46,6 +51,15 @@ namespace Controller {
 // TODO(#4502): onCompletion is not used by IM for now.
 // TODO(#4503): length should be passed to commands when byte string is in argument list.
 // TODO(#4503): Commands should take group id as an argument.
+
+namespace {
+void onClusterObjectCommandSenderFinal(CommandSender * sender,
+                                       app::ClusterObjectCommandSenderCallback<ResponseCallbackType> * _this)
+{
+    Platform::Delete(sender);
+    Platform::Delete(_this);
+}
+} // namespace
 
 // OnOff Cluster Commands
 // OnOff Cluster Attributes

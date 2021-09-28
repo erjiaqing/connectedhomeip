@@ -23,9 +23,13 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app-common/zap-generated/ids/Commands.h>
 
+#include <zap-generated/cluster_objects_commands.h>
+
 #include <controller/CHIPCluster.h>
 #include <lib/core/CHIPCallback.h>
 #include <lib/support/Span.h>
+
+#include <functional>
 
 namespace chip {
 namespace Controller {
@@ -45,6 +49,20 @@ public:
                           uint16_t productId, uint16_t imageType, uint16_t hardwareVersion, uint32_t currentVersion,
                           uint8_t protocolsSupported, chip::ByteSpan location, bool requestorCanConsent,
                           chip::ByteSpan metadataForProvider);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnApplyUpdateRequestCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OtaSoftwareUpdateProvider::ApplyUpdateRequestResponseCommandParams::Type &)>;
+    CHIP_ERROR ApplyUpdateRequest(OnApplyUpdateRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::OtaSoftwareUpdateProvider::ApplyUpdateRequestCommandParams::Type & params);
+    using OnNotifyUpdateAppliedCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR NotifyUpdateApplied(OnNotifyUpdateAppliedCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                   const app::clusters::OtaSoftwareUpdateProvider::NotifyUpdateAppliedCommandParams::Type & params);
+    using OnQueryImageCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OtaSoftwareUpdateProvider::QueryImageResponseCommandParams::Type &)>;
+    CHIP_ERROR QueryImage(OnQueryImageCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                          const app::clusters::OtaSoftwareUpdateProvider::QueryImageCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
