@@ -35,6 +35,16 @@
             "output": "attribute-size.cpp"
         },
         {
+            "path": "templates/app/command-cluster-objects.zapt",
+            "name": "Command Cluster Objects",
+            "output": "cluster_objects_commands.h"
+        },
+        {
+            "path": "templates/app/command-cluster-objects-src.zapt",
+            "name": "Command Cluster Objects",
+            "output": "cluster_objects_commands.cpp"
+        },
+        {
             "path": "templates/app/callback-stub-src.zapt",
             "name": "ZCL callback-stub source",
             "output": "callback-stub.cpp"

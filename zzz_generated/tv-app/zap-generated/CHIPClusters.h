@@ -23,9 +23,13 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app-common/zap-generated/ids/Commands.h>
 
+#include <zap-generated/cluster_objects_commands.h>
+
 #include <controller/CHIPCluster.h>
 #include <lib/core/CHIPCallback.h>
 #include <lib/support/Span.h>
+
+#include <functional>
 
 namespace chip {
 namespace Controller {
@@ -42,6 +46,21 @@ public:
     CHIP_ERROR CommissioningComplete(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR SetRegulatoryConfig(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                    uint8_t location, chip::ByteSpan countryCode, uint64_t breadcrumb, uint32_t timeoutMs);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnArmFailSafeCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::GeneralCommissioning::ArmFailSafeResponseCommandParams::Type &)>;
+    CHIP_ERROR ArmFailSafe(OnArmFailSafeCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::GeneralCommissioning::ArmFailSafeCommandParams::Type & params);
+    using OnCommissioningCompleteCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::GeneralCommissioning::CommissioningCompleteResponseCommandParams::Type &)>;
+    CHIP_ERROR CommissioningComplete(OnCommissioningCompleteCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                     const app::clusters::GeneralCommissioning::CommissioningCompleteCommandParams::Type & params);
+    using OnSetRegulatoryConfigCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::GeneralCommissioning::SetRegulatoryConfigResponseCommandParams::Type &)>;
+    CHIP_ERROR SetRegulatoryConfig(OnSetRegulatoryConfigCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                   const app::clusters::GeneralCommissioning::SetRegulatoryConfigCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeBreadcrumb(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -72,6 +91,29 @@ public:
     CHIP_ERROR ScanNetworks(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, chip::ByteSpan ssid,
                             uint64_t breadcrumb, uint32_t timeoutMs);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnDisableNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::DisableNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR DisableNetwork(OnDisableNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::NetworkCommissioning::DisableNetworkCommandParams::Type & params);
+    using OnEnableNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::EnableNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR EnableNetwork(OnEnableNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::NetworkCommissioning::EnableNetworkCommandParams::Type & params);
+    using OnGetLastNetworkCommissioningResultCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR GetLastNetworkCommissioningResult(
+        OnGetLastNetworkCommissioningResultCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+        const app::clusters::NetworkCommissioning::GetLastNetworkCommissioningResultCommandParams::Type & params);
+    using OnRemoveNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::RemoveNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR RemoveNetwork(OnRemoveNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::NetworkCommissioning::RemoveNetworkCommandParams::Type & params);
+    using OnScanNetworksCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::ScanNetworksResponseCommandParams::Type &)>;
+    CHIP_ERROR ScanNetworks(OnScanNetworksCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::NetworkCommissioning::ScanNetworksCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
@@ -99,6 +141,38 @@ public:
                             uint8_t fabricIndex);
     CHIP_ERROR UpdateFabricLabel(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                  chip::ByteSpan label);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnAddNOCCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::NOCResponseCommandParams::Type &)>;
+    CHIP_ERROR AddNOC(OnAddNOCCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                      const app::clusters::OperationalCredentials::AddNOCCommandParams::Type & params);
+    using OnAddTrustedRootCertificateCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR
+    AddTrustedRootCertificate(OnAddTrustedRootCertificateCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::OperationalCredentials::AddTrustedRootCertificateCommandParams::Type & params);
+    using OnAttestationRequestCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::AttestationResponseCommandParams::Type &)>;
+    CHIP_ERROR AttestationRequest(OnAttestationRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::OperationalCredentials::AttestationRequestCommandParams::Type & params);
+    using OnCertificateChainRequestCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::CertificateChainResponseCommandParams::Type &)>;
+    CHIP_ERROR
+    CertificateChainRequest(OnCertificateChainRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::OperationalCredentials::CertificateChainRequestCommandParams::Type & params);
+    using OnOpCSRRequestCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::OpCSRResponseCommandParams::Type &)>;
+    CHIP_ERROR OpCSRRequest(OnOpCSRRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::OperationalCredentials::OpCSRRequestCommandParams::Type & params);
+    using OnRemoveFabricCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::NOCResponseCommandParams::Type &)>;
+    CHIP_ERROR RemoveFabric(OnRemoveFabricCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::OperationalCredentials::RemoveFabricCommandParams::Type & params);
+    using OnUpdateFabricLabelCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::NOCResponseCommandParams::Type &)>;
+    CHIP_ERROR UpdateFabricLabel(OnUpdateFabricLabelCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::OperationalCredentials::UpdateFabricLabelCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeFabricsList(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);

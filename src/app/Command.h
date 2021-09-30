@@ -29,6 +29,7 @@
 #include <app/MessageDef/CommandDataElement.h>
 #include <app/MessageDef/CommandList.h>
 #include <app/MessageDef/InvokeCommand.h>
+#include <app/data-model/Encode.h>
 #include <lib/core/CHIPCore.h>
 #include <lib/support/BitFlags.h>
 #include <lib/support/CodeUtils.h>
@@ -40,6 +41,8 @@
 #include <protocols/Protocols.h>
 #include <system/SystemPacketBuffer.h>
 #include <system/TLVPacketBufferBackingStore.h>
+
+#include <functional>
 
 namespace chip {
 namespace app {
@@ -75,13 +78,10 @@ public:
      *  @retval #CHIP_NO_ERROR On success.
      *
      */
-    CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate);
+    CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr);
 
-    /**
-     *  Shutdown the Command. This terminates this instance
-     *  of the object and releases all held resources.
-     */
-    void Shutdown();
+    template <typename ClusterObjectT>
+    CHIP_ERROR EncodeFullCommand(const CommandPathParams & aCommandPathParams, const ClusterObjectT & aPayload);
 
     /**
      * Finalize Command Message TLV Builder and finalize command message
@@ -125,23 +125,38 @@ protected:
     void ClearState();
     const char * GetStateStr() const;
 
-    /**
-     * Internal shutdown method that we use when we know what's going on with
-     * our exchange and don't need to manually close it.
-     */
-    void ShutdownInternal();
-
     InvokeCommand::Builder mInvokeCommandBuilder;
     Messaging::ExchangeManager * mpExchangeMgr = nullptr;
     Messaging::ExchangeContext * mpExchangeCtx = nullptr;
-    InteractionModelDelegate * mpDelegate      = nullptr;
     uint8_t mCommandIndex                      = 0;
     CommandState mState                        = CommandState::Uninitialized;
+    chip::System::PacketBufferTLVWriter mCommandMessageWriter;
 
 private:
     friend class TestCommandInteraction;
     TLV::TLVType mDataElementContainerType = TLV::kTLVType_NotSpecified;
-    chip::System::PacketBufferTLVWriter mCommandMessageWriter;
 };
+
+template <typename ClusterObjectT>
+CHIP_ERROR Command::EncodeFullCommand(const CommandPathParams & aCommandPathParams, const ClusterObjectT & aPayload)
+{
+    CHIP_ERROR err = CHIP_NO_ERROR;
+    CommandDataElement::Builder commandDataElement;
+
+    VerifyOrReturnError(mState == CommandState::Initialized || mState == CommandState::AddCommand,
+                        err = CHIP_ERROR_INCORRECT_STATE);
+
+    commandDataElement = mInvokeCommandBuilder.GetCommandListBuilder().CreateCommandDataElementBuilder();
+    ReturnErrorOnFailure(commandDataElement.GetError());
+    ReturnErrorOnFailure(ConstructCommandPath(aCommandPathParams, commandDataElement));
+    ReturnErrorOnFailure(
+        DataModel::Encode(*commandDataElement.GetWriter(), TLV::ContextTag(CommandDataElement::kCsTag_Data), aPayload));
+
+    commandDataElement.EndOfCommandDataElement();
+    ReturnErrorOnFailure(commandDataElement.GetError());
+    MoveToState(CommandState::AddCommand);
+    return CHIP_NO_ERROR;
+}
+
 } // namespace app
 } // namespace chip

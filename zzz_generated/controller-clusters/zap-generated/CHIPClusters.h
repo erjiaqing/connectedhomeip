@@ -23,9 +23,13 @@
 #include <app-common/zap-generated/ids/Clusters.h>
 #include <app-common/zap-generated/ids/Commands.h>
 
+#include <zap-generated/cluster_objects_commands.h>
+
 #include <controller/CHIPCluster.h>
 #include <lib/core/CHIPCallback.h>
 #include <lib/support/Span.h>
+
+#include <functional>
 
 namespace chip {
 namespace Controller {
@@ -41,6 +45,16 @@ public:
                            chip::ByteSpan tempAccountIdentifier);
     CHIP_ERROR Login(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                      chip::ByteSpan tempAccountIdentifier, chip::ByteSpan setupPIN);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnGetSetupPINCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::AccountLogin::GetSetupPINResponseCommandParams::Type &)>;
+    CHIP_ERROR GetSetupPIN(OnGetSetupPINCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::AccountLogin::GetSetupPINCommandParams::Type & params);
+    using OnLoginCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Login(OnLoginCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                     const app::clusters::AccountLogin::LoginCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -62,6 +76,21 @@ public:
                                        uint32_t iterations, chip::ByteSpan salt, uint16_t passcodeID);
     CHIP_ERROR RevokeCommissioning(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnOpenBasicCommissioningWindowCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR OpenBasicCommissioningWindow(
+        OnOpenBasicCommissioningWindowCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+        const app::clusters::AdministratorCommissioning::OpenBasicCommissioningWindowCommandParams::Type & params);
+    using OnOpenCommissioningWindowCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR
+    OpenCommissioningWindow(OnOpenCommissioningWindowCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::AdministratorCommissioning::OpenCommissioningWindowCommandParams::Type & params);
+    using OnRevokeCommissioningCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR
+    RevokeCommissioning(OnRevokeCommissioningCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                        const app::clusters::AdministratorCommissioning::RevokeCommissioningCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
@@ -76,6 +105,12 @@ public:
 
     // Cluster Commands
     CHIP_ERROR ChangeStatus(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint8_t status);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnChangeStatusCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ChangeStatus(OnChangeStatusCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::ApplicationBasic::ChangeStatusCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeVendorName(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -100,6 +135,13 @@ public:
     CHIP_ERROR LaunchApp(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, chip::ByteSpan data,
                          uint16_t catalogVendorId, chip::ByteSpan applicationId);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnLaunchAppCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::ApplicationLauncher::LaunchAppResponseCommandParams::Type &)>;
+    CHIP_ERROR LaunchApp(OnLaunchAppCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::ApplicationLauncher::LaunchAppCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeApplicationLauncherList(Callback::Cancelable * onSuccessCallback,
                                                     Callback::Cancelable * onFailureCallback);
@@ -121,6 +163,15 @@ public:
                             chip::ByteSpan name);
     CHIP_ERROR SelectOutput(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint8_t index);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnRenameOutputCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR RenameOutput(OnRenameOutputCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::AudioOutput::RenameOutputCommandParams::Type & params);
+    using OnSelectOutputCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR SelectOutput(OnSelectOutputCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::AudioOutput::SelectOutputCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeAudioOutputList(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeCurrentAudioOutput(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -140,6 +191,16 @@ public:
                                          uint8_t percentOpen);
     CHIP_ERROR BarrierControlStop(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnBarrierControlGoToPercentCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR
+    BarrierControlGoToPercent(OnBarrierControlGoToPercentCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::BarrierControl::BarrierControlGoToPercentCommandParams::Type & params);
+    using OnBarrierControlStopCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR BarrierControlStop(OnBarrierControlStopCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::BarrierControl::BarrierControlStopCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeBarrierMovingState(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeBarrierSafetyStatus(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -158,6 +219,12 @@ public:
 
     // Cluster Commands
     CHIP_ERROR MfgSpecificPing(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                   = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnMfgSpecificPingCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MfgSpecificPing(OnMfgSpecificPingCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                               const app::clusters::Basic::MfgSpecificPingCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeInteractionModelVersion(Callback::Cancelable * onSuccessCallback,
@@ -226,6 +293,15 @@ public:
                     chip::GroupId groupId, chip::EndpointId endpointId, chip::ClusterId clusterId);
     CHIP_ERROR Unbind(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, chip::NodeId nodeId,
                       chip::GroupId groupId, chip::EndpointId endpointId, chip::ClusterId clusterId);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct        = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnBindCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Bind(OnBindCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                    const app::clusters::Binding::BindCommandParams::Type & params);
+    using OnUnbindCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Unbind(OnUnbindCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                      const app::clusters::Binding::UnbindCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -313,6 +389,67 @@ public:
                               uint8_t stepSize, uint8_t transitionTime, uint8_t optionsMask, uint8_t optionsOverride);
     CHIP_ERROR StopMoveStep(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint8_t optionsMask,
                             uint8_t optionsOverride);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnColorLoopSetCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ColorLoopSet(OnColorLoopSetCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::ColorControl::ColorLoopSetCommandParams::Type & params);
+    using OnEnhancedMoveHueCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR EnhancedMoveHue(OnEnhancedMoveHueCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                               const app::clusters::ColorControl::EnhancedMoveHueCommandParams::Type & params);
+    using OnEnhancedMoveToHueCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR EnhancedMoveToHue(OnEnhancedMoveToHueCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::ColorControl::EnhancedMoveToHueCommandParams::Type & params);
+    using OnEnhancedMoveToHueAndSaturationCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR
+    EnhancedMoveToHueAndSaturation(OnEnhancedMoveToHueAndSaturationCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                   const app::clusters::ColorControl::EnhancedMoveToHueAndSaturationCommandParams::Type & params);
+    using OnEnhancedStepHueCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR EnhancedStepHue(OnEnhancedStepHueCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                               const app::clusters::ColorControl::EnhancedStepHueCommandParams::Type & params);
+    using OnMoveColorCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveColor(OnMoveColorCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::ColorControl::MoveColorCommandParams::Type & params);
+    using OnMoveColorTemperatureCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveColorTemperature(OnMoveColorTemperatureCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                    const app::clusters::ColorControl::MoveColorTemperatureCommandParams::Type & params);
+    using OnMoveHueCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveHue(OnMoveHueCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                       const app::clusters::ColorControl::MoveHueCommandParams::Type & params);
+    using OnMoveSaturationCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveSaturation(OnMoveSaturationCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::ColorControl::MoveSaturationCommandParams::Type & params);
+    using OnMoveToColorCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToColor(OnMoveToColorCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::ColorControl::MoveToColorCommandParams::Type & params);
+    using OnMoveToColorTemperatureCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToColorTemperature(OnMoveToColorTemperatureCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                      const app::clusters::ColorControl::MoveToColorTemperatureCommandParams::Type & params);
+    using OnMoveToHueCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToHue(OnMoveToHueCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::ColorControl::MoveToHueCommandParams::Type & params);
+    using OnMoveToHueAndSaturationCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToHueAndSaturation(OnMoveToHueAndSaturationCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                      const app::clusters::ColorControl::MoveToHueAndSaturationCommandParams::Type & params);
+    using OnMoveToSaturationCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToSaturation(OnMoveToSaturationCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                const app::clusters::ColorControl::MoveToSaturationCommandParams::Type & params);
+    using OnStepColorCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StepColor(OnStepColorCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::ColorControl::StepColorCommandParams::Type & params);
+    using OnStepColorTemperatureCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StepColorTemperature(OnStepColorTemperatureCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                    const app::clusters::ColorControl::StepColorTemperatureCommandParams::Type & params);
+    using OnStepHueCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StepHue(OnStepHueCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                       const app::clusters::ColorControl::StepHueCommandParams::Type & params);
+    using OnStepSaturationCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StepSaturation(OnStepSaturationCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::ColorControl::StepSaturationCommandParams::Type & params);
+    using OnStopMoveStepCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StopMoveStep(OnStopMoveStepCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::ColorControl::StopMoveStepCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeCurrentHue(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -436,6 +573,17 @@ public:
     CHIP_ERROR LaunchURL(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                          chip::ByteSpan contentURL, chip::ByteSpan displayString);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnLaunchContentCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::ContentLauncher::LaunchContentResponseCommandParams::Type &)>;
+    CHIP_ERROR LaunchContent(OnLaunchContentCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::ContentLauncher::LaunchContentCommandParams::Type & params);
+    using OnLaunchURLCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::ContentLauncher::LaunchURLResponseCommandParams::Type &)>;
+    CHIP_ERROR LaunchURL(OnLaunchURLCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::ContentLauncher::LaunchURLCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeAcceptsHeaderList(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeSupportedStreamingTypes(Callback::Cancelable * onSuccessCallback,
@@ -468,6 +616,12 @@ public:
     // Cluster Commands
     CHIP_ERROR RetrieveLogsRequest(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                    uint8_t intent, uint8_t requestedProtocol, chip::ByteSpan transferFileDesignator);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                       = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnRetrieveLogsRequestCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR RetrieveLogsRequest(OnRetrieveLogsRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                   const app::clusters::DiagnosticLogs::RetrieveLogsRequestCommandParams::Type & params);
 
     // Cluster Attributes
 
@@ -520,6 +674,101 @@ public:
     CHIP_ERROR UnlockWithTimeout(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                  uint16_t timeoutInSeconds, chip::ByteSpan pin);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnClearAllPinsCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::ClearAllPinsResponseCommandParams::Type &)>;
+    CHIP_ERROR ClearAllPins(OnClearAllPinsCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::DoorLock::ClearAllPinsCommandParams::Type & params);
+    using OnClearAllRfidsCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::ClearAllRfidsResponseCommandParams::Type &)>;
+    CHIP_ERROR ClearAllRfids(OnClearAllRfidsCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::DoorLock::ClearAllRfidsCommandParams::Type & params);
+    using OnClearHolidayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::ClearHolidayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR ClearHolidaySchedule(OnClearHolidayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                    const app::clusters::DoorLock::ClearHolidayScheduleCommandParams::Type & params);
+    using OnClearPinCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::ClearPinResponseCommandParams::Type &)>;
+    CHIP_ERROR ClearPin(OnClearPinCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                        const app::clusters::DoorLock::ClearPinCommandParams::Type & params);
+    using OnClearRfidCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::ClearRfidResponseCommandParams::Type &)>;
+    CHIP_ERROR ClearRfid(OnClearRfidCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::DoorLock::ClearRfidCommandParams::Type & params);
+    using OnClearWeekdayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::ClearWeekdayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR ClearWeekdaySchedule(OnClearWeekdayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                    const app::clusters::DoorLock::ClearWeekdayScheduleCommandParams::Type & params);
+    using OnClearYeardayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::ClearYeardayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR ClearYeardaySchedule(OnClearYeardayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                    const app::clusters::DoorLock::ClearYeardayScheduleCommandParams::Type & params);
+    using OnGetHolidayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::GetHolidayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR GetHolidaySchedule(OnGetHolidayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::DoorLock::GetHolidayScheduleCommandParams::Type & params);
+    using OnGetLogRecordCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::GetLogRecordResponseCommandParams::Type &)>;
+    CHIP_ERROR GetLogRecord(OnGetLogRecordCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::DoorLock::GetLogRecordCommandParams::Type & params);
+    using OnGetPinCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::GetPinResponseCommandParams::Type &)>;
+    CHIP_ERROR GetPin(OnGetPinCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                      const app::clusters::DoorLock::GetPinCommandParams::Type & params);
+    using OnGetRfidCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::GetRfidResponseCommandParams::Type &)>;
+    CHIP_ERROR GetRfid(OnGetRfidCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                       const app::clusters::DoorLock::GetRfidCommandParams::Type & params);
+    using OnGetUserTypeCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::GetUserTypeResponseCommandParams::Type &)>;
+    CHIP_ERROR GetUserType(OnGetUserTypeCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::DoorLock::GetUserTypeCommandParams::Type & params);
+    using OnGetWeekdayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::GetWeekdayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR GetWeekdaySchedule(OnGetWeekdayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::DoorLock::GetWeekdayScheduleCommandParams::Type & params);
+    using OnGetYeardayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::GetYeardayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR GetYeardaySchedule(OnGetYeardayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::DoorLock::GetYeardayScheduleCommandParams::Type & params);
+    using OnLockDoorCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::LockDoorResponseCommandParams::Type &)>;
+    CHIP_ERROR LockDoor(OnLockDoorCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                        const app::clusters::DoorLock::LockDoorCommandParams::Type & params);
+    using OnSetHolidayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::SetHolidayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR SetHolidaySchedule(OnSetHolidayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::DoorLock::SetHolidayScheduleCommandParams::Type & params);
+    using OnSetPinCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::SetPinResponseCommandParams::Type &)>;
+    CHIP_ERROR SetPin(OnSetPinCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                      const app::clusters::DoorLock::SetPinCommandParams::Type & params);
+    using OnSetRfidCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::SetRfidResponseCommandParams::Type &)>;
+    CHIP_ERROR SetRfid(OnSetRfidCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                       const app::clusters::DoorLock::SetRfidCommandParams::Type & params);
+    using OnSetUserTypeCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::SetUserTypeResponseCommandParams::Type &)>;
+    CHIP_ERROR SetUserType(OnSetUserTypeCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::DoorLock::SetUserTypeCommandParams::Type & params);
+    using OnSetWeekdayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::SetWeekdayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR SetWeekdaySchedule(OnSetWeekdayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::DoorLock::SetWeekdayScheduleCommandParams::Type & params);
+    using OnSetYeardayScheduleCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::SetYeardayScheduleResponseCommandParams::Type &)>;
+    CHIP_ERROR SetYeardaySchedule(OnSetYeardayScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::DoorLock::SetYeardayScheduleCommandParams::Type & params);
+    using OnUnlockDoorCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::UnlockDoorResponseCommandParams::Type &)>;
+    CHIP_ERROR UnlockDoor(OnUnlockDoorCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                          const app::clusters::DoorLock::UnlockDoorCommandParams::Type & params);
+    using OnUnlockWithTimeoutCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::DoorLock::UnlockWithTimeoutResponseCommandParams::Type &)>;
+    CHIP_ERROR UnlockWithTimeout(OnUnlockWithTimeoutCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::DoorLock::UnlockWithTimeoutCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeLockState(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeLockType(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -561,6 +810,12 @@ public:
 
     // Cluster Commands
     CHIP_ERROR ResetCounts(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct               = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnResetCountsCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ResetCounts(OnResetCountsCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::EthernetNetworkDiagnostics::ResetCountsCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributePacketRxCount(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -609,6 +864,21 @@ public:
     CHIP_ERROR CommissioningComplete(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR SetRegulatoryConfig(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                    uint8_t location, chip::ByteSpan countryCode, uint64_t breadcrumb, uint32_t timeoutMs);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnArmFailSafeCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::GeneralCommissioning::ArmFailSafeResponseCommandParams::Type &)>;
+    CHIP_ERROR ArmFailSafe(OnArmFailSafeCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::GeneralCommissioning::ArmFailSafeCommandParams::Type & params);
+    using OnCommissioningCompleteCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::GeneralCommissioning::CommissioningCompleteResponseCommandParams::Type &)>;
+    CHIP_ERROR CommissioningComplete(OnCommissioningCompleteCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                     const app::clusters::GeneralCommissioning::CommissioningCompleteCommandParams::Type & params);
+    using OnSetRegulatoryConfigCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::GeneralCommissioning::SetRegulatoryConfigResponseCommandParams::Type &)>;
+    CHIP_ERROR SetRegulatoryConfig(OnSetRegulatoryConfigCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                   const app::clusters::GeneralCommissioning::SetRegulatoryConfigCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeBreadcrumb(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -666,6 +936,31 @@ public:
     CHIP_ERROR RemoveGroup(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint16_t groupId);
     CHIP_ERROR ViewGroup(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint16_t groupId);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnAddGroupCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Groups::AddGroupResponseCommandParams::Type &)>;
+    CHIP_ERROR AddGroup(OnAddGroupCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                        const app::clusters::Groups::AddGroupCommandParams::Type & params);
+    using OnAddGroupIfIdentifyingCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR AddGroupIfIdentifying(OnAddGroupIfIdentifyingCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                     const app::clusters::Groups::AddGroupIfIdentifyingCommandParams::Type & params);
+    using OnGetGroupMembershipCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Groups::GetGroupMembershipResponseCommandParams::Type &)>;
+    CHIP_ERROR GetGroupMembership(OnGetGroupMembershipCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::Groups::GetGroupMembershipCommandParams::Type & params);
+    using OnRemoveAllGroupsCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR RemoveAllGroups(OnRemoveAllGroupsCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                               const app::clusters::Groups::RemoveAllGroupsCommandParams::Type & params);
+    using OnRemoveGroupCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Groups::RemoveGroupResponseCommandParams::Type &)>;
+    CHIP_ERROR RemoveGroup(OnRemoveGroupCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::Groups::RemoveGroupCommandParams::Type & params);
+    using OnViewGroupCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Groups::ViewGroupResponseCommandParams::Type &)>;
+    CHIP_ERROR ViewGroup(OnViewGroupCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::Groups::ViewGroupCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeNameSupport(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -682,6 +977,16 @@ public:
     // Cluster Commands
     CHIP_ERROR Identify(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint16_t identifyTime);
     CHIP_ERROR IdentifyQuery(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct            = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnIdentifyCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Identify(OnIdentifyCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                        const app::clusters::Identify::IdentifyCommandParams::Type & params);
+    using OnIdentifyQueryCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Identify::IdentifyQueryResponseCommandParams::Type &)>;
+    CHIP_ERROR IdentifyQuery(OnIdentifyQueryCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::Identify::IdentifyQueryCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeIdentifyTime(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -700,6 +1005,13 @@ public:
 
     // Cluster Commands
     CHIP_ERROR SendKey(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint8_t keyCode);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnSendKeyCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::KeypadInput::SendKeyResponseCommandParams::Type &)>;
+    CHIP_ERROR SendKey(OnSendKeyCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                       const app::clusters::KeypadInput::SendKeyCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -730,6 +1042,33 @@ public:
                     uint8_t optionOverride);
     CHIP_ERROR StopWithOnOff(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct        = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnMoveCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Move(OnMoveCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                    const app::clusters::LevelControl::MoveCommandParams::Type & params);
+    using OnMoveToLevelCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToLevel(OnMoveToLevelCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::LevelControl::MoveToLevelCommandParams::Type & params);
+    using OnMoveToLevelWithOnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveToLevelWithOnOff(OnMoveToLevelWithOnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                    const app::clusters::LevelControl::MoveToLevelWithOnOffCommandParams::Type & params);
+    using OnMoveWithOnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR MoveWithOnOff(OnMoveWithOnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::LevelControl::MoveWithOnOffCommandParams::Type & params);
+    using OnStepCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Step(OnStepCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                    const app::clusters::LevelControl::StepCommandParams::Type & params);
+    using OnStepWithOnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StepWithOnOff(OnStepWithOnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::LevelControl::StepWithOnOffCommandParams::Type & params);
+    using OnStopCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Stop(OnStopCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                    const app::clusters::LevelControl::StopCommandParams::Type & params);
+    using OnStopWithOnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StopWithOnOff(OnStopWithOnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::LevelControl::StopWithOnOffCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeCurrentLevel(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -749,6 +1088,12 @@ public:
     // Cluster Commands
     CHIP_ERROR Sleep(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct         = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnSleepCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Sleep(OnSleepCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                     const app::clusters::LowPower::SleepCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
@@ -767,6 +1112,21 @@ public:
                            chip::ByteSpan name);
     CHIP_ERROR SelectInput(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint8_t index);
     CHIP_ERROR ShowInputStatus(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                   = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnHideInputStatusCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR HideInputStatus(OnHideInputStatusCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                               const app::clusters::MediaInput::HideInputStatusCommandParams::Type & params);
+    using OnRenameInputCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR RenameInput(OnRenameInputCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::MediaInput::RenameInputCommandParams::Type & params);
+    using OnSelectInputCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR SelectInput(OnSelectInputCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::MediaInput::SelectInputCommandParams::Type & params);
+    using OnShowInputStatusCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ShowInputStatus(OnShowInputStatusCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                               const app::clusters::MediaInput::ShowInputStatusCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeMediaInputList(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -796,6 +1156,53 @@ public:
                                 uint64_t deltaPositionMilliseconds);
     CHIP_ERROR MediaStartOver(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR MediaStop(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnMediaFastForwardCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaFastForwardResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaFastForward(OnMediaFastForwardCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                const app::clusters::MediaPlayback::MediaFastForwardCommandParams::Type & params);
+    using OnMediaNextCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaNextResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaNext(OnMediaNextCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::MediaPlayback::MediaNextCommandParams::Type & params);
+    using OnMediaPauseCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaPauseResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaPause(OnMediaPauseCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                          const app::clusters::MediaPlayback::MediaPauseCommandParams::Type & params);
+    using OnMediaPlayCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaPlayResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaPlay(OnMediaPlayCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::MediaPlayback::MediaPlayCommandParams::Type & params);
+    using OnMediaPreviousCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaPreviousResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaPrevious(OnMediaPreviousCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::MediaPlayback::MediaPreviousCommandParams::Type & params);
+    using OnMediaRewindCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaRewindResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaRewind(OnMediaRewindCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::MediaPlayback::MediaRewindCommandParams::Type & params);
+    using OnMediaSeekCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaSeekResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaSeek(OnMediaSeekCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::MediaPlayback::MediaSeekCommandParams::Type & params);
+    using OnMediaSkipBackwardCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaSkipBackwardResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaSkipBackward(OnMediaSkipBackwardCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::MediaPlayback::MediaSkipBackwardCommandParams::Type & params);
+    using OnMediaSkipForwardCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaSkipForwardResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaSkipForward(OnMediaSkipForwardCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                const app::clusters::MediaPlayback::MediaSkipForwardCommandParams::Type & params);
+    using OnMediaStartOverCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaStartOverResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaStartOver(OnMediaStartOverCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::MediaPlayback::MediaStartOverCommandParams::Type & params);
+    using OnMediaStopCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::MediaPlayback::MediaStopResponseCommandParams::Type &)>;
+    CHIP_ERROR MediaStop(OnMediaStopCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::MediaPlayback::MediaStopCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributePlaybackState(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -837,6 +1244,45 @@ public:
     CHIP_ERROR UpdateWiFiNetwork(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                  chip::ByteSpan ssid, chip::ByteSpan credentials, uint64_t breadcrumb, uint32_t timeoutMs);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnAddThreadNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::AddThreadNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR AddThreadNetwork(OnAddThreadNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                const app::clusters::NetworkCommissioning::AddThreadNetworkCommandParams::Type & params);
+    using OnAddWiFiNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::AddWiFiNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR AddWiFiNetwork(OnAddWiFiNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::NetworkCommissioning::AddWiFiNetworkCommandParams::Type & params);
+    using OnDisableNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::DisableNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR DisableNetwork(OnDisableNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::NetworkCommissioning::DisableNetworkCommandParams::Type & params);
+    using OnEnableNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::EnableNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR EnableNetwork(OnEnableNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::NetworkCommissioning::EnableNetworkCommandParams::Type & params);
+    using OnGetLastNetworkCommissioningResultCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR GetLastNetworkCommissioningResult(
+        OnGetLastNetworkCommissioningResultCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+        const app::clusters::NetworkCommissioning::GetLastNetworkCommissioningResultCommandParams::Type & params);
+    using OnRemoveNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::RemoveNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR RemoveNetwork(OnRemoveNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::NetworkCommissioning::RemoveNetworkCommandParams::Type & params);
+    using OnScanNetworksCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::ScanNetworksResponseCommandParams::Type &)>;
+    CHIP_ERROR ScanNetworks(OnScanNetworksCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::NetworkCommissioning::ScanNetworksCommandParams::Type & params);
+    using OnUpdateThreadNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::UpdateThreadNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR UpdateThreadNetwork(OnUpdateThreadNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                   const app::clusters::NetworkCommissioning::UpdateThreadNetworkCommandParams::Type & params);
+    using OnUpdateWiFiNetworkCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::NetworkCommissioning::UpdateWiFiNetworkResponseCommandParams::Type &)>;
+    CHIP_ERROR UpdateWiFiNetwork(OnUpdateWiFiNetworkCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::NetworkCommissioning::UpdateWiFiNetworkCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeFeatureMap(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -860,6 +1306,20 @@ public:
                           uint8_t protocolsSupported, chip::ByteSpan location, bool requestorCanConsent,
                           chip::ByteSpan metadataForProvider);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnApplyUpdateRequestCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OtaSoftwareUpdateProvider::ApplyUpdateRequestResponseCommandParams::Type &)>;
+    CHIP_ERROR ApplyUpdateRequest(OnApplyUpdateRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::OtaSoftwareUpdateProvider::ApplyUpdateRequestCommandParams::Type & params);
+    using OnNotifyUpdateAppliedCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR NotifyUpdateApplied(OnNotifyUpdateAppliedCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                   const app::clusters::OtaSoftwareUpdateProvider::NotifyUpdateAppliedCommandParams::Type & params);
+    using OnQueryImageCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OtaSoftwareUpdateProvider::QueryImageResponseCommandParams::Type &)>;
+    CHIP_ERROR QueryImage(OnQueryImageCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                          const app::clusters::OtaSoftwareUpdateProvider::QueryImageCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
@@ -876,6 +1336,13 @@ public:
     CHIP_ERROR AnnounceOtaProvider(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                    chip::ByteSpan serverLocation, uint16_t vendorId, uint8_t announcementReason,
                                    chip::ByteSpan metadataForNode);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                       = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnAnnounceOtaProviderCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR
+    AnnounceOtaProvider(OnAnnounceOtaProviderCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                        const app::clusters::OtaSoftwareUpdateRequestor::AnnounceOtaProviderCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeDefaultOtaProvider(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -919,6 +1386,27 @@ public:
     CHIP_ERROR OnWithTimedOff(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                               uint8_t onOffControl, uint16_t onTime, uint16_t offWaitTime);
     CHIP_ERROR Toggle(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct       = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Off(OnOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                   const app::clusters::OnOff::OffCommandParams::Type & params);
+    using OnOffWithEffectCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR OffWithEffect(OnOffWithEffectCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::OnOff::OffWithEffectCommandParams::Type & params);
+    using OnOnCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR On(OnOnCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                  const app::clusters::OnOff::OnCommandParams::Type & params);
+    using OnOnWithRecallGlobalSceneCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR OnWithRecallGlobalScene(OnOnWithRecallGlobalSceneCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                       const app::clusters::OnOff::OnWithRecallGlobalSceneCommandParams::Type & params);
+    using OnOnWithTimedOffCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR OnWithTimedOff(OnOnWithTimedOffCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::OnOff::OnWithTimedOffCommandParams::Type & params);
+    using OnToggleCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Toggle(OnToggleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                      const app::clusters::OnOff::ToggleCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeOnOff(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -980,6 +1468,46 @@ public:
                                  chip::ByteSpan label);
     CHIP_ERROR UpdateNOC(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                          chip::ByteSpan nOCValue, chip::ByteSpan iCACValue);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnAddNOCCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::NOCResponseCommandParams::Type &)>;
+    CHIP_ERROR AddNOC(OnAddNOCCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                      const app::clusters::OperationalCredentials::AddNOCCommandParams::Type & params);
+    using OnAddTrustedRootCertificateCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR
+    AddTrustedRootCertificate(OnAddTrustedRootCertificateCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::OperationalCredentials::AddTrustedRootCertificateCommandParams::Type & params);
+    using OnAttestationRequestCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::AttestationResponseCommandParams::Type &)>;
+    CHIP_ERROR AttestationRequest(OnAttestationRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::OperationalCredentials::AttestationRequestCommandParams::Type & params);
+    using OnCertificateChainRequestCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::CertificateChainResponseCommandParams::Type &)>;
+    CHIP_ERROR
+    CertificateChainRequest(OnCertificateChainRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::OperationalCredentials::CertificateChainRequestCommandParams::Type & params);
+    using OnOpCSRRequestCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::OpCSRResponseCommandParams::Type &)>;
+    CHIP_ERROR OpCSRRequest(OnOpCSRRequestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::OperationalCredentials::OpCSRRequestCommandParams::Type & params);
+    using OnRemoveFabricCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::NOCResponseCommandParams::Type &)>;
+    CHIP_ERROR RemoveFabric(OnRemoveFabricCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::OperationalCredentials::RemoveFabricCommandParams::Type & params);
+    using OnRemoveTrustedRootCertificateCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR RemoveTrustedRootCertificate(
+        OnRemoveTrustedRootCertificateCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+        const app::clusters::OperationalCredentials::RemoveTrustedRootCertificateCommandParams::Type & params);
+    using OnUpdateFabricLabelCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::NOCResponseCommandParams::Type &)>;
+    CHIP_ERROR UpdateFabricLabel(OnUpdateFabricLabelCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::OperationalCredentials::UpdateFabricLabelCommandParams::Type & params);
+    using OnUpdateNOCCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::OperationalCredentials::NOCResponseCommandParams::Type &)>;
+    CHIP_ERROR UpdateNOC(OnUpdateNOCCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::OperationalCredentials::UpdateNOCCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeFabricsList(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -1091,6 +1619,36 @@ public:
     CHIP_ERROR ViewScene(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint16_t groupId,
                          uint8_t sceneId);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnAddSceneCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Scenes::AddSceneResponseCommandParams::Type &)>;
+    CHIP_ERROR AddScene(OnAddSceneCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                        const app::clusters::Scenes::AddSceneCommandParams::Type & params);
+    using OnGetSceneMembershipCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Scenes::GetSceneMembershipResponseCommandParams::Type &)>;
+    CHIP_ERROR GetSceneMembership(OnGetSceneMembershipCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::Scenes::GetSceneMembershipCommandParams::Type & params);
+    using OnRecallSceneCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR RecallScene(OnRecallSceneCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::Scenes::RecallSceneCommandParams::Type & params);
+    using OnRemoveAllScenesCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Scenes::RemoveAllScenesResponseCommandParams::Type &)>;
+    CHIP_ERROR RemoveAllScenes(OnRemoveAllScenesCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                               const app::clusters::Scenes::RemoveAllScenesCommandParams::Type & params);
+    using OnRemoveSceneCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Scenes::RemoveSceneResponseCommandParams::Type &)>;
+    CHIP_ERROR RemoveScene(OnRemoveSceneCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::Scenes::RemoveSceneCommandParams::Type & params);
+    using OnStoreSceneCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Scenes::StoreSceneResponseCommandParams::Type &)>;
+    CHIP_ERROR StoreScene(OnStoreSceneCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                          const app::clusters::Scenes::StoreSceneCommandParams::Type & params);
+    using OnViewSceneCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::Scenes::ViewSceneResponseCommandParams::Type &)>;
+    CHIP_ERROR ViewScene(OnViewSceneCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                         const app::clusters::Scenes::ViewSceneCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeSceneCount(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeCurrentScene(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -1110,6 +1668,12 @@ public:
 
     // Cluster Commands
     CHIP_ERROR ResetWatermarks(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                   = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnResetWatermarksCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ResetWatermarks(OnResetWatermarksCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                               const app::clusters::SoftwareDiagnostics::ResetWatermarksCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeCurrentHeapFree(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -1149,6 +1713,19 @@ public:
                                      uint16_t majorNumber, uint16_t minorNumber);
     CHIP_ERROR SkipChannel(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint16_t count);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnChangeChannelCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::TvChannel::ChangeChannelResponseCommandParams::Type &)>;
+    CHIP_ERROR ChangeChannel(OnChangeChannelCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::TvChannel::ChangeChannelCommandParams::Type & params);
+    using OnChangeChannelByNumberCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ChangeChannelByNumber(OnChangeChannelByNumberCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                     const app::clusters::TvChannel::ChangeChannelByNumberCommandParams::Type & params);
+    using OnSkipChannelCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR SkipChannel(OnSkipChannelCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::TvChannel::SkipChannelCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeTvChannelList(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeTvChannelLineup(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -1167,6 +1744,13 @@ public:
     // Cluster Commands
     CHIP_ERROR NavigateTarget(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint8_t target,
                               chip::ByteSpan data);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnNavigateTargetCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::TargetNavigator::NavigateTargetResponseCommandParams::Type &)>;
+    CHIP_ERROR NavigateTarget(OnNavigateTargetCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::TargetNavigator::NavigateTargetCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeTargetNavigatorList(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -1204,6 +1788,26 @@ public:
     CHIP_ERROR TestNotHandled(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR TestSpecific(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR TestUnknownCommand(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct        = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnTestCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR Test(OnTestCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                    const app::clusters::TestCluster::TestCommandParams::Type & params);
+    using OnTestAddArgumentsCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::TestCluster::TestAddArgumentsResponseCommandParams::Type &)>;
+    CHIP_ERROR TestAddArguments(OnTestAddArgumentsCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                const app::clusters::TestCluster::TestAddArgumentsCommandParams::Type & params);
+    using OnTestNotHandledCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR TestNotHandled(OnTestNotHandledCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                              const app::clusters::TestCluster::TestNotHandledCommandParams::Type & params);
+    using OnTestSpecificCommandResponseCallbackFunct =
+        std::function<void(const app::clusters::TestCluster::TestSpecificResponseCommandParams::Type &)>;
+    CHIP_ERROR TestSpecific(OnTestSpecificCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                            const app::clusters::TestCluster::TestSpecificCommandParams::Type & params);
+    using OnTestUnknownCommandCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR TestUnknownCommand(OnTestUnknownCommandCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::TestCluster::TestUnknownCommandCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeBoolean(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -1298,6 +1902,24 @@ public:
     CHIP_ERROR SetpointRaiseLower(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, uint8_t mode,
                                   int8_t amount);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct                       = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnClearWeeklyScheduleCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ClearWeeklySchedule(OnClearWeeklyScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                   const app::clusters::Thermostat::ClearWeeklyScheduleCommandParams::Type & params);
+    using OnGetRelayStatusLogCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR GetRelayStatusLog(OnGetRelayStatusLogCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::Thermostat::GetRelayStatusLogCommandParams::Type & params);
+    using OnGetWeeklyScheduleCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR GetWeeklySchedule(OnGetWeeklyScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::Thermostat::GetWeeklyScheduleCommandParams::Type & params);
+    using OnSetWeeklyScheduleCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR SetWeeklySchedule(OnSetWeeklyScheduleCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                 const app::clusters::Thermostat::SetWeeklyScheduleCommandParams::Type & params);
+    using OnSetpointRaiseLowerCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR SetpointRaiseLower(OnSetpointRaiseLowerCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::Thermostat::SetpointRaiseLowerCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeLocalTemperature(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeAbsMinHeatSetpointLimit(Callback::Cancelable * onSuccessCallback,
@@ -1383,6 +2005,12 @@ public:
 
     // Cluster Commands
     CHIP_ERROR ResetCounts(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct               = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnResetCountsCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ResetCounts(OnResetCountsCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::ThreadNetworkDiagnostics::ResetCountsCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeChannel(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -1487,6 +2115,12 @@ public:
     // Cluster Commands
     CHIP_ERROR ResetCounts(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
 
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct               = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnResetCountsCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR ResetCounts(OnResetCountsCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::WiFiNetworkDiagnostics::ResetCountsCommandParams::Type & params);
+
     // Cluster Attributes
     CHIP_ERROR ReadAttributeBssid(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR ReadAttributeSecurityType(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
@@ -1516,6 +2150,30 @@ public:
                              uint16_t tiltValue);
     CHIP_ERROR StopMotion(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
     CHIP_ERROR UpOrOpen(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);
+
+    // Cluster Commands (Cluster Object Implementation)
+    using OnCommandErrorCallbackFunct               = std::function<void(Protocols::InteractionModel::Status, CHIP_ERROR)>;
+    using OnDownOrCloseCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR DownOrClose(OnDownOrCloseCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                           const app::clusters::WindowCovering::DownOrCloseCommandParams::Type & params);
+    using OnGoToLiftPercentageCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR GoToLiftPercentage(OnGoToLiftPercentageCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::WindowCovering::GoToLiftPercentageCommandParams::Type & params);
+    using OnGoToLiftValueCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR GoToLiftValue(OnGoToLiftValueCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::WindowCovering::GoToLiftValueCommandParams::Type & params);
+    using OnGoToTiltPercentageCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR GoToTiltPercentage(OnGoToTiltPercentageCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                                  const app::clusters::WindowCovering::GoToTiltPercentageCommandParams::Type & params);
+    using OnGoToTiltValueCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR GoToTiltValue(OnGoToTiltValueCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                             const app::clusters::WindowCovering::GoToTiltValueCommandParams::Type & params);
+    using OnStopMotionCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR StopMotion(OnStopMotionCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                          const app::clusters::WindowCovering::StopMotionCommandParams::Type & params);
+    using OnUpOrOpenCommandResponseCallbackFunct = std::function<void(void)>;
+    CHIP_ERROR UpOrOpen(OnUpOrOpenCommandResponseCallbackFunct, OnCommandErrorCallbackFunct,
+                        const app::clusters::WindowCovering::UpOrOpenCommandParams::Type & params);
 
     // Cluster Attributes
     CHIP_ERROR ReadAttributeType(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback);

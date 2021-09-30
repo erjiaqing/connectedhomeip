@@ -1,0 +1,42 @@
+{{> header}}
+
+#include "cluster_objects_commands.h"
+
+#include <app-common/zap-generated/cluster-objects.h>
+
+#pragma GCC diagnostic ignored "-Wstack-usage="
+
+namespace chip {
+namespace app {
+namespace clusters {
+
+{{#chip_client_clusters}}
+namespace {{asCamelCased name false}} {
+{{#chip_cluster_commands}}
+namespace {{name}}CommandParams {
+
+CHIP_ERROR Type::Encode(TLV::TLVWriter &writer, uint64_t tag) const{
+    TLV::TLVType outer;
+    ReturnErrorOnFailure(writer.StartContainer(tag, TLV::kTLVType_Structure, outer));
+    {{#chip_cluster_command_arguments}}
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(k{{asUpperCamelCase label}}FieldId), {{asLowerCamelCase label}}));
+    {{/chip_cluster_command_arguments}}
+    ReturnErrorOnFailure(writer.EndContainer(outer));
+    return CHIP_NO_ERROR;
+}
+
+}
+{{/chip_cluster_commands}}
+
+{{#chip_cluster_responses}}
+namespace {{name}}CommandParams {
+CHIP_ERROR Type::Decode(TLV::TLVReader &reader) { return CHIP_ERROR_NOT_IMPLEMENTED; }
+}// namespace for {{name}}
+{{/chip_cluster_responses}}
+
+}
+{{/chip_client_clusters}}
+
+} // namespace clusters
+} // namespace app
+} // namespace chip
