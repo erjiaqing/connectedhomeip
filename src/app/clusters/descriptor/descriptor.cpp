@@ -108,6 +108,8 @@ EmberAfStatus writePartsAttribute(EndpointId endpoint)
 
     uint16_t partsCount = 0;
 
+    ChipLogError(Zcl, "yujuan: writePartsAttribute");
+
     if (endpoint == 0x00)
     {
         for (uint16_t endpointIndex = 1; endpointIndex < emberAfEndpointCount(); endpointIndex++)
@@ -115,6 +117,8 @@ EmberAfStatus writePartsAttribute(EndpointId endpoint)
             if (emberAfEndpointIndexIsEnabled(endpointIndex))
             {
                 EndpointId endpointId = emberAfEndpointFromIndex(endpointIndex);
+
+                ChipLogError(Zcl, "yujuan: writePartsAttribute: endpointId:%d, partsCount:%d", endpointId, partsCount);
                 status                = writeAttribute(endpoint, attributeId, (uint8_t *) &endpointId, partsCount);
                 VerifyOrReturnError(status == EMBER_ZCL_STATUS_SUCCESS, status);
                 partsCount++;
@@ -128,6 +132,8 @@ EmberAfStatus writePartsAttribute(EndpointId endpoint)
 void emberAfPluginDescriptorServerInitCallback(void)
 {
     EmberAfStatus status = EMBER_ZCL_STATUS_SUCCESS;
+
+    ChipLogError(Zcl, "yujuan: emberAfPluginDescriptorServerInitCallback:emberAfEndpointCount():%d", emberAfEndpointCount());
 
     for (uint16_t index = 0; index < emberAfEndpointCount(); index++)
     {

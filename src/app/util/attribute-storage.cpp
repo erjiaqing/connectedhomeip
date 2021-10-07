@@ -613,6 +613,8 @@ EmberAfStatus emAfReadOrWriteAttribute(EmberAfAttributeSearchRecord * attRecord,
     uint8_t i;
     uint16_t attributeOffsetIndex = 0;
 
+    ChipLogError(Zcl, "yujuan: emAfReadOrWriteAttribute");
+
     for (i = 0; i < emberAfEndpointCount(); i++)
     {
         if (emAfEndpoints[i].endpoint == attRecord->endpoint)
@@ -647,6 +649,7 @@ EmberAfStatus emAfReadOrWriteAttribute(EmberAfAttributeSearchRecord * attRecord,
                                 uint8_t *src, *dst;
                                 if (write)
                                 {
+                                    ChipLogError(Zcl, "yujuan: emAfReadOrWriteAttribute:652");
                                     src = buffer;
                                     dst = attributeLocation;
                                     if (!emberAfAttributeWriteAccessCallback(attRecord->endpoint, attRecord->clusterId,
@@ -658,6 +661,7 @@ EmberAfStatus emAfReadOrWriteAttribute(EmberAfAttributeSearchRecord * attRecord,
                                 }
                                 else
                                 {
+                                    ChipLogError(Zcl, "yujuan: emAfReadOrWriteAttribute:665");
                                     if (buffer == NULL)
                                     {
                                         return EMBER_ZCL_STATUS_SUCCESS;

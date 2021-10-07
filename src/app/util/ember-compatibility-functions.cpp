@@ -191,8 +191,10 @@ bool ServerClusterCommandExists(const ConcreteCommandPath & aCommandPath)
 
 CHIP_ERROR ReadSingleClusterData(ClusterInfo & aClusterInfo, TLV::TLVWriter * apWriter, bool * apDataExists)
 {
+    ChipLogError(DataManagement, "yujuan: ReadSingleClusterData");
+
     ChipLogDetail(DataManagement,
-                  "Received Cluster Command: Cluster=" ChipLogFormatMEI " NodeId=0x" ChipLogFormatX64 " Endpoint=%" PRIx16
+                  "yujuan: Received Cluster Command: Cluster=" ChipLogFormatMEI " NodeId=0x" ChipLogFormatX64 " Endpoint=%" PRIx16
                   " AttributeId=%" PRIx32 " ListIndex=%" PRIx16,
                   ChipLogValueMEI(aClusterInfo.mClusterId), ChipLogValueX64(aClusterInfo.mNodeId), aClusterInfo.mEndpointId,
                   aClusterInfo.mFieldId, aClusterInfo.mListIndex);
@@ -200,6 +202,8 @@ CHIP_ERROR ReadSingleClusterData(ClusterInfo & aClusterInfo, TLV::TLVWriter * ap
     AttributeAccessInterface * attrOverride = findAttributeAccessOverride(aClusterInfo.mEndpointId, aClusterInfo.mClusterId);
     if (attrOverride != nullptr)
     {
+        ChipLogError(DataManagement, "yujuan: ReadSingleClusterData:205");
+
         // TODO: We should probably clone the writer and convert failures here
         // into status responses, unless our caller already does that.
         AttributeValueEncoder valueEncoder(apWriter);
