@@ -43,9 +43,9 @@ namespace {
 class DescriptorAttrAccess : public AttributeAccessInterface
 {
 public:
-    // Register for the GeneralDiagnostics cluster on all endpoints.
-    DescriptorAttrAccess() : AttributeAccessInterface(Optional<EndpointId>::Missing(), GeneralDiagnostics::Id) {
-        ChipLogError(Zcl, "yujuan: AttributeAccessInterface:mClusterId:%d", GeneralDiagnostics::Id);
+    // Register for the Descriptor cluster on all endpoints.
+    DescriptorAttrAccess() : AttributeAccessInterface(Optional<EndpointId>::Missing(), Descriptor::Id) {
+        ChipLogError(Zcl, "yujuan: AttributeAccessInterface:mClusterId:%d", Descriptor::Id);
     }
 
     CHIP_ERROR Read(ClusterInfo & aClusterInfo, AttributeValueEncoder & aEncoder) override;
@@ -116,7 +116,7 @@ CHIP_ERROR DescriptorAttrAccess::Read(ClusterInfo & aClusterInfo, AttributeValue
 {
     ChipLogError(Zcl, "yujuan: DescriptorAttrAccess::Read");
 
-    if (aClusterInfo.mClusterId != GeneralDiagnostics::Id)
+    if (aClusterInfo.mClusterId != Descriptor::Id)
     {
         // We shouldn't have been called at all.
         return CHIP_ERROR_INVALID_ARGUMENT;
