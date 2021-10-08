@@ -44,7 +44,9 @@ class DescriptorAttrAccess : public AttributeAccessInterface
 {
 public:
     // Register for the GeneralDiagnostics cluster on all endpoints.
-    DescriptorAttrAccess() : AttributeAccessInterface(Optional<EndpointId>::Missing(), GeneralDiagnostics::Id) {}
+    DescriptorAttrAccess() : AttributeAccessInterface(Optional<EndpointId>::Missing(), GeneralDiagnostics::Id) {
+        ChipLogError(Zcl, "yujuan: AttributeAccessInterface:mClusterId:%d", GeneralDiagnostics::Id);
+    }
 
     CHIP_ERROR Read(ClusterInfo & aClusterInfo, AttributeValueEncoder & aEncoder) override;
 
@@ -113,7 +115,7 @@ DescriptorAttrAccess gAttrAccess;
 CHIP_ERROR DescriptorAttrAccess::Read(ClusterInfo & aClusterInfo, AttributeValueEncoder & aEncoder)
 {
     ChipLogError(Zcl, "yujuan: DescriptorAttrAccess::Read");
-        
+
     if (aClusterInfo.mClusterId != GeneralDiagnostics::Id)
     {
         // We shouldn't have been called at all.
@@ -240,10 +242,15 @@ EmberAfStatus writePartsAttribute(EndpointId endpoint)
 void emberAfPluginDescriptorServerInitCallback(void)
 {
     EmberAfStatus status = EMBER_ZCL_STATUS_SUCCESS;
+    static bool attrAccessRegistered = false;
 
     ChipLogError(Zcl, "yujuan: emberAfPluginDescriptorServerInitCallback:emberAfEndpointCount():%d", emberAfEndpointCount());
 
-    registerAttributeAccessOverride(&gAttrAccess);
+    if (!attrAccessRegistered)
+    {
+        registerAttributeAccessOverride(&gAttrAccess);
+        attrAccessRegistered = true;
+    }
 
     for (uint16_t index = 0; index < emberAfEndpointCount(); index++)
     {

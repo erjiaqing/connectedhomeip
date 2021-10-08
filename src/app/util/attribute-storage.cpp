@@ -1452,17 +1452,21 @@ bool registerAttributeAccessOverride(app::AttributeAccessInterface * attrOverrid
     {
         if (cur->Matches(*attrOverride))
         {
-            ChipLogError(Zcl, "Duplicate attribute override registration failed");
+            ChipLogError(Zcl, "yujuan: Duplicate attribute override registration failed");
             return false;
         }
     }
     attrOverride->SetNext(gAttributeAccessOverrides);
+
+    ChipLogError(Zcl, "yujuan: registerAttributeAccessOverride");
     gAttributeAccessOverrides = attrOverride;
     return true;
 }
 
 app::AttributeAccessInterface * findAttributeAccessOverride(EndpointId endpointId, ClusterId clusterId)
 {
+    ChipLogError(Zcl, "yujuan: findAttributeAccessOverride:endpointId:%d, clusterId:%d", endpointId, clusterId);
+
     for (app::AttributeAccessInterface * cur = gAttributeAccessOverrides; cur; cur = cur->GetNext())
     {
         if (cur->Matches(endpointId, clusterId))
