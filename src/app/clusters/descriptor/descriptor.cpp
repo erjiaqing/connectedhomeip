@@ -50,6 +50,7 @@ public:
 
 private:
     CHIP_ERROR ReadPartsAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder);
+    CHIP_ERROR ReadClientServerAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder, bool server);
 };
 
 CHIP_ERROR DescriptorAttrAccess::ReadPartsAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder)
@@ -85,6 +86,28 @@ CHIP_ERROR DescriptorAttrAccess::ReadPartsAttribute(EndpointId endpoint, Attribu
     return err;
 }
 
+CHIP_ERROR DescriptorAttrAccess::ReadClientServerAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder, bool server)
+{
+    ChipLogError(Zcl, "yujuan: ReadClientServerAttribute: server:%d", server);
+
+    CHIP_ERROR err = aEncoder.EncodeList([&endpoint, server](const TagBoundEncoder & encoder) -> CHIP_ERROR {
+        ChipLogError(Zcl, "yujuan: ReadClientServerAttribute:67");
+
+        uint16_t clusterCount = emberAfClusterCount(endpoint, server);
+
+        for (uint8_t clusterIndex = 0; clusterIndex < clusterCount; clusterIndex++)
+        {
+            EmberAfCluster * cluster = emberAfGetNthCluster(endpoint, clusterIndex, server);
+            ReturnErrorOnFailure(encoder.Encode(cluster->clusterId));
+        }
+
+        ChipLogError(Zcl, "yujuan: ReadClientServerAttribute:80");
+        return CHIP_NO_ERROR;
+    });
+
+    return err;
+}
+
 DescriptorAttrAccess gAttrAccess;
 
 CHIP_ERROR DescriptorAttrAccess::Read(ClusterInfo & aClusterInfo, AttributeValueEncoder & aEncoder)
@@ -101,10 +124,10 @@ CHIP_ERROR DescriptorAttrAccess::Read(ClusterInfo & aClusterInfo, AttributeValue
         return ReadPartsAttribute(aClusterInfo.mEndpointId, aEncoder);
     }
     case ServerList::Id: {
-        return ReadPartsAttribute(aClusterInfo.mEndpointId, aEncoder);
+        return ReadClientServerAttribute(aClusterInfo.mEndpointId, aEncoder, true);
     }
     case ClientList::Id: {
-        return ReadPartsAttribute(aClusterInfo.mEndpointId, aEncoder);
+        return ReadClientServerAttribute(aClusterInfo.mEndpointId, aEncoder, false);
     }
     case PartsList::Id: {
         return ReadPartsAttribute(aClusterInfo.mEndpointId, aEncoder);
