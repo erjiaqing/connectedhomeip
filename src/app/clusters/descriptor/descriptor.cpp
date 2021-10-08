@@ -112,6 +112,8 @@ DescriptorAttrAccess gAttrAccess;
 
 CHIP_ERROR DescriptorAttrAccess::Read(ClusterInfo & aClusterInfo, AttributeValueEncoder & aEncoder)
 {
+    ChipLogError(Zcl, "yujuan: DescriptorAttrAccess::Read");
+        
     if (aClusterInfo.mClusterId != GeneralDiagnostics::Id)
     {
         // We shouldn't have been called at all.

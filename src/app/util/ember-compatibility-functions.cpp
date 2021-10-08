@@ -225,6 +225,8 @@ CHIP_ERROR ReadSingleClusterData(ClusterInfo & aClusterInfo, TLV::TLVWriter * ap
         }
     }
 
+    ChipLogError(DataManagement, "yujuan: ReadSingleClusterData:229");
+
     EmberAfAttributeType attributeType;
     EmberAfStatus status;
     status = emberAfReadAttribute(aClusterInfo.mEndpointId, aClusterInfo.mClusterId, aClusterInfo.mFieldId, CLUSTER_MASK_SERVER,
