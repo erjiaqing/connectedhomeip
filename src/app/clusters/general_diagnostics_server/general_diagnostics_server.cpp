@@ -96,6 +96,7 @@ CHIP_ERROR GeneralDiagosticsAttrAccess::Read(ClusterInfo & aClusterInfo, Attribu
 void emberAfGeneralDiagnosticsClusterServerInitCallback(EndpointId endpoint)
 {
     static bool attrAccessRegistered = false;
+
     if (!attrAccessRegistered)
     {
         registerAttributeAccessOverride(&gAttrAccess);

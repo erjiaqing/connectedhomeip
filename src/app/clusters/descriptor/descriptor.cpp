@@ -22,17 +22,113 @@
 
 #include <app-common/zap-generated/af-structs.h>
 #include <app-common/zap-generated/attribute-type.h>
+#include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/ids/Attributes.h>
 #include <app-common/zap-generated/ids/Clusters.h>
+#include <app/MessageDef/AttributeDataElement.h>
 #include <app/util/af.h>
 #include <app/util/attribute-storage.h>
 #include <lib/support/CodeUtils.h>
 #include <lib/support/logging/CHIPLogging.h>
 
 using namespace chip;
+using namespace chip::app;
 using namespace chip::app::Clusters;
+using namespace chip::app::Clusters::Descriptor::Attributes;
 
 constexpr const char * kErrorStr = "Descriptor cluster (0x%02x) Error setting '%s' attribute: 0x%02x";
+
+namespace {
+
+class DescriptorAttrAccess : public AttributeAccessInterface
+{
+public:
+    // Register for the GeneralDiagnostics cluster on all endpoints.
+    DescriptorAttrAccess() : AttributeAccessInterface(Optional<EndpointId>::Missing(), GeneralDiagnostics::Id) {}
+
+    CHIP_ERROR Read(ClusterInfo & aClusterInfo, AttributeValueEncoder & aEncoder) override;
+
+private:
+    CHIP_ERROR ReadPartsAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder);
+};
+
+CHIP_ERROR GeneralDiagosticsAttrAccess::ReadPartsAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder)
+{
+    EmberAfStatus status    = EMBER_ZCL_STATUS_SUCCESS;
+    AttributeId attributeId = Descriptor::Attributes::PartsList::Id;
+
+    uint16_t partsCount = 0;
+
+    ChipLogError(Zcl, "yujuan: ReadPartsAttribute");
+
+    if (endpoint == 0x00)
+    {
+        CHIP_ERROR err = aEncoder.EncodeList([&list](const TagBoundEncoder & encoder) -> CHIP_ERROR {
+            ChipLogError(Zcl, "yujuan: ReadPartsAttribute:67");
+
+            for (uint16_t endpointIndex = 1; endpointIndex < emberAfEndpointCount(); endpointIndex++)
+            {
+                if (emberAfEndpointIndexIsEnabled(endpointIndex))
+                {
+                    EndpointId endpointId = emberAfEndpointFromIndex(endpointIndex);
+                    ReturnErrorOnFailure(encoder.Encode(endpointId));
+                }
+
+                item.type     = deviceTypeId;
+                item.revision = revision;
+                ReturnErrorOnFailure(encoder.Encode(item));
+            }
+
+            ChipLogError(Zcl, "yujuan: ReadPartsAttribute:80");
+            return CHIP_NO_ERROR;
+        });
+    }
+
+    return CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_STATUS_ELEMENT;
+}
+
+DeviceType list[] = {};
+CHIP_ERROR err    = aEncoder.EncodeList([&list](const TagBoundEncoder & encoder) -> CHIP_ERROR {
+    for (auto & item : list)
+    {
+        item.type     = deviceTypeId;
+        item.revision = revision;
+        ReturnErrorOnFailure(encoder.Encode(item));
+    }
+    return CHIP_NO_ERROR;
+});
+
+DescriptorAttrAccess gAttrAccess;
+
+CHIP_ERROR DescriptorAttrAccess::Read(ClusterInfo & aClusterInfo, AttributeValueEncoder & aEncoder)
+{
+    if (aClusterInfo.mClusterId != GeneralDiagnostics::Id)
+    {
+        // We shouldn't have been called at all.
+        return CHIP_ERROR_INVALID_ARGUMENT;
+    }
+
+    switch (aClusterInfo.mFieldId)
+    {
+    case DeviceList::Id: {
+        return ReadPartsAttribute(aClusterInfo.mEndpointId, aEncoder);
+    }
+    case ServerList::Id: {
+        return ReadPartsAttribute(aClusterInfo.mEndpointId, aEncoder);
+    }
+    case ClientList::Id: {
+        return ReadPartsAttribute(aClusterInfo.mEndpointId, aEncoder);
+    }
+    case PartsList::Id: {
+        return ReadPartsAttribute(aClusterInfo.mEndpointId, aEncoder);
+    }
+    default: {
+        break;
+    }
+    }
+    return CHIP_NO_ERROR;
+}
+} // anonymous namespace
 
 EmberAfStatus writeAttribute(EndpointId endpoint, AttributeId attributeId, uint8_t * buffer, int32_t index = -1)
 {
@@ -119,7 +215,7 @@ EmberAfStatus writePartsAttribute(EndpointId endpoint)
                 EndpointId endpointId = emberAfEndpointFromIndex(endpointIndex);
 
                 ChipLogError(Zcl, "yujuan: writePartsAttribute: endpointId:%d, partsCount:%d", endpointId, partsCount);
-                status                = writeAttribute(endpoint, attributeId, (uint8_t *) &endpointId, partsCount);
+                status = writeAttribute(endpoint, attributeId, (uint8_t *) &endpointId, partsCount);
                 VerifyOrReturnError(status == EMBER_ZCL_STATUS_SUCCESS, status);
                 partsCount++;
             }
@@ -134,6 +230,8 @@ void emberAfPluginDescriptorServerInitCallback(void)
     EmberAfStatus status = EMBER_ZCL_STATUS_SUCCESS;
 
     ChipLogError(Zcl, "yujuan: emberAfPluginDescriptorServerInitCallback:emberAfEndpointCount():%d", emberAfEndpointCount());
+
+    registerAttributeAccessOverride(&gAttrAccess);
 
     for (uint16_t index = 0; index < emberAfEndpointCount(); index++)
     {
