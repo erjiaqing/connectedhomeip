@@ -52,18 +52,15 @@ private:
     CHIP_ERROR ReadPartsAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder);
 };
 
-CHIP_ERROR GeneralDiagosticsAttrAccess::ReadPartsAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder)
+CHIP_ERROR DescriptorAttrAccess::ReadPartsAttribute(EndpointId endpoint, AttributeValueEncoder & aEncoder)
 {
-    EmberAfStatus status    = EMBER_ZCL_STATUS_SUCCESS;
-    AttributeId attributeId = Descriptor::Attributes::PartsList::Id;
-
-    uint16_t partsCount = 0;
+    CHIP_ERROR err = CHIP_NO_ERROR;
 
     ChipLogError(Zcl, "yujuan: ReadPartsAttribute");
 
     if (endpoint == 0x00)
     {
-        CHIP_ERROR err = aEncoder.EncodeList([&list](const TagBoundEncoder & encoder) -> CHIP_ERROR {
+        err = aEncoder.EncodeList([](const TagBoundEncoder & encoder) -> CHIP_ERROR {
             ChipLogError(Zcl, "yujuan: ReadPartsAttribute:67");
 
             for (uint16_t endpointIndex = 1; endpointIndex < emberAfEndpointCount(); endpointIndex++)
@@ -73,30 +70,20 @@ CHIP_ERROR GeneralDiagosticsAttrAccess::ReadPartsAttribute(EndpointId endpoint, 
                     EndpointId endpointId = emberAfEndpointFromIndex(endpointIndex);
                     ReturnErrorOnFailure(encoder.Encode(endpointId));
                 }
-
-                item.type     = deviceTypeId;
-                item.revision = revision;
-                ReturnErrorOnFailure(encoder.Encode(item));
             }
 
             ChipLogError(Zcl, "yujuan: ReadPartsAttribute:80");
             return CHIP_NO_ERROR;
         });
     }
-
-    return CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_STATUS_ELEMENT;
-}
-
-DeviceType list[] = {};
-CHIP_ERROR err    = aEncoder.EncodeList([&list](const TagBoundEncoder & encoder) -> CHIP_ERROR {
-    for (auto & item : list)
+    else
     {
-        item.type     = deviceTypeId;
-        item.revision = revision;
-        ReturnErrorOnFailure(encoder.Encode(item));
+        ChipLogError(Zcl, "yujuan: Not a root endpoint and it does not contain a PartsList");
+        err = CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_STATUS_ELEMENT;
     }
-    return CHIP_NO_ERROR;
-});
+
+    return err;
+}
 
 DescriptorAttrAccess gAttrAccess;
 
