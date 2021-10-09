@@ -26,7 +26,11 @@
 
 #pragma once
 
+#include <functional>
+
+#include <app/WriteClient.h>
 #include <controller/CHIPDevice.h>
+#include <lib/support/CHIPMem.h>
 
 namespace chip {
 namespace Controller {
@@ -41,6 +45,85 @@ public:
     void Dissociate();
 
     ClusterId GetClusterId() const { return mClusterId; }
+
+    using WriteSuccessCallbackFunct = void(void * context);
+    using WriteFailureCallbackFunct = void(void * context, uint8_t status);
+
+    class WriteAttributeCallback final : public app::WriteClient::Callback
+    {
+    public:
+        using OnSuccessCallbackType = std::function<void()>;
+        using OnErrorCallbackType   = std::function<void(Protocols::InteractionModel::Status aIMStatus, CHIP_ERROR aError)>;
+        using OnDoneCallbackType    = std::function<void(app::WriteClient * commandSender)>;
+        WriteAttributeCallback() {}
+
+        WriteAttributeCallback & SetOnSuccessCallback(OnSuccessCallbackType cb)
+        {
+            mOnSuccess = cb;
+            return *this;
+        }
+
+        WriteAttributeCallback & SetOnErrorCallback(OnErrorCallbackType cb)
+        {
+            mOnError = cb;
+            return *this;
+        }
+
+        WriteAttributeCallback & SetOnDoneCallback(OnDoneCallbackType cb)
+        {
+            mOnDone = cb;
+            return *this;
+        }
+
+    private:
+        void OnSuccess(const app::WriteClient * apWriteClient, const app::AttributePathParams & aPath) override { mOnSuccess(); }
+        void OnError(const app::WriteClient * apWriteClient, Protocols::InteractionModel::Status aInteractionModelStatus,
+                     CHIP_ERROR aError) override
+        {
+            mOnError(aInteractionModelStatus, aError);
+        }
+        void OnDone(app::WriteClient * apWriteClient) override { mOnDone(apWriteClient); }
+
+        OnSuccessCallbackType mOnSuccess;
+        OnErrorCallbackType mOnError;
+        OnDoneCallbackType mOnDone;
+    };
+
+    template <typename AttributeDataT>
+    CHIP_ERROR WriteAttribute(AttributeId attributeId, const AttributeDataT & attributeData, void * context,
+                              WriteSuccessCallbackFunct successCb, WriteFailureCallbackFunct failureCb)
+    {
+        VerifyOrReturnError(mDevice != nullptr, CHIP_ERROR_INCORRECT_STATE);
+        auto callbacks   = Platform::MakeUnique<WriteAttributeCallback>();
+        auto callbackRaw = callbacks.get();
+
+        (*callbackRaw)
+            .SetOnSuccessCallback([context, successCb]() { successCb(context); })
+            .SetOnErrorCallback([context, failureCb](Protocols::InteractionModel::Status aIMStatus, CHIP_ERROR aError) {
+                failureCb(context, app::ToEmberAfStatus(aIMStatus));
+            })
+            .SetOnDoneCallback([callbackRaw](app::WriteClient * apWriteClient) {
+                Platform::Delete(callbackRaw);
+                Platform::Delete(apWriteClient);
+            });
+
+        auto writeClient = Platform::MakeUnique<app::WriteClient>(callbackRaw, mDevice->GetExchangeManager());
+        VerifyOrReturnError(writeClient != nullptr, CHIP_ERROR_NO_MEMORY);
+
+        app::AttributePathParams pathParams;
+        pathParams.mClusterId  = mClusterId;
+        pathParams.mEndpointId = mEndpoint;
+        pathParams.mFieldId    = attributeId;
+        pathParams.mFlags.Set(app::AttributePathParams::Flags::kFieldIdValid);
+
+        ReturnErrorOnFailure(writeClient->EncodeAttributeWritePayload(pathParams, attributeData));
+        ReturnErrorOnFailure(writeClient->SendCommandRequest(sessionHandle.GetPeerNodeId(), sessionHandle.GetFabricIndex(),
+                                                             Optional<SessionHandle>(sessionHandle)));
+
+        writeClient.release();
+        callbacks.release();
+        return CHIP_NO_ERROR;
+    }
 
 protected:
     ClusterBase(uint16_t cluster) : mClusterId(cluster) {}
