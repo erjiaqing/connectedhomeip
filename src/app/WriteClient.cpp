@@ -29,60 +29,72 @@
 namespace chip {
 namespace app {
 
-CHIP_ERROR WriteClient::Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate,
-                             uint64_t aApplicationIdentifier)
+CHIP_ERROR WriteClient::AllocateBuffer()
 {
-    VerifyOrReturnError(apExchangeMgr != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
-    VerifyOrReturnError(mpExchangeMgr == nullptr, CHIP_ERROR_INCORRECT_STATE);
-    VerifyOrReturnError(mpExchangeCtx == nullptr, CHIP_ERROR_INCORRECT_STATE);
-
+    CHIP_ERROR err = CHIP_NO_ERROR;
     AttributeDataList::Builder attributeDataListBuilder;
-    System::PacketBufferHandle packet = System::PacketBufferHandle::New(chip::app::kMaxSecureSduLengthBytes);
-    VerifyOrReturnError(!packet.IsNull(), CHIP_ERROR_NO_MEMORY);
 
-    mMessageWriter.Init(std::move(packet));
+    if (!mBufferAllocated)
+    {
+        mMessageWriter.Reset();
 
-    ReturnErrorOnFailure(mWriteRequestBuilder.Init(&mMessageWriter));
+        System::PacketBufferHandle commandPacket = System::PacketBufferHandle::New(chip::app::kMaxSecureSduLengthBytes);
+        VerifyOrExit(!commandPacket.IsNull(), err = CHIP_ERROR_NO_MEMORY);
 
-    attributeDataListBuilder = mWriteRequestBuilder.CreateAttributeDataListBuilder();
-    ReturnErrorOnFailure(attributeDataListBuilder.GetError());
+        mMessageWriter.Init(std::move(commandPacket));
+        err = mWriteRequestBuilder.Init(&mMessageWriter);
+        SuccessOrExit(err);
 
-    ClearExistingExchangeContext();
-    mpExchangeMgr         = apExchangeMgr;
-    mpDelegate            = apDelegate;
-    mAttributeStatusIndex = 0;
-    mAppIdentifier        = aApplicationIdentifier;
-    MoveToState(State::Initialized);
+        attributeDataListBuilder = mWriteRequestBuilder.CreateAttributeDataListBuilder();
+        SuccessOrExit(attributeDataListBuilder.GetError());
 
-    return CHIP_NO_ERROR;
+        mAttributeStatusIndex = 0;
+
+        mBufferAllocated = true;
+    }
+
+exit:
+    return err;
 }
 
-void WriteClient::Shutdown()
+void WriteClient::Abort()
 {
-    VerifyOrReturn(mState != State::Uninitialized);
-    ClearExistingExchangeContext();
-    ShutdownInternal();
-}
-
-void WriteClient::ShutdownInternal()
-{
-    mMessageWriter.Reset();
-
-    mpExchangeMgr         = nullptr;
-    mpExchangeCtx         = nullptr;
-    mpDelegate            = nullptr;
-    mAttributeStatusIndex = 0;
-    ClearState();
-}
-
-void WriteClient::ClearExistingExchangeContext()
-{
-    // Discard any existing exchange context. Effectively we can only have one IM exchange with
-    // a single node at any one time.
+    //
+    // If the exchange context hasn't already been gracefully closed
+    // (signaled by setting it to null), then we need to forcibly
+    // tear it down.
+    //
     if (mpExchangeCtx != nullptr)
     {
         mpExchangeCtx->Abort();
         mpExchangeCtx = nullptr;
+    }
+}
+
+void WriteClient::Close()
+{
+    //
+    // Shortly after this call to close and when handling an inbound message, it's entirely possible
+    // for this object (courtesy of its derived class) to be destroyed
+    // *before* the call unwinds all the way back to ExchangeContext::HandleMessage.
+    //
+    // As part of tearing down the exchange, there is logic there to invoke the delegate to notify
+    // it of impending closure - which is this object, which just got destroyed!
+    //
+    // So prevent a use-after-free, set delegate to null.
+    //
+    // For more details, see #10344.
+    //
+    if (mpExchangeCtx != nullptr)
+    {
+        mpExchangeCtx->SetDelegate(nullptr);
+    }
+
+    mpExchangeCtx = nullptr;
+
+    if (mpCallback)
+    {
+        mpCallback->OnDone(this);
     }
 }
 
@@ -136,15 +148,13 @@ exit:
 
 CHIP_ERROR WriteClient::PrepareAttribute(const AttributePathParams & attributePathParams)
 {
-    CHIP_ERROR err = CHIP_NO_ERROR;
+    ReturnErrorOnFailure(AllocateBuffer());
 
     AttributeDataElement::Builder attributeDataElement =
         mWriteRequestBuilder.GetAttributeDataListBuilder().CreateAttributeDataElementBuilder();
-    SuccessOrExit(attributeDataElement.GetError());
-    err = ConstructAttributePath(attributePathParams, attributeDataElement);
+    ReturnErrorOnFailure(attributeDataElement.GetError());
 
-exit:
-    return err;
+    return ConstructAttributePath(attributePathParams, attributeDataElement);
 }
 
 CHIP_ERROR WriteClient::FinishAttribute()
@@ -254,26 +264,19 @@ CHIP_ERROR WriteClient::SendWriteRequest(NodeId aNodeId, FabricIndex aFabricInde
     err = FinalizeMessage(packet);
     SuccessOrExit(err);
 
-    // Discard any existing exchange context. Effectively we can only have one exchange per WriteClient
-    // at any one time.
-    ClearExistingExchangeContext();
-
     // Create a new exchange context.
     mpExchangeCtx = mpExchangeMgr->NewContext(apSecureSession.ValueOr(SessionHandle(aNodeId, 0, 0, aFabricIndex)), this);
     VerifyOrExit(mpExchangeCtx != nullptr, err = CHIP_ERROR_NO_MEMORY);
+
     mpExchangeCtx->SetResponseTimeout(timeout);
 
     err = mpExchangeCtx->SendMessage(Protocols::InteractionModel::MsgType::WriteRequest, std::move(packet),
                                      Messaging::SendFlags(Messaging::SendMessageFlags::kExpectResponse));
     SuccessOrExit(err);
+
     MoveToState(State::AwaitingResponse);
 
 exit:
-    if (err != CHIP_NO_ERROR)
-    {
-        ClearExistingExchangeContext();
-    }
-
     return err;
 }
 
@@ -285,32 +288,26 @@ CHIP_ERROR WriteClient::OnMessageReceived(Messaging::ExchangeContext * apExchang
     // This should never fail because even if SendWriteRequest is called
     // back-to-back, the second call will call Close() on the first exchange,
     // which clears the OnMessageReceived callback.
-
-    VerifyOrDie(apExchangeContext == mpExchangeCtx);
+    VerifyOrExit(apExchangeContext == mpExchangeCtx, err = CHIP_ERROR_INCORRECT_STATE);
 
     // Verify that the message is an Write Response.
     // If not, close the exchange and free the payload.
-    if (!aPayloadHeader.HasMessageType(Protocols::InteractionModel::MsgType::WriteResponse))
-    {
-        ExitNow();
-    }
+    VerifyOrExit(aPayloadHeader.HasMessageType(Protocols::InteractionModel::MsgType::WriteResponse),
+                 err = CHIP_ERROR_INVALID_MESSAGE_TYPE);
 
-    err = ProcessWriteResponseMessage(std::move(aPayload));
+    SuccessOrExit(err = ProcessWriteResponseMessage(std::move(aPayload)));
 
 exit:
-    if (mpDelegate != nullptr)
+    if (mpCallback != nullptr)
     {
         if (err != CHIP_NO_ERROR)
         {
-            mpDelegate->WriteResponseError(this, err);
-        }
-        else
-        {
-            mpDelegate->WriteResponseProcessed(this);
+            mpCallback->OnError(this, Protocols::InteractionModel::Status::Failure, err);
         }
     }
-    ShutdownInternal();
-    return err;
+
+    Close();
+    return CHIP_NO_ERROR;
 }
 
 void WriteClient::OnResponseTimeout(Messaging::ExchangeContext * apExchangeContext)
@@ -318,11 +315,11 @@ void WriteClient::OnResponseTimeout(Messaging::ExchangeContext * apExchangeConte
     ChipLogProgress(DataManagement, "Time out! failed to receive write response from Exchange: " ChipLogFormatExchange,
                     ChipLogValueExchange(apExchangeContext));
 
-    if (mpDelegate != nullptr)
+    if (mpCallback != nullptr)
     {
-        mpDelegate->WriteResponseError(this, CHIP_ERROR_TIMEOUT);
+        mpCallback->OnError(this, Protocols::InteractionModel::Status::Failure, CHIP_ERROR_TIMEOUT);
     }
-    ShutdownInternal();
+    Close();
 }
 
 CHIP_ERROR WriteClient::ProcessAttributeStatusElement(AttributeStatusElement::Parser & aAttributeStatusElement)
@@ -364,41 +361,28 @@ CHIP_ERROR WriteClient::ProcessAttributeStatusElement(AttributeStatusElement::Pa
         attributePathParams.mFlags.Set(AttributePathParams::Flags::kListIndexValid);
     }
 
-    err = aAttributeStatusElement.GetStatusElement(&(statusElementParser));
-    if (CHIP_NO_ERROR == err)
+    SuccessOrExit(err = aAttributeStatusElement.GetStatusElement(&(statusElementParser)));
+    SuccessOrExit(err = statusElementParser.DecodeStatusElement(&generalCode, &protocolId, &protocolCode));
+    VerifyOrExit(mpCallback != nullptr, );
+
+    if (protocolId == Protocols::InteractionModel::Id.ToFullyQualifiedSpecForm())
     {
-        err = statusElementParser.DecodeStatusElement(&generalCode, &protocolId, &protocolCode);
-        SuccessOrExit(err);
-        if (mpDelegate != nullptr)
+        if (protocolCode == to_underlying(Protocols::InteractionModel::Status::Success))
         {
-            mpDelegate->WriteResponseStatus(this, generalCode, protocolId, protocolCode, attributePathParams,
-                                            mAttributeStatusIndex);
+            mpCallback->OnSuccess(this, attributePathParams);
         }
-    }
-
-exit:
-    if (err != CHIP_NO_ERROR && mpDelegate != nullptr)
-    {
-        mpDelegate->WriteResponseProtocolError(this, mAttributeStatusIndex);
-    }
-    return err;
-}
-
-CHIP_ERROR WriteClientHandle::SendWriteRequest(NodeId aNodeId, FabricIndex aFabricIndex, Optional<SessionHandle> apSecureSession,
-                                               uint32_t timeout)
-{
-    CHIP_ERROR err = mpWriteClient->SendWriteRequest(aNodeId, aFabricIndex, apSecureSession, timeout);
-
-    if (err == CHIP_NO_ERROR)
-    {
-        // On success, the InteractionModelEngine will be responible to take care of the lifecycle of the WriteClient, so we release
-        // the WriteClient without closing it.
-        mpWriteClient = nullptr;
+        else
+        {
+            mpCallback->OnError(this, static_cast<Protocols::InteractionModel::Status>(protocolCode),
+                                CHIP_ERROR_IM_STATUS_CODE_RECEIVED);
+        }
     }
     else
     {
-        SetWriteClient(nullptr);
+        mpCallback->OnError(this, Protocols::InteractionModel::Status::Failure, CHIP_ERROR_IM_STATUS_CODE_RECEIVED);
     }
+
+exit:
     return err;
 }
 
