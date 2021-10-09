@@ -19,6 +19,7 @@
 #pragma once
 
 #include <app/AttributePathParams.h>
+#include <app/ConcreteAttributePath.h>
 #include <app/InteractionModelDelegate.h>
 #include <app/MessageDef/AttributeDataList.h>
 #include <app/MessageDef/AttributeStatusElement.h>
@@ -47,14 +48,71 @@ class InteractionModelEngine;
  * every attribute it wants to insert in write request, then call SendWriteRequest
  *
  */
-class WriteClient : public Messaging::ExchangeDelegate
+class WriteClient : public chip::Messaging::ExchangeDelegate
 {
 public:
-    /**
-     *  Shutdown the WriteClient. This terminates this instance
-     *  of the object and releases all held resources.
-     */
-    void Shutdown();
+    class Callback
+    {
+    public:
+        virtual ~Callback() = default;
+
+        /**
+         * OnResponse will be called when a successful response from server has been received and processed. Specifically:
+         *  - When a status code is received and it is IM::Success, aData will be nullptr.
+         *  - When a data response is received, aData will point to a valid TLVReader initialized to point at the struct container
+         *    that contains the data payload (callee will still need to open and process the container).
+         *
+         * The WriteClient object MUST continue to exist after this call is completed. The application shall wait until it
+         * receives an OnDone call to destroy the object.
+         *
+         * @param[in] apWriteClient: The write client object that initiated the command transaction.
+         * @param[in] aPath: The command path field in invoke command response.
+         * @param[in] aData: The command data, will be nullptr if the server returns a StatusElement.
+         */
+        virtual void OnSuccess(WriteClient * apWriteClient, const AttributePathParams & aPath) {}
+
+        /**
+         * OnError will be called when an error occurr *after* a successful call to SendCommandRequest(). The following
+         * errors will be delivered through this call in the aError field:
+         *
+         * - CHIP_ERROR_TIMEOUT: A response was not received within the expected response timeout.
+         * - CHIP_ERROR_*TLV*: A malformed, non-compliant response was received from the server.
+         * - CHIP_ERROR_IM_STATUS_CODE_RECEIVED: An invoke response containing a status code denoting an error was received.
+         *                  When the protocol ID in the received status is IM, aInteractionModelStatus will contain the IM status
+         *                  code. Otherwise, aInteractionModelStatus will always be set to IM::Status::Failure.
+         * - CHIP_ERROR*: All other cases.
+         *
+         * The WriteClient object MUST continue to exist after this call is completed. The application shall wait until it
+         * receives an OnDone call to destroy and free the object.
+         *
+         * @param[in] apWriteClient: The write client object that initiated the command transaction.
+         * @param[in] aInteractionModelStatus: Contains an IM status code. This SHALL never be IM::Success, and will contain a valid
+         * server-side emitted error if aProtocolError == CHIP_ERROR_IM_STATUS_CODE_RECEIVED.
+         * @param[in] aError: A system error code that conveys the overall error code.
+         */
+        virtual void OnError(const WriteClient * apWriteClient, Protocols::InteractionModel::Status aInteractionModelStatus,
+                             CHIP_ERROR aError)
+        {}
+
+        /**
+         * OnDone will be called when WriteClient has finished all work and is safe to destory and free the
+         * allocated WriteClient object.
+         *
+         * This function will:
+         *      - Always be called exactly *once* for a given WriteClient instance.
+         *      - Be called even in error circumstances.
+         *      - Only be called after a successful call to SendCommandRequest as been made.
+         *
+         * This function must be implemented to destroy the WriteClient object.
+         *
+         * @param[in] apWriteClient: The write client object of the terminated invoke command transaction.
+         */
+        virtual void OnDone(WriteClient * apWriteClient) = 0;
+    };
+
+    WriteClient(chip::Messaging::ExchangeManager * apExchangeMgr, Callback * apCallback) :
+        mpExchangeMgr(apExchangeMgr), mpCallback(apCallback)
+    {}
 
     CHIP_ERROR PrepareAttribute(const AttributePathParams & attributePathParams);
     CHIP_ERROR FinishAttribute();
@@ -79,6 +137,8 @@ private:
         AddAttribute,      // The client has added attribute and ready for a SendWriteRequest
         AwaitingResponse,  // The client has sent out the write request message
     };
+
+    CHIP_ERROR AllocateBuffer();
 
     /**
      * Finalize Write Request Message TLV Builder and retrieve final data from tlv builder for later sending
@@ -108,14 +168,13 @@ private:
      *  @retval #CHIP_ERROR_INCORRECT_STATE incorrect state if it is already initialized
      *  @retval #CHIP_NO_ERROR On success.
      */
-    CHIP_ERROR Init(Messaging::ExchangeManager * apExchangeMgr, InteractionModelDelegate * apDelegate,
-                    uint64_t aApplicationIdentifier);
+    CHIP_ERROR Init(uint64_t aApplicationIdentifier);
 
-    virtual ~WriteClient() = default;
+    ~WriteClient() { Abort(); };
 
-    CHIP_ERROR OnMessageReceived(Messaging::ExchangeContext * apExchangeContext, const PayloadHeader & aPayloadHeader,
+    CHIP_ERROR OnMessageReceived(chip::Messaging::ExchangeContext * apExchangeContext, const PayloadHeader & aPayloadHeader,
                                  System::PacketBufferHandle && aPayload) override;
-    void OnResponseTimeout(Messaging::ExchangeContext * apExchangeContext) override;
+    void OnResponseTimeout(chip::Messaging::ExchangeContext * apExchangeContext) override;
 
     /**
      *  Check if current write client is being used
@@ -123,26 +182,39 @@ private:
     bool IsFree() const { return mState == State::Uninitialized; };
 
     void MoveToState(const State aTargetState);
+
     CHIP_ERROR ProcessWriteResponseMessage(System::PacketBufferHandle && payload);
     CHIP_ERROR ProcessAttributeStatusElement(AttributeStatusElement::Parser & aAttributeStatusElement);
     CHIP_ERROR ConstructAttributePath(const AttributePathParams & aAttributePathParams,
                                       AttributeDataElement::Builder aAttributeDataElement);
-    void ClearExistingExchangeContext();
     const char * GetStateStr() const;
     void ClearState();
 
-    /**
-     * Internal shutdown method that we use when we know what's going on with
-     * our exchange and don't need to manually close it.
+    /*
+     * The actual closure of the exchange happens automatically in the exchange layer.
+     * This function just sets the internally tracked exchange pointer to null to align
+     * with the exchange layer so as to prevent further closure if Abort() is called later.
      */
-    void ShutdownInternal();
+    void Close();
 
-    Messaging::ExchangeManager * mpExchangeMgr = nullptr;
-    Messaging::ExchangeContext * mpExchangeCtx = nullptr;
-    InteractionModelDelegate * mpDelegate      = nullptr;
-    State mState                               = State::Uninitialized;
+    /*
+     * This forcibly closes the exchange context if a valid one is pointed to. Such a situation does
+     * not arise during normal message processing flows that all normally call Close() above. This can only
+     * arise due to application-initiated destruction of the object when this object is handling receiving/sending
+     * message payloads.
+     */
+    void Abort();
+
+    chip::Messaging::ExchangeManager * mpExchangeMgr = nullptr;
+    chip::Messaging::ExchangeContext * mpExchangeCtx = nullptr;
+
+    Callback * mpCallback = nullptr;
+    State mState          = State::Uninitialized;
+    bool mBufferAllocated = false;
+
     System::PacketBufferTLVWriter mMessageWriter;
     WriteRequest::Builder mWriteRequestBuilder;
+
     uint8_t mAttributeStatusIndex = 0;
     uint64_t mAppIdentifier       = 0;
 };

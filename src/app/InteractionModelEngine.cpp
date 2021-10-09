@@ -95,14 +95,6 @@ void InteractionModelEngine::Shutdown()
         }
     }
 
-    for (auto & writeClient : mWriteClients)
-    {
-        if (!writeClient.IsFree())
-        {
-            writeClient.Shutdown();
-        }
-    }
-
     for (auto & writeHandler : mWriteHandlers)
     {
         VerifyOrDie(writeHandler.IsFree());
@@ -140,25 +132,6 @@ CHIP_ERROR InteractionModelEngine::NewReadClient(ReadClient ** const apReadClien
     }
 
     return err;
-}
-
-CHIP_ERROR InteractionModelEngine::NewWriteClient(WriteClientHandle & apWriteClient, uint64_t aApplicationIdentifier)
-{
-    apWriteClient.SetWriteClient(nullptr);
-
-    for (auto & writeClient : mWriteClients)
-    {
-        if (!writeClient.IsFree())
-        {
-            continue;
-        }
-
-        ReturnLogErrorOnFailure(writeClient.Init(mpExchangeMgr, mpDelegate, aApplicationIdentifier));
-        apWriteClient.SetWriteClient(&writeClient);
-        return CHIP_NO_ERROR;
-    }
-
-    return CHIP_ERROR_NO_MEMORY;
 }
 
 CHIP_ERROR InteractionModelEngine::OnUnknownMsgType(Messaging::ExchangeContext * apExchangeContext,
@@ -348,11 +321,6 @@ CHIP_ERROR InteractionModelEngine::SendSubscribeRequest(ReadPrepareParams & aRea
 uint16_t InteractionModelEngine::GetReadClientArrayIndex(const ReadClient * const apReadClient) const
 {
     return static_cast<uint16_t>(apReadClient - mReadClients);
-}
-
-uint16_t InteractionModelEngine::GetWriteClientArrayIndex(const WriteClient * const apWriteClient) const
-{
-    return static_cast<uint16_t>(apWriteClient - mWriteClients);
 }
 
 void InteractionModelEngine::ReleaseClusterInfoList(ClusterInfo *& aClusterInfo)
