@@ -235,30 +235,36 @@ class BaseTestHelper:
             return False
 
     def TestReadBasicAttributes(self, nodeid: int, endpoint: int, group: int):
-        basic_cluster_attrs = {
-            "VendorName": "TEST_VENDOR",
-            "VendorID": 9050,
-            "ProductName": "TEST_PRODUCT",
-            "ProductID": 65279,
-            "UserLabel": "",
-            "Location": "",
-            "HardwareVersion": 0,
-            "HardwareVersionString": "TEST_VERSION",
-            "SoftwareVersion": 0,
-            "SoftwareVersionString": "prerelease",
+        cluster_attrs = {
+            "Descriptor": {
+                "PartsList": [1, 2]
+            },
+            "Basic": {
+                "VendorName": "TEST_VENDOR",
+                "VendorID": 9050,
+                "ProductName": "TEST_PRODUCT",
+                "ProductID": 65279,
+                "UserLabel": "",
+                "Location": "",
+                "HardwareVersion": 0,
+                "HardwareVersionString": "TEST_VERSION",
+                "SoftwareVersion": 0,
+                "SoftwareVersionString": "prerelease",
+            }
         }
         failed_zcl = {}
-        for basic_attr, expected_value in basic_cluster_attrs.items():
-            try:
-                res = self.devCtrl.ZCLReadAttribute(cluster="Basic",
-                                                    attribute=basic_attr,
-                                                    nodeid=nodeid,
-                                                    endpoint=endpoint,
-                                                    groupid=group)
-                TestResult(f"Read attribute {basic_attr}", res).assertValueEqual(
-                    expected_value)
-            except Exception as ex:
-                failed_zcl[basic_attr] = str(ex)
+        for clus_name, attr_list in cluster_attrs.items():
+            for attr_name, expected_value in attr_list.items():
+                try:
+                    res = self.devCtrl.ZCLReadAttribute(cluster=clus_name,
+                                                        attribute=attr_name,
+                                                        nodeid=nodeid,
+                                                        endpoint=endpoint,
+                                                        groupid=group)
+                    TestResult(f"Read attribute {clus_name}.{attr_name}", res).assertValueEqual(
+                        expected_value)
+                except Exception as ex:
+                    failed_zcl[f"{clus_name}.{attr_name}"] = str(ex)
         if failed_zcl:
             self.logger.exception(f"Following attributes failed: {failed_zcl}")
             return False
