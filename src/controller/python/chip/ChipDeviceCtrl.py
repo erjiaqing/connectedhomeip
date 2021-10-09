@@ -347,8 +347,12 @@ class ChipDeviceController(object):
         # We are not using IM for Attributes.
         res = self._Cluster.WriteAttribute(
             device, cluster, attribute, endpoint, groupid, value, False)
-        if blocking:
-            return im.GetAttributeWriteResponse(im.DEFAULT_ATTRIBUTEWRITE_APPID)
+        clusterInfo = self._Cluster.ListClusterInfo()[cluster]
+        attributeId = next((attributeInfo["attributeId"]
+                            for attributeInfo in clusterInfo["attributes"].values()
+                            if attributeInfo["attributeName"] == attribute), 0)
+        return im.AttributeWriteResult(
+            path=im.AttributePath(nodeId=nodeid, endpointId=endpoint, clusterId=clusterInfo["clusterId"], attributeId=attributeId), status=res)
 
     def ZCLSubscribeAttribute(self, cluster, attribute, nodeid, endpoint, minInterval, maxInterval, blocking=True):
         device = c_void_p(None)

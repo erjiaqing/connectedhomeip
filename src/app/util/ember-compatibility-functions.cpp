@@ -477,7 +477,7 @@ CHIP_ERROR WriteSingleClusterData(ClusterInfo & aClusterInfo, TLV::TLVReader & a
                                                   imCode == Protocols::InteractionModel::Status::Success
                                                       ? Protocols::SecureChannel::GeneralStatusCode::kSuccess
                                                       : Protocols::SecureChannel::GeneralStatusCode::kFailure,
-                                                  Protocols::SecureChannel::Id, imCode);
+                                                  Protocols::InteractionModel::Id, imCode);
 }
 } // namespace app
 } // namespace chip

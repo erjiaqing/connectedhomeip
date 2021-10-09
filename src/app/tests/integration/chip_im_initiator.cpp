@@ -133,14 +133,11 @@ void HandleSubscribeReportComplete()
            static_cast<double>(gSubRespCount) * 100 / static_cast<double>(gSubCount), static_cast<double>(transitTime) / 1000);
 }
 
-class MockInteractionModelApp : public chip::app::InteractionModelDelegate, public ::chip::app::CommandSender::Callback
+class MockInteractionModelApp : public chip::app::InteractionModelDelegate,
+                                public ::chip::app::CommandSender::Callback,
+                                public ::chip::app::WriteClient::Callback
 {
 public:
-    CHIP_ERROR WriteResponseProcessed(const chip::app::WriteClient * apWriteClient) override
-    {
-        HandleWriteComplete();
-        return CHIP_NO_ERROR;
-    }
     CHIP_ERROR EventStreamReceived(const chip::Messaging::ExchangeContext * apExchangeContext,
                                    chip::TLV::TLVReader * apEventListReader) override
     {
@@ -197,7 +194,16 @@ public:
         gLastCommandResult = TestCommandResult::kFailure;
         printf("CommandResponseError happens with %" CHIP_ERROR_FORMAT, aError.Format());
     }
-    void OnDone(chip::app::CommandSender * apCommandSender) override {}
+    void OnDone(chip::app::CommandSender * apCommandSender) override { delete apCommandSender; }
+
+    void OnSuccess(const chip::app::WriteClient * apWriteClient, const chip::app::AttributePathParams & aPath) override
+    {
+        HandleWriteComplete();
+    }
+    void OnError(const chip::app::WriteClient * apWriteClient, chip::Protocols::InteractionModel::Status aInteractionModelStatus,
+                 CHIP_ERROR aError) override
+    {}
+    void OnDone(chip::app::WriteClient * apWriteClient) override { delete apWriteClient; }
 };
 
 MockInteractionModelApp gMockDelegate;
@@ -333,10 +339,9 @@ exit:
     return err;
 }
 
-CHIP_ERROR SendWriteRequest(chip::app::WriteClientHandle & apWriteClient)
+CHIP_ERROR SendWriteRequest(chip::app::WriteClient * apWriteClient)
 {
-    CHIP_ERROR err = CHIP_NO_ERROR;
-    chip::TLV::TLVWriter * writer;
+    CHIP_ERROR err   = CHIP_NO_ERROR;
     gLastMessageTime = chip::System::SystemClock().GetMonotonicMilliseconds();
     chip::app::AttributePathParams attributePathParams;
 
@@ -349,14 +354,9 @@ CHIP_ERROR SendWriteRequest(chip::app::WriteClientHandle & apWriteClient)
     attributePathParams.mListIndex  = 5;
     attributePathParams.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
 
-    SuccessOrExit(err = apWriteClient->PrepareAttribute(attributePathParams));
-
-    writer = apWriteClient->GetAttributeDataElementTLVWriter();
-
-    SuccessOrExit(err = writer->PutBoolean(chip::TLV::ContextTag(chip::app::AttributeDataElement::kCsTag_Data), true));
-    SuccessOrExit(err = apWriteClient->FinishAttribute());
-    SuccessOrExit(err = apWriteClient.SendWriteRequest(chip::kTestDeviceNodeId, gFabricIndex,
-                                                       chip::Optional<chip::SessionHandle>::Missing(), gMessageTimeoutMsec));
+    SuccessOrExit(err = apWriteClient->EncodeAttributeWritePayload(attributePathParams, true));
+    SuccessOrExit(err = apWriteClient->SendWriteRequest(chip::kTestDeviceNodeId, gFabricIndex,
+                                                        chip::Optional<chip::SessionHandle>::Missing(), gMessageTimeoutMsec));
 
     gWriteCount++;
 
@@ -546,8 +546,7 @@ void WriteRequestTimerHandler(chip::System::Layer * systemLayer, void * appState
 
     if (gWriteRespCount < kMaxWriteMessageCount)
     {
-        chip::app::WriteClientHandle writeClient;
-        err = chip::app::InteractionModelEngine::GetInstance()->NewWriteClient(writeClient);
+        chip::app::WriteClient * writeClient = new chip::app::WriteClient(&gMockDelegate, &gExchangeManager);
         SuccessOrExit(err);
 
         err = SendWriteRequest(writeClient);

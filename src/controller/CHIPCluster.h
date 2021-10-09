@@ -29,6 +29,7 @@
 #include <functional>
 
 #include <app/WriteClient.h>
+#include <app/util/error-mapping.h>
 #include <controller/CHIPDevice.h>
 #include <lib/support/CHIPMem.h>
 
@@ -117,8 +118,10 @@ public:
         pathParams.mFlags.Set(app::AttributePathParams::Flags::kFieldIdValid);
 
         ReturnErrorOnFailure(writeClient->EncodeAttributeWritePayload(pathParams, attributeData));
-        ReturnErrorOnFailure(writeClient->SendCommandRequest(sessionHandle.GetPeerNodeId(), sessionHandle.GetFabricIndex(),
-                                                             Optional<SessionHandle>(sessionHandle)));
+
+        auto sessionHandle = mDevice->GetSecureSession().Value();
+        ReturnErrorOnFailure(writeClient->SendWriteRequest(sessionHandle.GetPeerNodeId(), sessionHandle.GetFabricIndex(),
+                                                           Optional<SessionHandle>(sessionHandle)));
 
         writeClient.release();
         callbacks.release();

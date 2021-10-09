@@ -35,11 +35,11 @@
 #include <messaging/Flags.h>
 #include <protocols/Protocols.h>
 #include <system/SystemPacketBuffer.h>
+#include <system/TLVPacketBufferBackingStore.h>
 
 namespace chip {
 namespace app {
 
-class WriteClientHandle;
 class InteractionModelEngine;
 
 /**
@@ -114,6 +114,7 @@ public:
     WriteClient(Callback * apCallback, chip::Messaging::ExchangeManager * apExchangeMgr) :
         mpCallback(apCallback), mpExchangeMgr(apExchangeMgr)
     {}
+    ~WriteClient() { Abort(); };
 
     template <class T>
     CHIP_ERROR EncodeAttributeWritePayload(const chip::app::AttributePathParams & attributePath, const T & value)
@@ -182,8 +183,6 @@ private:
      */
     CHIP_ERROR Init(uint64_t aApplicationIdentifier);
 
-    ~WriteClient() { Abort(); };
-
     CHIP_ERROR OnMessageReceived(chip::Messaging::ExchangeContext * apExchangeContext, const PayloadHeader & aPayloadHeader,
                                  System::PacketBufferHandle && aPayload) override;
     void OnResponseTimeout(chip::Messaging::ExchangeContext * apExchangeContext) override;
@@ -217,12 +216,12 @@ private:
      */
     void Abort();
 
-    chip::Messaging::ExchangeManager * mpExchangeMgr = nullptr;
-    chip::Messaging::ExchangeContext * mpExchangeCtx = nullptr;
-
     Callback * mpCallback = nullptr;
     State mState          = State::Uninitialized;
     bool mBufferAllocated = false;
+
+    chip::Messaging::ExchangeManager * mpExchangeMgr = nullptr;
+    chip::Messaging::ExchangeContext * mpExchangeCtx = nullptr;
 
     System::PacketBufferTLVWriter mMessageWriter;
     WriteRequest::Builder mWriteRequestBuilder;

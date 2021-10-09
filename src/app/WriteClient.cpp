@@ -386,23 +386,5 @@ exit:
     return err;
 }
 
-CHIP_ERROR WriteClientHandle::SendWriteRequest(NodeId aNodeId, FabricIndex aFabricIndex, Optional<SessionHandle> apSecureSession,
-                                               uint32_t timeout)
-{
-    CHIP_ERROR err = mpWriteClient->SendWriteRequest(aNodeId, aFabricIndex, apSecureSession, timeout);
-
-    if (err == CHIP_NO_ERROR)
-    {
-        // On success, the InteractionModelEngine will be responible to take care of the lifecycle of the WriteClient, so we release
-        // the WriteClient without closing it.
-        mpWriteClient = nullptr;
-    }
-    else
-    {
-        SetWriteClient(nullptr);
-    }
-    return err;
-}
-
 } // namespace app
 } // namespace chip
