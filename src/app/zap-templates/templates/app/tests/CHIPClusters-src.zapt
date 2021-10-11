@@ -24,18 +24,9 @@ namespace Controller {
 {{#unless isStruct}}
 CHIP_ERROR {{asUpperCamelCase parent.name}}ClusterTest::WriteAttribute{{asUpperCamelCase name}}(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, {{chipType}} {{asLowerCamelCase name}})
 {
-    app::WriteClientHandle handle;
-    chip::app::AttributePathParams attributePath;
-    attributePath.mNodeId         = mDevice->GetDeviceId();
-    attributePath.mEndpointId     = mEndpoint;
-    attributePath.mClusterId      = mClusterId;
-    attributePath.mFieldId        = {{#if isGlobalAttribute}}Globals{{else}}{{asUpperCamelCase parent.name}}{{/if}}::Attributes::{{asUpperCamelCase name}}::Id;
-    attributePath.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
-
-    ReturnErrorOnFailure(app::InteractionModelEngine::GetInstance()->NewWriteClient(handle));
-    ReturnErrorOnFailure(handle.EncodeScalarAttributeWritePayload(attributePath, {{asLowerCamelCase name}}));
-
-    return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
+    Callback::Callback<DefaultSuccessCallback> * successCb = Callback::Callback<DefaultSuccessCallback>::FromCancelable(onSuccessCallback);
+    Callback::Callback<DefaultFailureCallback> * failureCb = Callback::Callback<DefaultFailureCallback>::FromCancelable(onFailureCallback);
+    return WriteAttribute({{ asHex code 8 }}, {{asLowerCamelCase name}}, successCb->mContext, successCb->mCall, failureCb->mCall);
 }
 
 {{/unless}}

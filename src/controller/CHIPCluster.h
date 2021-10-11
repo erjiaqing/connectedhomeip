@@ -26,7 +26,12 @@
 
 #pragma once
 
+#include <functional>
+
+#include <app/WriteClient.h>
+#include <app/util/error-mapping.h>
 #include <controller/CHIPDevice.h>
+#include <lib/support/CHIPMem.h>
 
 namespace chip {
 namespace Controller {
@@ -41,6 +46,24 @@ public:
     void Dissociate();
 
     ClusterId GetClusterId() const { return mClusterId; }
+
+    template <typename AttributeDataT>
+    CHIP_ERROR WriteAttribute(AttributeId attributeId, const AttributeDataT & attributeData,
+                              Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback)
+    {
+        app::WriteClientHandle handle;
+        ReturnErrorOnFailure(app::InteractionModelEngine::GetInstance()->NewWriteClient(handle));
+
+        app::AttributePathParams pathParams;
+        pathParams.mClusterId  = mClusterId;
+        pathParams.mEndpointId = mEndpoint;
+        pathParams.mFieldId    = attributeId;
+        pathParams.mFlags.Set(app::AttributePathParams::Flags::kFieldIdValid);
+
+        ReturnErrorOnFailure(handle.EncodeScalarAttributeWritePayload(pathParams, attributeData));
+
+        return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
+    }
 
 protected:
     ClusterBase(uint16_t cluster) : mClusterId(cluster) {}
