@@ -330,7 +330,7 @@ class ChipDeviceController(object):
             with deviceAvailableCV:
                 deviceAvailableCV.wait()
 
-        if self.device == c_void_p(None):
+        if returnDevice == c_void_p(None):
             raise self._ChipStack.ErrorToException(CHIP_ERROR_INTERNAL)
         return returnDevice
 
