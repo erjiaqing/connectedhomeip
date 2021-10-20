@@ -42,28 +42,28 @@ class ClusterObjectTests:
             raise ValueError()
 
     @classmethod
-    async def RoundTripTest(cls, devCtrl):
+    async def RoundTripTest(cls, device):
         req = Clusters.OnOff.Commands.On()
-        res = await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=LIGHTING_ENDPOINT_ID, payload=req)
+        res = await device.send_command(endpoint=LIGHTING_ENDPOINT_ID, payload=req)
         if res is not None:
             logger.error(
                 f"Got {res} Response from server, but None is expected.")
             raise ValueError()
 
     @classmethod
-    async def RoundTripTestWithBadEndpoint(cls, devCtrl):
+    async def RoundTripTestWithBadEndpoint(cls, device):
         req = Clusters.OnOff.Commands.On()
         try:
-            await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=233, payload=req)
+            await device.send_command(endpoint=233, payload=req)
             raise ValueError(f"Failure expected")
         except chip.interaction_model.InteractionModelError as ex:
             logger.info(f"Recevied {ex} from server.")
             return
 
     @classmethod
-    async def SendCommandWithResponse(cls, devCtrl):
+    async def SendCommandWithResponse(cls, device):
         req = Clusters.TestCluster.Commands.TestAddArguments(Arg1=2, Arg2=3)
-        res = await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=LIGHTING_ENDPOINT_ID, payload=req, responseType=Clusters.TestCluster.Commands.TestAddArgumentsResponse)
+        res = await device.send_command(endpoint=LIGHTING_ENDPOINT_ID, payload=req, response_type=Clusters.TestCluster.Commands.TestAddArgumentsResponse)
         if not isinstance(res, Clusters.TestCluster.Commands.TestAddArgumentsResponse):
             logger.error(f"Unexpected response of type {type(res)} received.")
             raise ValueError()
@@ -75,9 +75,10 @@ class ClusterObjectTests:
     async def RunTest(cls, devCtrl):
         try:
             cls.TestAPI()
-            await cls.RoundTripTest(devCtrl)
-            await cls.RoundTripTestWithBadEndpoint(devCtrl)
-            await cls.SendCommandWithResponse(devCtrl)
+            device = await devCtrl.get_connected_device(NODE_ID)
+            await cls.RoundTripTest(device)
+            await cls.RoundTripTestWithBadEndpoint(device)
+            await cls.SendCommandWithResponse(device)
         except Exception as ex:
             logger.error(
                 f"Unexpected error occurred when running tests: {ex}")

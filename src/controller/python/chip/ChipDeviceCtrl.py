@@ -37,6 +37,7 @@ from .clusters import Command as ClusterCommand
 from .clusters import ClusterObjects as ClusterObjects
 import enum
 import threading
+import .device
 
 
 __all__ = ["ChipDeviceController"]
@@ -310,6 +311,53 @@ class ChipDeviceController(object):
     def GetClusterHandler(self):
         return self._Cluster
 
+    def GetConnectedDevice(self, nodeid):
+        '''
+        GetConnectedDevice
+        Equals to get_connected_device.
+        '''
+        return self.get_connected_device(nodeid)
+
+    def get_connected_device(self, nodeid):
+        eventLoop = asyncio.get_running_loop()
+        future = eventLoop.create_future()
+
+        class DeviceAvailableCallbackClosure:
+            def __init__(self, chipStack, eventLoop, future, nodeid):
+                self.chipStack = chipStack
+                self.eventLoop = eventLoop
+                self.future = future
+                self.nodeid = nodeid
+
+            def _OnError(self, err):
+                self.future.set_exception(self.chipStack.ErrorToException(err))
+
+            def _OnDevice(self, cxx_device):
+                self.future.set_result(device.Device(
+                    cxx_device, self.nodeid, self.chipStack))
+
+            def DeviceAvailableCallback(self, device, err):
+                if err != 0:
+                    self.eventLoop.call_soon_threadsafe(self._OnError, err)
+                else:
+                    self.eventLoop.call_soon_threadsafe(self._OnDevice, device)
+                pythonapi.Py_DecRef(py_object(self))
+
+            def GetDataAvailableCallback(self):
+                return (lambda device, err: self.DeviceAvailableCallback(device, err))
+
+        closure = DeviceAvailableCallbackClosure(
+            self._ChipStack, eventLoop, future)
+        pythonapi.Py_IncRef(py_object(closure))
+        res = self._ChipStack.Call(lambda: self._dmLib.pychip_GetConnectedDeviceByNodeId(
+            self.devCtrl, nodeid, _DeviceAvailableFunct(closure.GetDataAvailableCallback())))
+
+        if res != 0:
+            pythonapi.Py_IncRef(py_object(closure))
+            raise self._ChipStack.ErrorToException(res)
+
+        return future
+
     def GetConnectedDeviceSync(self, nodeid):
         returnDevice = c_void_p(None)
         deviceAvailableCV = threading.Condition()
@@ -331,11 +379,11 @@ class ChipDeviceController(object):
 
         # The callback might have been received synchronously (during self._ChipStack.Call()).
         # Check if the device is already set before waiting for the callback.
-        if returnDevice == c_void_p(None):
+        if not returnDevice:
             with deviceAvailableCV:
                 deviceAvailableCV.wait()
 
-        if returnDevice == c_void_p(None):
+        if not returnDevice:
             raise self._ChipStack.ErrorToException(CHIP_ERROR_INTERNAL)
         return returnDevice
 
