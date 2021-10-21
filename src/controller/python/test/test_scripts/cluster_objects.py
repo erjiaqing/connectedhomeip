@@ -44,7 +44,7 @@ class ClusterObjectTests:
     @classmethod
     async def RoundTripTest(cls, device):
         req = Clusters.OnOff.Commands.On()
-        res = await device.send_command(endpoint=LIGHTING_ENDPOINT_ID, payload=req)
+        res = await device.SendCommand(endpoint=LIGHTING_ENDPOINT_ID, payload=req)
         if res is not None:
             logger.error(
                 f"Got {res} Response from server, but None is expected.")
@@ -54,7 +54,7 @@ class ClusterObjectTests:
     async def RoundTripTestWithBadEndpoint(cls, device):
         req = Clusters.OnOff.Commands.On()
         try:
-            await device.send_command(endpoint=233, payload=req)
+            await device.SendCommand(endpoint=233, payload=req)
             raise ValueError(f"Failure expected")
         except chip.interaction_model.InteractionModelError as ex:
             logger.info(f"Recevied {ex} from server.")
@@ -63,7 +63,7 @@ class ClusterObjectTests:
     @classmethod
     async def SendCommandWithResponse(cls, device):
         req = Clusters.TestCluster.Commands.TestAddArguments(Arg1=2, Arg2=3)
-        res = await device.send_command(endpoint=LIGHTING_ENDPOINT_ID, payload=req, response_type=Clusters.TestCluster.Commands.TestAddArgumentsResponse)
+        res = await device.SendCommand(endpoint=LIGHTING_ENDPOINT_ID, payload=req, response_type=Clusters.TestCluster.Commands.TestAddArgumentsResponse)
         if not isinstance(res, Clusters.TestCluster.Commands.TestAddArgumentsResponse):
             logger.error(f"Unexpected response of type {type(res)} received.")
             raise ValueError()

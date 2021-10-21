@@ -33,13 +33,13 @@ class Device:
     def node_id(self) -> int:
         return self._node_id
 
-    def send_command(self, endpoint: int, payload: ClusterObjects.ClusterCommand, response_type: ClusterObjects.ClusterCommand = None):
+    def SendCommand(self, endpoint: int, payload: ClusterObjects.ClusterCommand, responseType: ClusterObjects.ClusterCommand = None):
         eventLoop = asyncio.get_running_loop()
         future = eventLoop.create_future()
 
         res = self._ChipStack.Call(
             lambda: Command.SendCommand(
-                future, eventLoop, response_type, self._device, Command.CommandPath(
+                future, eventLoop, responseType, self._device, Command.CommandPath(
                     EndpointId=endpoint,
                     ClusterId=payload.cluster_id,
                     CommandId=payload.command_id,

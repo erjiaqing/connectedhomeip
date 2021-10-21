@@ -312,13 +312,6 @@ class ChipDeviceController(object):
         return self._Cluster
 
     def GetConnectedDevice(self, nodeid):
-        '''
-        GetConnectedDevice
-        Equals to get_connected_device.
-        '''
-        return self.get_connected_device(nodeid)
-
-    def get_connected_device(self, nodeid):
         eventLoop = asyncio.get_running_loop()
         future = eventLoop.create_future()
 
@@ -361,16 +354,17 @@ class ChipDeviceController(object):
     def GetConnectedDeviceSync(self, nodeid):
         returnDevice = c_void_p(None)
         deviceAvailableCV = threading.Condition()
+        asyncError = None
 
         def DeviceAvailableCallback(device, err):
             nonlocal returnDevice
             nonlocal deviceAvailableCV
+            nonlocal asyncError
             with deviceAvailableCV:
                 returnDevice = device
                 deviceAvailableCV.notify_all()
             if err != 0:
-                print("Failed in getting the connected device: {}".format(err))
-                raise self._ChipStack.ErrorToException(err)
+                asyncError = err
 
         res = self._ChipStack.Call(lambda: self._dmLib.pychip_GetConnectedDeviceByNodeId(
             self.devCtrl, nodeid, _DeviceAvailableFunct(DeviceAvailableCallback)))
@@ -384,25 +378,12 @@ class ChipDeviceController(object):
                 deviceAvailableCV.wait()
 
         if not returnDevice:
-            raise self._ChipStack.ErrorToException(CHIP_ERROR_INTERNAL)
+            raise self._ChipStack.ErrorToException(asyncError)
         return returnDevice
 
     async def SendCommand(self, nodeid: int, endpoint: int, payload: ClusterObjects.ClusterCommand, responseType=None):
-        eventLoop = asyncio.get_running_loop()
-        future = eventLoop.create_future()
-
-        device = self.GetConnectedDeviceSync(nodeid)
-        res = self._ChipStack.Call(
-            lambda: ClusterCommand.SendCommand(
-                future, eventLoop, responseType, device, ClusterCommand.CommandPath(
-                    EndpointId=endpoint,
-                    ClusterId=payload.cluster_id,
-                    CommandId=payload.command_id,
-                ), payload)
-        )
-        if res != 0:
-            future.set_exception(self._ChipStack.ErrorToException(res))
-        return await future
+        device = await self.GetConnectedDeviceSync(nodeid)
+        return await device.SendCommand(endpoint, payload, responseType=responseType)
 
     def ZCLSend(self, cluster, command, nodeid, endpoint, groupid, args, blocking=False):
         device = self.GetConnectedDeviceSync(nodeid)
