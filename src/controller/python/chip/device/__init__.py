@@ -23,10 +23,10 @@ import asyncio
 
 
 class Device:
-    def __init__(self, native_device_object, node_id: int, chip_stack: chip.ChipStack):
-        self._device = native_device_object
-        self._node_id = node_id
-        self._chip_stack = chip_stack
+    def __init__(self, nativeDeviceObject, nodeId: int, chipStack: chip.ChipStack):
+        self._device = nativeDeviceObject
+        self._nodeId = nodeId
+        self._chipStack = chipStack
         pass
 
     @property
@@ -37,7 +37,7 @@ class Device:
         eventLoop = asyncio.get_running_loop()
         future = eventLoop.create_future()
 
-        res = self._ChipStack.Call(
+        res = self._chipStack.Call(
             lambda: Command.SendCommand(
                 future, eventLoop, responseType, self._device, Command.CommandPath(
                     EndpointId=endpoint,

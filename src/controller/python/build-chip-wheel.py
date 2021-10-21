@@ -136,6 +136,7 @@ try:
         'chip.ble.commissioning',
         'chip.configuration',
         'chip.clusters',
+        'chip.device',
         'chip.discovery',
         'chip.exceptions',
         'chip.internal',

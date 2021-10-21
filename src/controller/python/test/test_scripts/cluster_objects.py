@@ -63,7 +63,7 @@ class ClusterObjectTests:
     @classmethod
     async def SendCommandWithResponse(cls, device):
         req = Clusters.TestCluster.Commands.TestAddArguments(Arg1=2, Arg2=3)
-        res = await device.SendCommand(endpoint=LIGHTING_ENDPOINT_ID, payload=req, response_type=Clusters.TestCluster.Commands.TestAddArgumentsResponse)
+        res = await device.SendCommand(endpoint=LIGHTING_ENDPOINT_ID, payload=req, responseType=Clusters.TestCluster.Commands.TestAddArgumentsResponse)
         if not isinstance(res, Clusters.TestCluster.Commands.TestAddArgumentsResponse):
             logger.error(f"Unexpected response of type {type(res)} received.")
             raise ValueError()
@@ -75,7 +75,7 @@ class ClusterObjectTests:
     async def RunTest(cls, devCtrl):
         try:
             cls.TestAPI()
-            device = await devCtrl.get_connected_device(NODE_ID)
+            device = await devCtrl.GetConnectedDevice(NODE_ID)
             await cls.RoundTripTest(device)
             await cls.RoundTripTestWithBadEndpoint(device)
             await cls.SendCommandWithResponse(device)

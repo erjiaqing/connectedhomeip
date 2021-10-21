@@ -35,9 +35,9 @@ from .interaction_model import delegate as im
 from .exceptions import *
 from .clusters import Command as ClusterCommand
 from .clusters import ClusterObjects as ClusterObjects
+from . import device
 import enum
 import threading
-import .device
 
 
 __all__ = ["ChipDeviceController"]
@@ -340,7 +340,7 @@ class ChipDeviceController(object):
                 return (lambda device, err: self.DeviceAvailableCallback(device, err))
 
         closure = DeviceAvailableCallbackClosure(
-            self._ChipStack, eventLoop, future)
+            self._ChipStack, eventLoop, future, nodeid)
         pythonapi.Py_IncRef(py_object(closure))
         res = self._ChipStack.Call(lambda: self._dmLib.pychip_GetConnectedDeviceByNodeId(
             self.devCtrl, nodeid, _DeviceAvailableFunct(closure.GetDataAvailableCallback())))
