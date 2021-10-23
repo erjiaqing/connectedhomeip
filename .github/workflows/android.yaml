@@ -29,7 +29,6 @@ jobs:
 
         env:
             JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64/
-            JAVA_TOOL_OPTIONS: "-Xmx4096m"
 
         runs-on: ubuntu-latest
         if: github.actor != 'restyled-io[bot]'
@@ -57,8 +56,9 @@ jobs:
                    .environment/pigweed-venv/*.log
             - name: Build android examples
               run: |
-                ./scripts/run_in_build_env.sh \
-                  "./scripts/build/build_examples.py --no-log-timestamps --target-glob 'android-*' build"
+                (while true; do (ps -o pid,rss,command ax | sort -b -k2 -n -r | head -n 10); sleep 60; done) & \
+                (./scripts/run_in_build_env.sh \
+                  "./scripts/build/build_examples.py --no-log-timestamps --target-glob 'android-*' build")
             - name: Run Android build rule tests
               run: |
                 ./scripts/run_in_build_env.sh \
