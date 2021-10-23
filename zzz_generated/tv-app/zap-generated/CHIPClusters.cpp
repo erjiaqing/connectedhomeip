@@ -205,18 +205,19 @@ template CHIP_ERROR ClusterBase::WriteAttribute<chip::app::Clusters::GeneralComm
 CHIP_ERROR GeneralCommissioningCluster::WriteAttributeBreadcrumb(Callback::Cancelable * onSuccessCallback,
                                                                  Callback::Cancelable * onFailureCallback, uint64_t value)
 {
+    void * context                             = nullptr;
+    WriteResponseSuccessCallback onSuccessFunc = nullptr;
+    WriteResponseFailureCallback onFailureFunc = nullptr;
     if (onSuccessCallback != nullptr && onFailureCallback != nullptr)
     {
-        auto onSuccess = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
-        auto onFailure = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
-        return WriteAttribute<app::Clusters::GeneralCommissioning::Attributes::Breadcrumb::TypeInfo>(
-            value, onSuccess->mContext, onSuccess->mCall, onFailure->mCall);
+        auto onSuccessCb = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
+        auto onFailureCb = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
+        context          = onSuccessCb->mContext;
+        onSuccessFunc    = onSuccessCb->mCall;
+        onFailureFunc    = onFailureCb->mCall;
     }
-    else
-    {
-        return WriteAttribute<app::Clusters::GeneralCommissioning::Attributes::Breadcrumb::TypeInfo>(value, nullptr, nullptr,
-                                                                                                     nullptr);
-    }
+    return ClusterBase::WriteAttribute<app::Clusters::GeneralCommissioning::Attributes::Breadcrumb::TypeInfo>(
+        value, context, onSuccessFunc, onFailureFunc);
 }
 
 CHIP_ERROR GeneralCommissioningCluster::ReadAttributeBasicCommissioningInfoList(Callback::Cancelable * onSuccessCallback,

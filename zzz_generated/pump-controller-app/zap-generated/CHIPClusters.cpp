@@ -892,18 +892,19 @@ ClusterBase::WriteAttribute<chip::app::Clusters::PumpConfigurationAndControl::At
 CHIP_ERROR PumpConfigurationAndControlCluster::WriteAttributeOperationMode(Callback::Cancelable * onSuccessCallback,
                                                                            Callback::Cancelable * onFailureCallback, uint8_t value)
 {
+    void * context                             = nullptr;
+    WriteResponseSuccessCallback onSuccessFunc = nullptr;
+    WriteResponseFailureCallback onFailureFunc = nullptr;
     if (onSuccessCallback != nullptr && onFailureCallback != nullptr)
     {
-        auto onSuccess = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
-        auto onFailure = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
-        return WriteAttribute<app::Clusters::PumpConfigurationAndControl::Attributes::OperationMode::TypeInfo>(
-            value, onSuccess->mContext, onSuccess->mCall, onFailure->mCall);
+        auto onSuccessCb = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
+        auto onFailureCb = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
+        context          = onSuccessCb->mContext;
+        onSuccessFunc    = onSuccessCb->mCall;
+        onFailureFunc    = onFailureCb->mCall;
     }
-    else
-    {
-        return WriteAttribute<app::Clusters::PumpConfigurationAndControl::Attributes::OperationMode::TypeInfo>(value, nullptr,
-                                                                                                               nullptr, nullptr);
-    }
+    return ClusterBase::WriteAttribute<app::Clusters::PumpConfigurationAndControl::Attributes::OperationMode::TypeInfo>(
+        value, context, onSuccessFunc, onFailureFunc);
 }
 
 CHIP_ERROR PumpConfigurationAndControlCluster::ReadAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,

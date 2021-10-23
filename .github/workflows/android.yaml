@@ -25,10 +25,11 @@ concurrency:
 jobs:
     android:
         name: Build Android
-        timeout-minutes: 60
+        timeout-minutes: 90
 
         env:
             JAVA_HOME: /usr/lib/jvm/java-8-openjdk-amd64/
+            JAVA_TOOL_OPTIONS: "-Xmx4096m"
 
         runs-on: ubuntu-latest
         if: github.actor != 'restyled-io[bot]'

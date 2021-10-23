@@ -109,17 +109,19 @@ template CHIP_ERROR ClusterBase::WriteAttribute<chip::app::Clusters::OnOff::Attr
 CHIP_ERROR OnOffCluster::WriteAttributeOnTime(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback,
                                               uint16_t value)
 {
+    void * context                             = nullptr;
+    WriteResponseSuccessCallback onSuccessFunc = nullptr;
+    WriteResponseFailureCallback onFailureFunc = nullptr;
     if (onSuccessCallback != nullptr && onFailureCallback != nullptr)
     {
-        auto onSuccess = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
-        auto onFailure = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
-        return WriteAttribute<app::Clusters::OnOff::Attributes::OnTime::TypeInfo>(value, onSuccess->mContext, onSuccess->mCall,
-                                                                                  onFailure->mCall);
+        auto onSuccessCb = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
+        auto onFailureCb = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
+        context          = onSuccessCb->mContext;
+        onSuccessFunc    = onSuccessCb->mCall;
+        onFailureFunc    = onFailureCb->mCall;
     }
-    else
-    {
-        return WriteAttribute<app::Clusters::OnOff::Attributes::OnTime::TypeInfo>(value, nullptr, nullptr, nullptr);
-    }
+    return ClusterBase::WriteAttribute<app::Clusters::OnOff::Attributes::OnTime::TypeInfo>(value, context, onSuccessFunc,
+                                                                                           onFailureFunc);
 }
 
 CHIP_ERROR OnOffCluster::ReadAttributeOffWaitTime(Callback::Cancelable * onSuccessCallback,
@@ -141,17 +143,19 @@ template CHIP_ERROR ClusterBase::WriteAttribute<chip::app::Clusters::OnOff::Attr
 CHIP_ERROR OnOffCluster::WriteAttributeOffWaitTime(Callback::Cancelable * onSuccessCallback,
                                                    Callback::Cancelable * onFailureCallback, uint16_t value)
 {
+    void * context                             = nullptr;
+    WriteResponseSuccessCallback onSuccessFunc = nullptr;
+    WriteResponseFailureCallback onFailureFunc = nullptr;
     if (onSuccessCallback != nullptr && onFailureCallback != nullptr)
     {
-        auto onSuccess = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
-        auto onFailure = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
-        return WriteAttribute<app::Clusters::OnOff::Attributes::OffWaitTime::TypeInfo>(value, onSuccess->mContext, onSuccess->mCall,
-                                                                                       onFailure->mCall);
+        auto onSuccessCb = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
+        auto onFailureCb = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
+        context          = onSuccessCb->mContext;
+        onSuccessFunc    = onSuccessCb->mCall;
+        onFailureFunc    = onFailureCb->mCall;
     }
-    else
-    {
-        return WriteAttribute<app::Clusters::OnOff::Attributes::OffWaitTime::TypeInfo>(value, nullptr, nullptr, nullptr);
-    }
+    return ClusterBase::WriteAttribute<app::Clusters::OnOff::Attributes::OffWaitTime::TypeInfo>(value, context, onSuccessFunc,
+                                                                                                onFailureFunc);
 }
 
 CHIP_ERROR OnOffCluster::ReadAttributeStartUpOnOff(Callback::Cancelable * onSuccessCallback,
@@ -173,17 +177,19 @@ template CHIP_ERROR ClusterBase::WriteAttribute<chip::app::Clusters::OnOff::Attr
 CHIP_ERROR OnOffCluster::WriteAttributeStartUpOnOff(Callback::Cancelable * onSuccessCallback,
                                                     Callback::Cancelable * onFailureCallback, uint8_t value)
 {
+    void * context                             = nullptr;
+    WriteResponseSuccessCallback onSuccessFunc = nullptr;
+    WriteResponseFailureCallback onFailureFunc = nullptr;
     if (onSuccessCallback != nullptr && onFailureCallback != nullptr)
     {
-        auto onSuccess = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
-        auto onFailure = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
-        return WriteAttribute<app::Clusters::OnOff::Attributes::StartUpOnOff::TypeInfo>(value, onSuccess->mContext,
-                                                                                        onSuccess->mCall, onFailure->mCall);
+        auto onSuccessCb = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
+        auto onFailureCb = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
+        context          = onSuccessCb->mContext;
+        onSuccessFunc    = onSuccessCb->mCall;
+        onFailureFunc    = onFailureCb->mCall;
     }
-    else
-    {
-        return WriteAttribute<app::Clusters::OnOff::Attributes::StartUpOnOff::TypeInfo>(value, nullptr, nullptr, nullptr);
-    }
+    return ClusterBase::WriteAttribute<app::Clusters::OnOff::Attributes::StartUpOnOff::TypeInfo>(value, context, onSuccessFunc,
+                                                                                                 onFailureFunc);
 }
 
 CHIP_ERROR OnOffCluster::ReadAttributeFeatureMap(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback)

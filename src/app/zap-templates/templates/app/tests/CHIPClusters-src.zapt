@@ -25,15 +25,19 @@ namespace Controller {
 {{#unless isStruct}}
 CHIP_ERROR {{asUpperCamelCase parent.name}}ClusterTest::WriteAttribute{{asUpperCamelCase name}}(Callback::Cancelable * onSuccessCallback, Callback::Cancelable * onFailureCallback, {{chipType}} value)
 {
+    void * context = nullptr;
+    WriteResponseSuccessCallback onSuccessFunc = nullptr;
+    WriteResponseFailureCallback onFailureFunc = nullptr;
     if (onSuccessCallback != nullptr && onFailureCallback != nullptr)
     {
-        auto onSuccess = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
-        auto onFailure = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
-        // TYPE: {{ type }}
-        return WriteAttribute<app::Clusters::{{asUpperCamelCase parent.name}}::Attributes::{{asUpperCamelCase name}}::TypeInfo>(value, onSuccess->mContext, onSuccess->mCall, onFailure->mCall);
-    } else {
-        return WriteAttribute<app::Clusters::{{asUpperCamelCase parent.name}}::Attributes::{{asUpperCamelCase name}}::TypeInfo>(value, nullptr, nullptr, nullptr);
+        auto onSuccessCb = Callback::Callback<WriteResponseSuccessCallback>::FromCancelable(onSuccessCallback);
+        auto onFailureCb = Callback::Callback<WriteResponseFailureCallback>::FromCancelable(onFailureCallback);
+        context = onSuccessCb->mContext;
+        onSuccessFunc = onSuccessCb->mCall;
+        onFailureFunc = onFailureCb->mCall;
+
     }
+    return ClusterBase::WriteAttribute<app::Clusters::{{asUpperCamelCase parent.name}}::Attributes::{{asUpperCamelCase name}}::TypeInfo>(value, context, onSuccessFunc, onFailureFunc);
 }
 
 {{#*inline "attributeTypeInfo"}}chip::app::Clusters::{{asUpperCamelCase parent.name}}::Attributes::{{asUpperCamelCase name}}::TypeInfo{{/inline}}
