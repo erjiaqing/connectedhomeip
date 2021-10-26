@@ -50,6 +50,7 @@ chip_test_suite("tests") {
     "TestEventPathParams.cpp",
     "TestInteractionModelEngine.cpp",
     "TestMessageDef.cpp",
+    "TestPathIterator.cpp",
     "TestStatusResponse.cpp",
   ]
 
@@ -69,6 +70,7 @@ chip_test_suite("tests") {
     "${chip_root}/src/app/common:cluster-objects",
     "${chip_root}/src/app/tests:helpers",
     "${chip_root}/src/app/util:device_callbacks_manager",
+    "${chip_root}/src/app/util/mock:mock_ember",
     "${chip_root}/src/lib/core",
     "${nlunit_test_root}:nlunit-test",
   ]

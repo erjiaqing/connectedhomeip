@@ -56,6 +56,8 @@
 
 #include "Options.h"
 
+#include <app/PathIterator.h>
+
 using namespace chip;
 using namespace chip::Credentials;
 using namespace chip::DeviceLayer;
