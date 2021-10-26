@@ -95,6 +95,8 @@ static_library("app") {
     "MessageDef/TimedRequestMessage.cpp",
     "MessageDef/WriteRequest.cpp",
     "MessageDef/WriteResponse.cpp",
+    "PathIterator.cpp",
+    "PathIterator.h",
     "ReadClient.cpp",
     "ReadHandler.cpp",
     "WriteClient.cpp",
