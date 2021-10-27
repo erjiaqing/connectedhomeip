@@ -27,6 +27,7 @@
 #include <app/ClusterInfo.h>
 #include <app/EventManagement.h>
 #include <app/InteractionModelDelegate.h>
+#include <app/PathIterator.h>
 #include <lib/core/CHIPCore.h>
 #include <lib/core/CHIPTLVDebug.hpp>
 #include <lib/support/CodeUtils.h>
@@ -130,6 +131,7 @@ public:
     bool IsActiveSubscription() const { return mActiveSubscription; }
     CHIP_ERROR OnSubscribeRequest(Messaging::ExchangeContext * apExchangeContext, System::PacketBufferHandle && aPayload);
     void GetSubscriptionId(uint64_t & aSubscriptionId) { aSubscriptionId = mSubscriptionId; }
+    PathIterator * GetPathIterator() { return &mPathIterator; }
     void SetDirty() { mDirty = true; }
     void ClearDirty() { mDirty = false; }
     bool IsDirty() { return mDirty; }
@@ -189,11 +191,12 @@ private:
     uint16_t mMinIntervalFloorSeconds          = 0;
     uint16_t mMaxIntervalCeilingSeconds        = 0;
     Optional<SessionHandle> mSessionHandle;
-    bool mHoldReport         = false;
-    bool mDirty              = false;
-    bool mActiveSubscription = false;
-    NodeId mInitiatorNodeId  = kUndefinedNodeId;
-    FabricIndex mFabricIndex = 0;
+    bool mHoldReport           = false;
+    bool mDirty                = false;
+    bool mActiveSubscription   = false;
+    NodeId mInitiatorNodeId    = kUndefinedNodeId;
+    FabricIndex mFabricIndex   = 0;
+    PathIterator mPathIterator = PathIterator(nullptr);
 };
 } // namespace app
 } // namespace chip

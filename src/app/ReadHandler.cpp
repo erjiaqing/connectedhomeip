@@ -355,6 +355,7 @@ CHIP_ERROR ReadHandler::ProcessAttributePathList(AttributePathList::Parser & aAt
     // if we have exhausted this container
     if (CHIP_END_OF_TLV == err)
     {
+        mPathIterator.Reset(mpAttributeClusterInfoList);
         err = CHIP_NO_ERROR;
     }
 

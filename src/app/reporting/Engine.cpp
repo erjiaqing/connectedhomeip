@@ -62,26 +62,18 @@ EventNumber Engine::CountEvents(ReadHandler * apReadHandler, EventNumber * apIni
 }
 
 CHIP_ERROR
-Engine::RetrieveClusterData(AttributeDataList::Builder & aAttributeDataList, ClusterInfo & aClusterInfo)
+Engine::RetrieveClusterData(AttributeDataList::Builder & aAttributeDataList, const ConcreteAttributePath & aPath)
 {
-    CHIP_ERROR err = CHIP_NO_ERROR;
-
-    // TODO: We assume the path is a concrete path here, will be changed when implementing the wildcard event read.
-    ConcreteAttributePath path(aClusterInfo.mEndpointId.Value(), aClusterInfo.mClusterId.Value(), aClusterInfo.mFieldId.Value());
+    CHIP_ERROR err                                            = CHIP_NO_ERROR;
     AttributeDataElement::Builder attributeDataElementBuilder = aAttributeDataList.CreateAttributeDataElementBuilder();
     AttributePath::Builder attributePathBuilder               = attributeDataElementBuilder.CreateAttributePathBuilder();
-    attributePathBuilder.NodeId(aClusterInfo.mNodeId.ValueOr(kUndefinedNodeId))
-        .EndpointId(aClusterInfo.mEndpointId.Value())
-        .ClusterId(aClusterInfo.mClusterId.Value())
-        .FieldId(aClusterInfo.mFieldId.Value())
-        .EndOfAttributePath();
+    attributePathBuilder.EndpointId(aPath.mEndpointId).ClusterId(aPath.mClusterId).FieldId(aPath.mAttributeId).EndOfAttributePath();
     err = attributePathBuilder.GetError();
     SuccessOrExit(err);
 
-    ChipLogDetail(DataManagement, "<RE:Run> Cluster %" PRIx32 ", Field %" PRIx32 " is dirty", aClusterInfo.mClusterId.Value(),
-                  aClusterInfo.mFieldId.Value());
+    ChipLogDetail(DataManagement, "<RE:Run> Cluster %" PRIx32 ", Field %" PRIx32 " is dirty", aPath.mClusterId, aPath.mAttributeId);
 
-    err = ReadSingleClusterData(path, attributeDataElementBuilder.GetWriter(), nullptr /* data exists */);
+    err = ReadSingleClusterData(aPath, attributeDataElementBuilder.GetWriter(), nullptr /* data exists */);
     SuccessOrExit(err);
     attributeDataElementBuilder.MoreClusterData(false);
     attributeDataElementBuilder.EndOfAttributeDataElement();
@@ -91,7 +83,7 @@ exit:
     if (err != CHIP_NO_ERROR)
     {
         ChipLogError(DataManagement, "Error retrieving data from clusterId: " ChipLogFormatMEI ", err = %" CHIP_ERROR_FORMAT,
-                     ChipLogValueMEI(aClusterInfo.mClusterId.Value()), err.Format());
+                     ChipLogValueMEI(aPath.mClusterId), err.Format());
     }
 
     return err;
@@ -105,28 +97,40 @@ CHIP_ERROR Engine::BuildSingleReportDataAttributeDataList(ReportData::Builder & 
     aReportDataBuilder.Checkpoint(backup);
     AttributeDataList::Builder attributeDataList = aReportDataBuilder.CreateAttributeDataListBuilder();
     SuccessOrExit(err = aReportDataBuilder.GetError());
-    // TODO: Need to handle multiple chunk of message
-    for (auto clusterInfo = apReadHandler->GetAttributeClusterInfolist(); clusterInfo != nullptr; clusterInfo = clusterInfo->mpNext)
+
+    if (apReadHandler->IsInitialReport())
     {
-        if (apReadHandler->IsInitialReport())
+        ConcreteAttributePath path;
+        mMoreChunkedMessages = true;
+        for (; apReadHandler->GetPathIterator()->Get(path); apReadHandler->GetPathIterator()->Proceed())
         {
-            // Retrieve data for this cluster instance and clear its dirty flag.
-            err = RetrieveClusterData(attributeDataList, *clusterInfo);
-            VerifyOrExit(err == CHIP_NO_ERROR,
-                         ChipLogError(DataManagement, "<RE:Run> Error retrieving data from cluster, aborting"));
+            VerifyOrExit((err = RetrieveClusterData(attributeDataList, path)) == CHIP_NO_ERROR,
+                         ChipLogError(DataManagement, "<RE:Run> Error retrieving data from cluster, aborting."));
             attributeClean = false;
         }
-        else
+        mMoreChunkedMessages = false;
+    }
+    else
+    {
+        for (auto clusterInfo = apReadHandler->GetAttributeClusterInfolist(); clusterInfo != nullptr;
+             clusterInfo      = clusterInfo->mpNext)
         {
             for (auto path = mpGlobalDirtySet; path != nullptr; path = path->mpNext)
             {
-                if (clusterInfo->IsAttributePathSupersetOf(*path))
+                if (clusterInfo->IsAttributePathSupersetOf(*path) && !path->HasWildcard())
                 {
-                    err = RetrieveClusterData(attributeDataList, *path);
+                    // Skip wildcard subscription for now.
+                    err = RetrieveClusterData(
+                        attributeDataList,
+                        ConcreteAttributePath(path->mEndpointId.Value(), path->mClusterId.Value(), path->mFieldId.Value()));
                 }
-                else if (path->IsAttributePathSupersetOf(*clusterInfo))
+                else if (path->IsAttributePathSupersetOf(*clusterInfo) && !clusterInfo->HasWildcard())
                 {
-                    err = RetrieveClusterData(attributeDataList, *clusterInfo);
+                    // Skip wildcard subscription for now.
+                    err =
+                        RetrieveClusterData(attributeDataList,
+                                            ConcreteAttributePath(clusterInfo->mEndpointId.Value(), clusterInfo->mClusterId.Value(),
+                                                                  clusterInfo->mFieldId.Value()));
                 }
                 else
                 {
