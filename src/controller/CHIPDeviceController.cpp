@@ -1651,7 +1651,7 @@ void DeviceControllerInteractionModelDelegate::OnReportData(const app::ReadClien
 CHIP_ERROR DeviceControllerInteractionModelDelegate::ReadError(app::ReadClient * apReadClient, CHIP_ERROR aError)
 {
     app::ClusterInfo path;
-    path.mNodeId = apReadClient->GetPeerNodeId();
+    path.mNodeId.SetValue(apReadClient->GetPeerNodeId());
     IMReadReportAttributesResponseCallback(apReadClient, path, nullptr, Protocols::InteractionModel::Status::Failure);
     return CHIP_NO_ERROR;
 }

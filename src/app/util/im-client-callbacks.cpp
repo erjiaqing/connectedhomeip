@@ -366,7 +366,10 @@ bool IMReadReportAttributesResponseCallback(const app::ReadClient * apReadClient
                                             TLV::TLVReader * apData, Protocols::InteractionModel::Status status)
 {
     ChipLogProgress(Zcl, "ReadAttributesResponse:");
-    ChipLogProgress(Zcl, "  ClusterId: " ChipLogFormatMEI, ChipLogValueMEI(aPath.mClusterId));
+    if (aPath.mClusterId.HasValue())
+    {
+        ChipLogProgress(Zcl, "  ClusterId: " ChipLogFormatMEI, ChipLogValueMEI(aPath.mClusterId.Value()));
+    }
 
     Callback::Cancelable * onSuccessCallback = nullptr;
     Callback::Cancelable * onFailureCallback = nullptr;
@@ -378,8 +381,12 @@ bool IMReadReportAttributesResponseCallback(const app::ReadClient * apReadClient
     CHIP_ERROR err = CHIP_NO_ERROR;
     if (apReadClient->IsSubscriptionType())
     {
-        err = gCallbacks.GetReportCallback(sourceId, aPath.mEndpointId, aPath.mClusterId, aPath.mFieldId, &onSuccessCallback,
-                                           &tlvFilter);
+        if (status == Protocols::InteractionModel::Status::Success)
+        {
+            // If the status is success, the path must be a concrete path.
+            err = gCallbacks.GetReportCallback(sourceId, aPath.mEndpointId.Value(), aPath.mClusterId.Value(),
+                                               aPath.mFieldId.Value(), &onSuccessCallback, &tlvFilter);
+        }
     }
     else
     {
@@ -405,7 +412,10 @@ bool IMReadReportAttributesResponseCallback(const app::ReadClient * apReadClient
         return true;
     }
 
-    ChipLogProgress(Zcl, "  attributeId: " ChipLogFormatMEI, ChipLogValueMEI(aPath.mFieldId));
+    if (aPath.mFieldId.HasValue())
+    {
+        ChipLogProgress(Zcl, "  attributeId: " ChipLogFormatMEI, ChipLogValueMEI(aPath.mFieldId.Value()));
+    }
     LogIMStatus(status);
 
     if (status == Protocols::InteractionModel::Status::Success && apData != nullptr)
