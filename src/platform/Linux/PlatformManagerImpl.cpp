@@ -314,8 +314,9 @@ CHIP_ERROR PlatformManagerImpl::_GetUpTime(uint64_t & upTime)
 CHIP_ERROR PlatformManagerImpl::_GetTotalOperationalHours(uint32_t & totalOperationalHours)
 {
     uint64_t upTime = 0;
+    CHIP_ERROR err  = CHIP_NO_ERROR;
 
-    if (_GetUpTime(upTime) == CHIP_NO_ERROR)
+    if ((err = _GetUpTime(upTime)) == CHIP_NO_ERROR)
     {
         uint32_t totalHours = 0;
         if (ConfigurationMgrImpl().GetTotalOperationalHours(totalHours) == CHIP_NO_ERROR)
@@ -325,7 +326,7 @@ CHIP_ERROR PlatformManagerImpl::_GetTotalOperationalHours(uint32_t & totalOperat
         }
     }
 
-    return CHIP_ERROR_INVALID_TIME;
+    return err;
 }
 
 CHIP_ERROR PlatformManagerImpl::_GetBootReasons(uint8_t & bootReasons)
