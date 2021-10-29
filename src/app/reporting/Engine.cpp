@@ -62,24 +62,18 @@ EventNumber Engine::CountEvents(ReadHandler * apReadHandler, EventNumber * apIni
 }
 
 CHIP_ERROR
-Engine::RetrieveClusterData(AttributeDataList::Builder & aAttributeDataList, ClusterInfo & aClusterInfo)
+Engine::RetrieveClusterData(AttributeDataList::Builder & aAttributeDataList, const ConcreteAttributePath & aPath)
 {
-    CHIP_ERROR err = CHIP_NO_ERROR;
-    ConcreteAttributePath path(aClusterInfo.mEndpointId, aClusterInfo.mClusterId, aClusterInfo.mFieldId);
+    CHIP_ERROR err                                            = CHIP_NO_ERROR;
     AttributeDataElement::Builder attributeDataElementBuilder = aAttributeDataList.CreateAttributeDataElementBuilder();
     AttributePath::Builder attributePathBuilder               = attributeDataElementBuilder.CreateAttributePathBuilder();
-    attributePathBuilder.NodeId(aClusterInfo.mNodeId)
-        .EndpointId(aClusterInfo.mEndpointId)
-        .ClusterId(aClusterInfo.mClusterId)
-        .FieldId(aClusterInfo.mFieldId)
-        .EndOfAttributePath();
+    attributePathBuilder.EndpointId(aPath.mEndpointId).ClusterId(aPath.mClusterId).FieldId(aPath.mAttributeId).EndOfAttributePath();
     err = attributePathBuilder.GetError();
     SuccessOrExit(err);
 
-    ChipLogDetail(DataManagement, "<RE:Run> Cluster %" PRIx32 ", Field %" PRIx32 " is dirty", aClusterInfo.mClusterId,
-                  aClusterInfo.mFieldId);
+    ChipLogDetail(DataManagement, "<RE:Run> Cluster %" PRIx32 ", Field %" PRIx32 " is dirty", aPath.mClusterId, aPath.mAttributeId);
 
-    err = ReadSingleClusterData(path, attributeDataElementBuilder.GetWriter(), nullptr /* data exists */);
+    err = ReadSingleClusterData(aPath, attributeDataElementBuilder.GetWriter(), nullptr /* data exists */);
     SuccessOrExit(err);
     attributeDataElementBuilder.MoreClusterData(false);
     attributeDataElementBuilder.EndOfAttributeDataElement();
@@ -89,7 +83,7 @@ exit:
     if (err != CHIP_NO_ERROR)
     {
         ChipLogError(DataManagement, "Error retrieving data from clusterId: " ChipLogFormatMEI ", err = %" CHIP_ERROR_FORMAT,
-                     ChipLogValueMEI(aClusterInfo.mClusterId), err.Format());
+                     ChipLogValueMEI(aPath.mClusterId), err.Format());
     }
 
     return err;
@@ -103,28 +97,41 @@ CHIP_ERROR Engine::BuildSingleReportDataAttributeDataList(ReportData::Builder & 
     aReportDataBuilder.Checkpoint(backup);
     AttributeDataList::Builder attributeDataList = aReportDataBuilder.CreateAttributeDataListBuilder();
     SuccessOrExit(err = aReportDataBuilder.GetError());
-    // TODO: Need to handle multiple chunk of message
-    for (auto clusterInfo = apReadHandler->GetAttributeClusterInfolist(); clusterInfo != nullptr; clusterInfo = clusterInfo->mpNext)
+
+    if (apReadHandler->IsInitialReport())
     {
-        if (apReadHandler->IsInitialReport())
+        ConcreteAttributePath path;
+        mMoreChunkedMessages = true;
+        for (; apReadHandler->GetPathIterator()->Get(path); apReadHandler->GetPathIterator()->Proceed())
         {
-            // Retrieve data for this cluster instance and clear its dirty flag.
-            err = RetrieveClusterData(attributeDataList, *clusterInfo);
-            VerifyOrExit(err == CHIP_NO_ERROR,
-                         ChipLogError(DataManagement, "<RE:Run> Error retrieving data from cluster, aborting"));
+            VerifyOrExit(aReportDataBuilder.GetWriter()->GetRemainingFreeLength() > 50, err = CHIP_ERROR_NO_MEMORY);
+            VerifyOrExit((err = RetrieveClusterData(attributeDataList, path)) == CHIP_NO_ERROR,
+                         ChipLogError(DataManagement, "<RE:Run> Error retrieving data from cluster, aborting."));
             attributeClean = false;
         }
-        else
+        mMoreChunkedMessages = false;
+    }
+    else
+    {
+        for (auto clusterInfo = apReadHandler->GetAttributeClusterInfolist(); clusterInfo != nullptr;
+             clusterInfo      = clusterInfo->mpNext)
         {
             for (auto path = mpGlobalDirtySet; path != nullptr; path = path->mpNext)
             {
-                if (clusterInfo->IsAttributePathSupersetOf(*path))
+                if (clusterInfo->IsAttributePathSupersetOf(*path) && !path->HasWildcard())
                 {
-                    err = RetrieveClusterData(attributeDataList, *path);
+                    // Skip wildcard subscription for now.
+                    err = RetrieveClusterData(
+                        attributeDataList,
+                        ConcreteAttributePath(path->mEndpointId.Value(), path->mClusterId.Value(), path->mFieldId.Value()));
                 }
-                else if (path->IsAttributePathSupersetOf(*clusterInfo))
+                else if (path->IsAttributePathSupersetOf(*clusterInfo) && !clusterInfo->HasWildcard())
                 {
-                    err = RetrieveClusterData(attributeDataList, *clusterInfo);
+                    // Skip wildcard subscription for now.
+                    err =
+                        RetrieveClusterData(attributeDataList,
+                                            ConcreteAttributePath(clusterInfo->mEndpointId.Value(), clusterInfo->mClusterId.Value(),
+                                                                  clusterInfo->mFieldId.Value()));
                 }
                 else
                 {
@@ -138,14 +145,24 @@ CHIP_ERROR Engine::BuildSingleReportDataAttributeDataList(ReportData::Builder & 
             }
         }
     }
-    attributeDataList.EndOfAttributeDataList();
-    err = attributeDataList.GetError();
-
 exit:
+    if ((err == CHIP_ERROR_BUFFER_TOO_SMALL) || (err == CHIP_ERROR_NO_MEMORY))
+    {
+        ChipLogDetail(DataManagement, "<RE:Run> We cannot put nore chunks into this report. Enable chunking.");
+        err = CHIP_NO_ERROR;
+    }
+
+    if (err == CHIP_NO_ERROR)
+    {
+        attributeDataList.EndOfAttributeDataList();
+        err = attributeDataList.GetError();
+    }
+
     if (attributeClean || err != CHIP_NO_ERROR)
     {
         aReportDataBuilder.Rollback(backup);
     }
+
     return err;
 }
 
@@ -281,7 +298,6 @@ CHIP_ERROR Engine::BuildAndSendSingleReportData(ReadHandler * apReadHandler)
     SuccessOrExit(err);
 
     // TODO: Add mechanism to set mSuppressResponse to handle status reports for multiple reports
-    // TODO: Add more chunk message support, currently mMoreChunkedMessages is always false.
     if (mMoreChunkedMessages)
     {
         reportDataBuilder.MoreChunkedMessages(mMoreChunkedMessages);
@@ -434,7 +450,7 @@ CHIP_ERROR Engine::SendReport(ReadHandler * apReadHandler, System::PacketBufferH
 
     // We can only have 1 report in flight for any given read - increment and break out.
     mNumReportsInFlight++;
-    err = apReadHandler->SendReportData(std::move(aPayload));
+    err = apReadHandler->SendReportData(std::move(aPayload), mMoreChunkedMessages);
     return err;
 }
 

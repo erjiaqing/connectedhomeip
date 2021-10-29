@@ -618,8 +618,10 @@ static bool IsInterestedEventPaths(EventLoadOutContext * eventLoadOutContext, co
     }
     while (interestedEventPaths != nullptr)
     {
-        if (interestedEventPaths->mNodeId == event.mNodeId && interestedEventPaths->mEndpointId == event.mEndpointId &&
-            interestedEventPaths->mClusterId == event.mClusterId && interestedEventPaths->mEventId == event.mEventId)
+        if (interestedEventPaths->mNodeId == Optional<NodeId>(event.mNodeId) &&
+            interestedEventPaths->mEndpointId == Optional<EndpointId>(event.mEndpointId) &&
+            interestedEventPaths->mClusterId == Optional<ClusterId>(event.mClusterId) &&
+            interestedEventPaths->mEventId == Optional<EventId>(event.mEventId))
         {
             return true;
         }

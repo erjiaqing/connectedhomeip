@@ -154,6 +154,15 @@ CHIP_ERROR ReadHandler::OnStatusResponse(Messaging::ExchangeContext * apExchange
     VerifyOrExit((statusCode == Protocols::InteractionModel::Status::Success), err = CHIP_ERROR_INVALID_ARGUMENT);
     switch (mState)
     {
+    case HandlerState::AwaitingChunkingResponse:
+        InteractionModelEngine::GetInstance()->GetReportingEngine().OnReportConfirm();
+        MoveToState(HandlerState::GeneratingReports);
+        if (mpExchangeCtx)
+        {
+            mpExchangeCtx->WillSendMessage();
+        }
+        SuccessOrExit(err = InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun());
+        break;
     case HandlerState::AwaitingReportResponse:
         if (IsSubscriptionType())
         {
@@ -191,7 +200,7 @@ exit:
     return err;
 }
 
-CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload)
+CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload, bool aMoreChunks)
 {
     VerifyOrReturnLogError(IsReportable(), CHIP_ERROR_INCORRECT_STATE);
     if (IsInitialReport())
@@ -205,7 +214,7 @@ CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload)
         mpExchangeCtx->SetResponseTimeout(kImMessageTimeout);
     }
     VerifyOrReturnLogError(mpExchangeCtx != nullptr, CHIP_ERROR_INCORRECT_STATE);
-    MoveToState(HandlerState::AwaitingReportResponse);
+    MoveToState(aMoreChunks ? HandlerState::AwaitingChunkingResponse : HandlerState::AwaitingReportResponse);
     CHIP_ERROR err = mpExchangeCtx->SendMessage(Protocols::InteractionModel::MsgType::ReportData, std::move(aPayload),
                                                 Messaging::SendFlags(Messaging::SendMessageFlags::kExpectResponse));
     if (err == CHIP_NO_ERROR)
@@ -215,7 +224,10 @@ CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload)
             err = RefreshSubscribeSyncTimer();
         }
     }
-    ClearDirty();
+    if (!aMoreChunks)
+    {
+        ClearDirty();
+    }
     return err;
 }
 
@@ -333,33 +345,16 @@ CHIP_ERROR ReadHandler::ProcessAttributePathList(AttributePathList::Parser & aAt
         AttributePath::Parser path;
         err = path.Init(reader);
         SuccessOrExit(err);
-        err = path.GetNodeId(&(clusterInfo.mNodeId));
-        SuccessOrExit(err);
-        err = path.GetEndpointId(&(clusterInfo.mEndpointId));
-        SuccessOrExit(err);
-        err = path.GetClusterId(&(clusterInfo.mClusterId));
-        SuccessOrExit(err);
-        err = path.GetFieldId(&(clusterInfo.mFieldId));
-        if (CHIP_NO_ERROR == err)
-        {
-            clusterInfo.mFlags.Set(ClusterInfo::Flags::kFieldIdValid);
-        }
-        else if (CHIP_END_OF_TLV == err)
-        {
-            err = CHIP_NO_ERROR;
-        }
-        SuccessOrExit(err);
+        // TODO(#8364): Support wildcard paths here, should check if we have got valid input when implementing wildcard read.
+        SuccessOrExit(err = path.GetNodeId(clusterInfo.mNodeId));
+        SuccessOrExit(err = path.GetEndpointId(clusterInfo.mEndpointId));
+        SuccessOrExit(err = path.GetClusterId(clusterInfo.mClusterId));
+        SuccessOrExit(err = path.GetFieldId(clusterInfo.mFieldId));
+        SuccessOrExit(err = path.GetListIndex(clusterInfo.mListIndex));
 
-        err = path.GetListIndex(&(clusterInfo.mListIndex));
-        if (CHIP_NO_ERROR == err)
-        {
-            VerifyOrExit(clusterInfo.mFlags.Has(ClusterInfo::Flags::kFieldIdValid), err = CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
-            clusterInfo.mFlags.Set(ClusterInfo::Flags::kListIndexValid);
-        }
-        else if (CHIP_END_OF_TLV == err)
-        {
-            err = CHIP_NO_ERROR;
-        }
+        VerifyOrExit(!clusterInfo.mListIndex.HasValue() || clusterInfo.mFieldId.HasValue(),
+                     err = CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
+
         SuccessOrExit(err);
         err = InteractionModelEngine::GetInstance()->PushFront(mpAttributeClusterInfoList, clusterInfo);
         SuccessOrExit(err);
@@ -368,6 +363,7 @@ CHIP_ERROR ReadHandler::ProcessAttributePathList(AttributePathList::Parser & aAt
     // if we have exhausted this container
     if (CHIP_END_OF_TLV == err)
     {
+        mPathIterator.Reset(mpAttributeClusterInfoList);
         err = CHIP_NO_ERROR;
     }
 
@@ -389,21 +385,15 @@ CHIP_ERROR ReadHandler::ProcessEventPathList(EventPathList::Parser & aEventPathL
         EventPath::Parser path;
         err = path.Init(reader);
         SuccessOrExit(err);
-        err = path.GetNodeId(&(clusterInfo.mNodeId));
-        SuccessOrExit(err);
-        err = path.GetEndpointId(&(clusterInfo.mEndpointId));
-        SuccessOrExit(err);
-        err = path.GetClusterId(&(clusterInfo.mClusterId));
-        SuccessOrExit(err);
-        err = path.GetEventId(&(clusterInfo.mEventId));
-        if (CHIP_NO_ERROR == err)
-        {
-            clusterInfo.mFlags.Set(ClusterInfo::Flags::kEventIdValid);
-        }
-        else if (CHIP_END_OF_TLV == err)
-        {
-            err = CHIP_NO_ERROR;
-        }
+        SuccessOrExit(err = path.GetNodeId(clusterInfo.mNodeId));
+        SuccessOrExit(err = path.GetEndpointId(clusterInfo.mEndpointId));
+        SuccessOrExit(err = path.GetClusterId(clusterInfo.mClusterId));
+        SuccessOrExit(err = path.GetEventId(clusterInfo.mEventId));
+
+        // TODO: We assume the path is a concrete path here, will be removed when implementing the wildcard event read.
+        VerifyOrExit(clusterInfo.mEndpointId.HasValue() && clusterInfo.mClusterId.HasValue(),
+                     err = CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
+
         SuccessOrExit(err);
         err = InteractionModelEngine::GetInstance()->PushFront(mpEventClusterInfoList, clusterInfo);
         SuccessOrExit(err);
@@ -432,6 +422,9 @@ const char * ReadHandler::GetStateStr() const
 
     case HandlerState::GeneratingReports:
         return "GeneratingReports";
+
+    case HandlerState::AwaitingChunkingResponse:
+        return "AwaitingChunkingResponse";
 
     case HandlerState::AwaitingReportResponse:
         return "AwaitingReportResponse";
