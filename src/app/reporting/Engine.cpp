@@ -104,6 +104,7 @@ CHIP_ERROR Engine::BuildSingleReportDataAttributeDataList(ReportData::Builder & 
         mMoreChunkedMessages = true;
         for (; apReadHandler->GetPathIterator()->Get(path); apReadHandler->GetPathIterator()->Proceed())
         {
+            VerifyOrExit(aReportDataBuilder.GetWriter()->GetRemainingFreeLength() > 50, err = CHIP_ERROR_NO_MEMORY);
             VerifyOrExit((err = RetrieveClusterData(attributeDataList, path)) == CHIP_NO_ERROR,
                          ChipLogError(DataManagement, "<RE:Run> Error retrieving data from cluster, aborting."));
             attributeClean = false;
@@ -144,14 +145,24 @@ CHIP_ERROR Engine::BuildSingleReportDataAttributeDataList(ReportData::Builder & 
             }
         }
     }
-    attributeDataList.EndOfAttributeDataList();
-    err = attributeDataList.GetError();
-
 exit:
+    if ((err == CHIP_ERROR_BUFFER_TOO_SMALL) || (err == CHIP_ERROR_NO_MEMORY))
+    {
+        ChipLogDetail(DataManagement, "<RE:Run> We cannot put nore chunks into this report. Enable chunking.");
+        err = CHIP_NO_ERROR;
+    }
+
+    if (err == CHIP_NO_ERROR)
+    {
+        attributeDataList.EndOfAttributeDataList();
+        err = attributeDataList.GetError();
+    }
+
     if (attributeClean || err != CHIP_NO_ERROR)
     {
         aReportDataBuilder.Rollback(backup);
     }
+
     return err;
 }
 
@@ -287,7 +298,6 @@ CHIP_ERROR Engine::BuildAndSendSingleReportData(ReadHandler * apReadHandler)
     SuccessOrExit(err);
 
     // TODO: Add mechanism to set mSuppressResponse to handle status reports for multiple reports
-    // TODO: Add more chunk message support, currently mMoreChunkedMessages is always false.
     if (mMoreChunkedMessages)
     {
         reportDataBuilder.MoreChunkedMessages(mMoreChunkedMessages);
@@ -440,7 +450,7 @@ CHIP_ERROR Engine::SendReport(ReadHandler * apReadHandler, System::PacketBufferH
 
     // We can only have 1 report in flight for any given read - increment and break out.
     mNumReportsInFlight++;
-    err = apReadHandler->SendReportData(std::move(aPayload));
+    err = apReadHandler->SendReportData(std::move(aPayload), mMoreChunkedMessages);
     return err;
 }
 

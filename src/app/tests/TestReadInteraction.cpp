@@ -402,7 +402,7 @@ void TestReadInteraction::TestReadHandler(nlTestSuite * apSuite, void * apContex
     readHandler.Init(&ctx.GetExchangeManager(), nullptr, exchangeCtx, chip::app::ReadHandler::InteractionType::Read);
 
     GenerateReportData(apSuite, apContext, reportDatabuf);
-    err = readHandler.SendReportData(std::move(reportDatabuf));
+    err = readHandler.SendReportData(std::move(reportDatabuf), false);
     NL_TEST_ASSERT(apSuite, err == CHIP_ERROR_INCORRECT_STATE);
 
     writer.Init(std::move(readRequestbuf));
@@ -534,7 +534,7 @@ void TestReadInteraction::TestReadHandlerInvalidAttributePath(nlTestSuite * apSu
     readHandler.Init(&ctx.GetExchangeManager(), nullptr, exchangeCtx, chip::app::ReadHandler::InteractionType::Read);
 
     GenerateReportData(apSuite, apContext, reportDatabuf);
-    err = readHandler.SendReportData(std::move(reportDatabuf));
+    err = readHandler.SendReportData(std::move(reportDatabuf), false);
     NL_TEST_ASSERT(apSuite, err == CHIP_ERROR_INCORRECT_STATE);
 
     writer.Init(std::move(readRequestbuf));

@@ -98,12 +98,13 @@ public:
      *  Send ReportData to initiator
      *
      *  @param[in]    aPayload             A payload that has read request data
+     *  @param[in]    aMoreChunks          A flags indicating there will be more chunks for this read request
      *
      *  @retval #Others If fails to send report data
      *  @retval #CHIP_NO_ERROR On success.
      *
      */
-    CHIP_ERROR SendReportData(System::PacketBufferHandle && aPayload);
+    CHIP_ERROR SendReportData(System::PacketBufferHandle && aPayload, bool mMoreChunks);
 
     bool IsFree() const { return mState == HandlerState::Uninitialized; }
     bool IsReportable() const { return mState == HandlerState::GeneratingReports && !mHoldReport; }
@@ -142,11 +143,12 @@ private:
     friend class TestReadInteraction;
     enum class HandlerState
     {
-        Uninitialized = 0,      ///< The handler has not been initialized
-        Initialized,            ///< The handler has been initialized and is ready
-        GeneratingReports,      ///< The handler has received either a Read or Subscribe request and is the process of generating a
-                                ///< report.
-        AwaitingReportResponse, ///< The handler has sent the report to the client and is awaiting a status response.
+        Uninitialized = 0, ///< The handler has not been initialized
+        Initialized,       ///< The handler has been initialized and is ready
+        GeneratingReports, ///< The handler has received either a Read or Subscribe request and is the process of generating a
+                           ///< report.
+        AwaitingChunkingResponse, ///< The handler just sent a report chunk and is waiting a status response.
+        AwaitingReportResponse,   ///< The handler has sent the last report chunk to the client and is awaiting a status response.
     };
 
     static void OnRefreshSubscribeTimerSyncCallback(System::Layer * apSystemLayer, void * apAppState);

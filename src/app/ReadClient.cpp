@@ -218,17 +218,26 @@ CHIP_ERROR ReadClient::SendStatusResponse(CHIP_ERROR aError)
     {
         if (IsAwaitingInitialReport())
         {
-            MoveToState(ClientState::AwaitingSubscribeResponse);
+            if (!mPendingMoreChunks)
+            {
+                MoveToState(ClientState::AwaitingSubscribeResponse);
+            }
         }
         else
         {
             RefreshLivenessCheckTimer();
         }
     }
-    ReturnLogErrorOnFailure(
-        mpExchangeCtx->SendMessage(Protocols::InteractionModel::MsgType::StatusResponse, std::move(msgBuf),
-                                   Messaging::SendFlags(IsAwaitingSubscribeResponse() ? Messaging::SendMessageFlags::kExpectResponse
-                                                                                      : Messaging::SendMessageFlags::kNone)));
+    else if (mPendingMoreChunks)
+    {
+        ChipLogDetail(DataManagement, "%s: ReacClient: PendingMoreChunks", __func__);
+        MoveToState(ClientState::AwaitingInitialReport);
+    }
+    ChipLogDetail(DataManagement, "%s: ReacClient: PendingMoreChunks %c", __func__, "-+"[mPendingMoreChunks]);
+    ReturnLogErrorOnFailure(mpExchangeCtx->SendMessage(Protocols::InteractionModel::MsgType::StatusResponse, std::move(msgBuf),
+                                                       Messaging::SendFlags((IsAwaitingSubscribeResponse() || mPendingMoreChunks)
+                                                                                ? Messaging::SendMessageFlags::kExpectResponse
+                                                                                : Messaging::SendMessageFlags::kNone)));
     return CHIP_NO_ERROR;
 }
 
@@ -263,9 +272,15 @@ CHIP_ERROR ReadClient::GenerateAttributePathList(AttributePathList::Builder & aA
     for (size_t index = 0; index < aAttributePathParamsListSize; index++)
     {
         AttributePath::Builder attributePathBuilder = aAttributePathListBuilder.CreateAttributePathBuilder();
-        attributePathBuilder.NodeId(apAttributePathParamsList[index].mNodeId)
-            .EndpointId(apAttributePathParamsList[index].mEndpointId)
-            .ClusterId(apAttributePathParamsList[index].mClusterId);
+        attributePathBuilder.NodeId(apAttributePathParamsList[index].mNodeId);
+        if (apAttributePathParamsList[index].mEndpointId != 0xFFFF)
+        {
+            attributePathBuilder.EndpointId(apAttributePathParamsList[index].mEndpointId);
+        }
+        if (apAttributePathParamsList[index].mClusterId != 0xFFFFFFFF)
+        {
+            attributePathBuilder.ClusterId(apAttributePathParamsList[index].mClusterId);
+        }
         if (apAttributePathParamsList[index].mFlags.Has(AttributePathParams::Flags::kFieldIdValid))
         {
             attributePathBuilder.FieldId(apAttributePathParamsList[index].mFieldId);
@@ -308,7 +323,7 @@ CHIP_ERROR ReadClient::OnMessageReceived(Messaging::ExchangeContext * apExchange
     }
 
 exit:
-    if (!IsSubscriptionType() || err != CHIP_NO_ERROR)
+    if ((!IsSubscriptionType() && !mPendingMoreChunks) || err != CHIP_NO_ERROR)
     {
         ShutdownInternal(err);
     }
@@ -347,7 +362,7 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
     bool isEventListPresent         = false;
     bool isAttributeDataListPresent = false;
     bool suppressResponse           = false;
-    bool moreChunkedMessages        = false;
+    mPendingMoreChunks              = false;
     uint64_t subscriptionId         = 0;
     EventList::Parser eventList;
     AttributeDataList::Parser attributeDataList;
@@ -396,10 +411,11 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
     }
     SuccessOrExit(err);
 
-    err = report.GetMoreChunkedMessages(&moreChunkedMessages);
+    err = report.GetMoreChunkedMessages(&mPendingMoreChunks);
     if (CHIP_END_OF_TLV == err)
     {
-        err = CHIP_NO_ERROR;
+        mPendingMoreChunks = false;
+        err                = CHIP_NO_ERROR;
     }
     SuccessOrExit(err);
 
@@ -426,7 +442,7 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
         err = CHIP_NO_ERROR;
     }
     SuccessOrExit(err);
-    if (isAttributeDataListPresent && nullptr != mpDelegate && !moreChunkedMessages)
+    if (isAttributeDataListPresent && nullptr != mpDelegate)
     {
         chip::TLV::TLVReader attributeDataListReader;
         attributeDataList.GetReader(&attributeDataListReader);
@@ -446,7 +462,7 @@ CHIP_ERROR ReadClient::ProcessReportData(System::PacketBufferHandle && aPayload)
     }
 exit:
     SendStatusResponse(err);
-    if (!mInitialReport)
+    if (!mInitialReport && !mPendingMoreChunks)
     {
         mpExchangeCtx = nullptr;
     }

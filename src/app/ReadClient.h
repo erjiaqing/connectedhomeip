@@ -191,6 +191,7 @@ private:
     ClientState mState                         = ClientState::Uninitialized;
     uint64_t mAppIdentifier                    = 0;
     bool mInitialReport                        = true;
+    bool mPendingMoreChunks                    = false;
     uint16_t mMinIntervalFloorSeconds          = 0;
     uint16_t mMaxIntervalCeilingSeconds        = 0;
     uint64_t mSubscriptionId                   = 0;

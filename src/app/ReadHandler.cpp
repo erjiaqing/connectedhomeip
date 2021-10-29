@@ -154,6 +154,15 @@ CHIP_ERROR ReadHandler::OnStatusResponse(Messaging::ExchangeContext * apExchange
     VerifyOrExit((statusCode == Protocols::InteractionModel::Status::Success), err = CHIP_ERROR_INVALID_ARGUMENT);
     switch (mState)
     {
+    case HandlerState::AwaitingChunkingResponse:
+        InteractionModelEngine::GetInstance()->GetReportingEngine().OnReportConfirm();
+        MoveToState(HandlerState::GeneratingReports);
+        if (mpExchangeCtx)
+        {
+            mpExchangeCtx->WillSendMessage();
+        }
+        SuccessOrExit(err = InteractionModelEngine::GetInstance()->GetReportingEngine().ScheduleRun());
+        break;
     case HandlerState::AwaitingReportResponse:
         if (IsSubscriptionType())
         {
@@ -191,7 +200,7 @@ exit:
     return err;
 }
 
-CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload)
+CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload, bool aMoreChunks)
 {
     VerifyOrReturnLogError(IsReportable(), CHIP_ERROR_INCORRECT_STATE);
     if (IsInitialReport())
@@ -205,7 +214,7 @@ CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload)
         mpExchangeCtx->SetResponseTimeout(kImMessageTimeout);
     }
     VerifyOrReturnLogError(mpExchangeCtx != nullptr, CHIP_ERROR_INCORRECT_STATE);
-    MoveToState(HandlerState::AwaitingReportResponse);
+    MoveToState(aMoreChunks ? HandlerState::AwaitingChunkingResponse : HandlerState::AwaitingReportResponse);
     CHIP_ERROR err = mpExchangeCtx->SendMessage(Protocols::InteractionModel::MsgType::ReportData, std::move(aPayload),
                                                 Messaging::SendFlags(Messaging::SendMessageFlags::kExpectResponse));
     if (err == CHIP_NO_ERROR)
@@ -215,7 +224,10 @@ CHIP_ERROR ReadHandler::SendReportData(System::PacketBufferHandle && aPayload)
             err = RefreshSubscribeSyncTimer();
         }
     }
-    ClearDirty();
+    if (!aMoreChunks)
+    {
+        ClearDirty();
+    }
     return err;
 }
 
@@ -343,10 +355,6 @@ CHIP_ERROR ReadHandler::ProcessAttributePathList(AttributePathList::Parser & aAt
         VerifyOrExit(!clusterInfo.mListIndex.HasValue() || clusterInfo.mFieldId.HasValue(),
                      err = CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
 
-        // TODO(#8364): We assume the path is a concrete path here, will be removed when implementing the wildcard read.
-        VerifyOrExit(clusterInfo.mEndpointId.HasValue() && clusterInfo.mClusterId.HasValue() && clusterInfo.mFieldId.HasValue(),
-                     err = CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
-
         SuccessOrExit(err);
         err = InteractionModelEngine::GetInstance()->PushFront(mpAttributeClusterInfoList, clusterInfo);
         SuccessOrExit(err);
@@ -414,6 +422,9 @@ const char * ReadHandler::GetStateStr() const
 
     case HandlerState::GeneratingReports:
         return "GeneratingReports";
+
+    case HandlerState::AwaitingChunkingResponse:
+        return "AwaitingChunkingResponse";
 
     case HandlerState::AwaitingReportResponse:
         return "AwaitingReportResponse";
