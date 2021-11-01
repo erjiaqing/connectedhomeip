@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <app/AttributePathParams.h>
+#include <app/ClusterInfo.h>
 #include <app/ConcreteAttributePath.h>
 #include <app/InteractionModelDelegate.h>
 #include <app/MessageDef/AttributeDataList.h>
@@ -107,7 +107,7 @@ public:
      */
     void Shutdown();
 
-    CHIP_ERROR PrepareAttribute(const AttributePathParams & attributePathParams);
+    CHIP_ERROR PrepareAttribute(const ClusterInfo & attributePathParams);
     CHIP_ERROR FinishAttribute();
     TLV::TLVWriter * GetAttributeDataElementTLVWriter();
 
@@ -172,7 +172,7 @@ private:
     void MoveToState(const State aTargetState);
     CHIP_ERROR ProcessWriteResponseMessage(System::PacketBufferHandle && payload);
     CHIP_ERROR ProcessAttributeStatusIB(AttributeStatusIB::Parser & aAttributeStatusIB);
-    CHIP_ERROR ConstructAttributePath(const AttributePathParams & aAttributePathParams,
+    CHIP_ERROR ConstructAttributePath(const ClusterInfo & aAttributePathParams,
                                       AttributeDataElement::Builder aAttributeDataElement);
     void ClearExistingExchangeContext();
     const char * GetStateStr() const;
@@ -230,7 +230,7 @@ public:
      *  Encode an attribute value that can be directly encoded using TLVWriter::Put
      */
     template <class T>
-    CHIP_ERROR EncodeAttributeWritePayload(const chip::app::AttributePathParams & attributePath, const T & value)
+    CHIP_ERROR EncodeAttributeWritePayload(const chip::app::ClusterInfo & attributePath, const T & value)
     {
         chip::TLV::TLVWriter * writer = nullptr;
 

@@ -257,24 +257,30 @@ exit:
 }
 
 CHIP_ERROR ReadClient::GenerateAttributePathList(AttributePathList::Builder & aAttributePathListBuilder,
-                                                 AttributePathParams * apAttributePathParamsList,
-                                                 size_t aAttributePathParamsListSize)
+                                                 ClusterInfo * apAttributePathParamsList, size_t aAttributePathParamsListSize)
 {
     for (size_t index = 0; index < aAttributePathParamsListSize; index++)
     {
+        VerifyOrReturnError(apAttributePathParamsList[index].IsValidAttributePath(), CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
         AttributePath::Builder attributePathBuilder = aAttributePathListBuilder.CreateAttributePathBuilder();
-        attributePathBuilder.NodeId(apAttributePathParamsList[index].mNodeId)
-            .EndpointId(apAttributePathParamsList[index].mEndpointId)
-            .ClusterId(apAttributePathParamsList[index].mClusterId);
-        if (apAttributePathParamsList[index].mFlags.Has(AttributePathParams::Flags::kFieldIdValid))
+        if (apAttributePathParamsList[index].HasValidNodeId())
+        {
+            attributePathBuilder.NodeId(apAttributePathParamsList[index].mNodeId);
+        }
+        if (apAttributePathParamsList[index].HasValidEndpointId())
+        {
+            attributePathBuilder.EndpointId(apAttributePathParamsList[index].mEndpointId);
+        }
+        if (apAttributePathParamsList[index].HasValidClusterId())
+        {
+            attributePathBuilder.ClusterId(apAttributePathParamsList[index].mClusterId);
+        }
+        if (apAttributePathParamsList[index].HasValidAttributeId())
         {
             attributePathBuilder.FieldId(apAttributePathParamsList[index].mFieldId);
         }
-
-        if (apAttributePathParamsList[index].mFlags.Has(AttributePathParams::Flags::kListIndexValid))
+        if (apAttributePathParamsList[index].HasValidListIndex())
         {
-            VerifyOrReturnError(apAttributePathParamsList[index].mFlags.Has(AttributePathParams::Flags::kFieldIdValid),
-                                CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
             attributePathBuilder.ListIndex(apAttributePathParamsList[index].mListIndex);
         }
 

@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <app/AttributePathParams.h>
+#include <app/ClusterInfo.h>
 #include <app/EventPathParams.h>
 #include <app/InteractionModelDelegate.h>
 #include <app/MessageDef/ReadRequest.h>
@@ -166,7 +166,7 @@ private:
     CHIP_ERROR GenerateEventPathList(EventPathList::Builder & aEventPathListBuilder, EventPathParams * apEventPathParamsList,
                                      size_t aEventPathParamsListSize);
     CHIP_ERROR GenerateAttributePathList(AttributePathList::Builder & aAttributeathListBuilder,
-                                         AttributePathParams * apAttributePathParamsList, size_t aAttributePathParamsListSize);
+                                         ClusterInfo * apAttributePathParamsList, size_t aAttributePathParamsListSize);
     CHIP_ERROR ProcessAttributeDataList(TLV::TLVReader & aAttributeDataListReader);
 
     void ClearExchangeContext() { mpExchangeCtx = nullptr; }

@@ -199,16 +199,14 @@ exit:
     return err;
 }
 
-CHIP_ERROR WriteHandler::ConstructAttributePath(const AttributePathParams & aAttributePathParams,
+CHIP_ERROR WriteHandler::ConstructAttributePath(const ClusterInfo & aAttributePathParams,
                                                 AttributeStatusIB::Builder aAttributeStatusIB)
 {
+    ReturnErrorCodeIf(aAttributePathParams.HasWildcard() || !aAttributePathParams.IsValidAttributePath(),
+                      CHIP_ERROR_INVALID_PATH_LIST);
     AttributePath::Builder attributePath = aAttributeStatusIB.CreateAttributePathBuilder();
-    if (aAttributePathParams.mFlags.Has(AttributePathParams::Flags::kFieldIdValid))
-    {
-        attributePath.FieldId(aAttributePathParams.mFieldId);
-    }
 
-    if (aAttributePathParams.mFlags.Has(AttributePathParams::Flags::kListIndexValid))
+    if (aAttributePathParams.HasValidListIndex())
     {
         attributePath.ListIndex(aAttributePathParams.mListIndex);
     }
@@ -216,13 +214,13 @@ CHIP_ERROR WriteHandler::ConstructAttributePath(const AttributePathParams & aAtt
     attributePath.NodeId(aAttributePathParams.mNodeId)
         .ClusterId(aAttributePathParams.mClusterId)
         .EndpointId(aAttributePathParams.mEndpointId)
+        .FieldId(aAttributePathParams.mFieldId)
         .EndOfAttributePath();
 
     return attributePath.GetError();
 }
 
-CHIP_ERROR WriteHandler::AddStatus(const AttributePathParams & aAttributePathParams,
-                                   const Protocols::InteractionModel::Status aStatus)
+CHIP_ERROR WriteHandler::AddStatus(const ClusterInfo & aAttributePathParams, const Protocols::InteractionModel::Status aStatus)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     StatusIB::Builder statusIBBuilder;

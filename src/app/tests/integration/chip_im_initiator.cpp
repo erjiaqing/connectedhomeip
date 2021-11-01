@@ -310,7 +310,7 @@ CHIP_ERROR SendReadRequest()
     eventPathParams[1].mClusterId  = kTestClusterId;
     eventPathParams[1].mEventId    = kTestChangeEvent2;
 
-    chip::app::AttributePathParams attributePathParams(kTestEndpointId, kTestClusterId, 1);
+    chip::app::ClusterInfo attributePathParams(kTestEndpointId, kTestClusterId, 1);
 
     printf("\nSend read request message to Node: %" PRIu64 "\n", chip::kTestDeviceNodeId);
 
@@ -340,7 +340,7 @@ CHIP_ERROR SendWriteRequest(chip::app::WriteClientHandle & apWriteClient)
     CHIP_ERROR err = CHIP_NO_ERROR;
     chip::TLV::TLVWriter * writer;
     gLastMessageTime = chip::System::SystemClock().GetMonotonicMilliseconds();
-    chip::app::AttributePathParams attributePathParams;
+    chip::app::ClusterInfo attributePathParams;
 
     printf("\nSend write request message to Node: %" PRIu64 "\n", chip::kTestDeviceNodeId);
 
@@ -348,8 +348,6 @@ CHIP_ERROR SendWriteRequest(chip::app::WriteClientHandle & apWriteClient)
     attributePathParams.mEndpointId = 2;
     attributePathParams.mClusterId  = 3;
     attributePathParams.mFieldId    = 4;
-    attributePathParams.mListIndex  = 5;
-    attributePathParams.mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
 
     SuccessOrExit(err = apWriteClient->PrepareAttribute(attributePathParams));
 
@@ -377,7 +375,7 @@ CHIP_ERROR SendSubscribeRequest()
 
     chip::app::ReadPrepareParams readPrepareParams(chip::SessionHandle(chip::kTestDeviceNodeId, 1, 1, gFabricIndex));
     chip::app::EventPathParams eventPathParams[2];
-    chip::app::AttributePathParams attributePathParams[1];
+    chip::app::ClusterInfo attributePathParams[1];
     readPrepareParams.mpEventPathParamsList                = eventPathParams;
     readPrepareParams.mpEventPathParamsList[0].mNodeId     = kTestNodeId;
     readPrepareParams.mpEventPathParamsList[0].mEndpointId = kTestEndpointId;
@@ -396,8 +394,6 @@ CHIP_ERROR SendSubscribeRequest()
     readPrepareParams.mpAttributePathParamsList[0].mEndpointId = kTestEndpointId;
     readPrepareParams.mpAttributePathParamsList[0].mClusterId  = kTestClusterId;
     readPrepareParams.mpAttributePathParamsList[0].mFieldId    = 1;
-    readPrepareParams.mpAttributePathParamsList[0].mListIndex  = 0;
-    readPrepareParams.mpAttributePathParamsList[0].mFlags.Set(chip::app::AttributePathParams::Flags::kFieldIdValid);
 
     readPrepareParams.mAttributePathParamsListSize = 1;
 

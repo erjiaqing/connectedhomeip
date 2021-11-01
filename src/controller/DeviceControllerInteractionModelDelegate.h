@@ -53,7 +53,7 @@ public:
     }
 
     // TODO: We only support allocating one path, should support multiple path later.
-    app::AttributePathParams * AllocateAttributePathParam(size_t n, uint64_t applicationId)
+    app::ClusterInfo * AllocateAttributePathParam(size_t n, uint64_t applicationId)
     {
         if (n > 1)
         {
@@ -74,7 +74,7 @@ private:
     struct AttributePathTransactionMap
     {
         uint64_t ApplicationId = UINT64_MAX;
-        app::AttributePathParams Params;
+        app::ClusterInfo Params;
     };
     AttributePathTransactionMap mAttributePathTransactionMapPool[CHIP_DEVICE_CONTROLLER_SUBSCRIPTION_ATTRIBUTE_PATH_POOL_SIZE];
 };

@@ -18,7 +18,6 @@
 
 #pragma once
 
-#include <app/AttributePathParams.h>
 #include <app/util/basic-types.h>
 #include <assert.h>
 #include <lib/core/Optional.h>
@@ -44,6 +43,13 @@ struct ClusterInfo
     static constexpr EventId kInvalidEventId         = 0xFFFF'FFFF;
     // ListIndex is a uint16 number, thus 0xFFFF is not a valid list index.
     static constexpr ListIndex kInvalidListIndex = 0xFFFF;
+
+    ClusterInfo() {}
+    ClusterInfo(EndpointId aEndpoint) : mEndpointId(aEndpoint) {}
+    ClusterInfo(EndpointId aEndpoint, ClusterId aCluster) : mClusterId(aCluster), mEndpointId(aEndpoint) {}
+    ClusterInfo(EndpointId aEndpoint, ClusterId aCluster, AttributeId aAttribute) :
+        mClusterId(aCluster), mFieldId(aAttribute), mEndpointId(aEndpoint)
+    {}
 
     bool IsAttributePathSupersetOf(const ClusterInfo & other) const
     {
@@ -71,7 +77,6 @@ struct ClusterInfo
     inline bool HasValidListIndex() const { return mListIndex != kInvalidListIndex; }
     inline bool HasValidEventId() const { return mEventId != kInvalidEventId; }
 
-    ClusterInfo() {}
     /*
      * For better structure alignment
      * Above ordering is by bit-size to ensure least amount of memory alignment padding.

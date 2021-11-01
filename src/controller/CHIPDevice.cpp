@@ -755,7 +755,7 @@ void Device::AddReportHandler(EndpointId endpoint, ClusterId cluster, AttributeI
     mCallbacksMgr.AddReportCallback(mDeviceId, endpoint, cluster, attribute, onReportCallback, tlvDataFilter);
 }
 
-CHIP_ERROR Device::SendReadAttributeRequest(app::AttributePathParams aPath, Callback::Cancelable * onSuccessCallback,
+CHIP_ERROR Device::SendReadAttributeRequest(app::ClusterInfo aPath, Callback::Cancelable * onSuccessCallback,
                                             Callback::Cancelable * onFailureCallback, app::TLVDataFilter aTlvDataFilter)
 {
     bool loadedSecureSession = false;
@@ -784,7 +784,7 @@ CHIP_ERROR Device::SendReadAttributeRequest(app::AttributePathParams aPath, Call
     return err;
 }
 
-CHIP_ERROR Device::SendSubscribeAttributeRequest(app::AttributePathParams aPath, uint16_t mMinIntervalFloorSeconds,
+CHIP_ERROR Device::SendSubscribeAttributeRequest(app::ClusterInfo aPath, uint16_t mMinIntervalFloorSeconds,
                                                  uint16_t mMaxIntervalCeilingSeconds, Callback::Cancelable * onSuccessCallback,
                                                  Callback::Cancelable * onFailureCallback)
 {
@@ -794,7 +794,7 @@ CHIP_ERROR Device::SendSubscribeAttributeRequest(app::AttributePathParams aPath,
 
     ReturnErrorOnFailure(LoadSecureSessionParametersIfNeeded(loadedSecureSession));
 
-    app::AttributePathParams * path = mpIMDelegate->AllocateAttributePathParam(1, seqNum);
+    app::ClusterInfo * path = mpIMDelegate->AllocateAttributePathParam(1, seqNum);
 
     VerifyOrReturnError(path != nullptr, CHIP_ERROR_NO_MEMORY);
 

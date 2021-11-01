@@ -92,8 +92,7 @@ CHIP_ERROR WriteAttribute(Messaging::ExchangeManager * aExchangeMgr, SessionHand
 
     ReturnErrorOnFailure(app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, callback.get()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(endpointId, AttributeInfo::GetClusterId(), AttributeInfo::GetAttributeId()),
-        requestCommandData));
+        chip::app::ClusterInfo(endpointId, AttributeInfo::GetClusterId(), AttributeInfo::GetAttributeId()), requestCommandData));
     ReturnErrorOnFailure(handle.SendWriteRequest(sessionHandle));
 
     callback.release();

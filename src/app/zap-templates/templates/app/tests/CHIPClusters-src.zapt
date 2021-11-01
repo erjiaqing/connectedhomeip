@@ -27,7 +27,7 @@ CHIP_ERROR {{asUpperCamelCase parent.name}}ClusterTest::WriteAttribute{{asUpperC
 {
     app::WriteClientHandle handle;
     ReturnErrorOnFailure(app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
-    ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(chip::app::AttributePathParams(mEndpoint, mClusterId, {{asUpperCamelCase parent.name}}::Attributes::{{asUpperCamelCase name}}::Id), value));
+    ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(chip::app::ClusterInfo(mEndpoint, mClusterId, {{asUpperCamelCase parent.name}}::Attributes::{{asUpperCamelCase name}}::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 {{/unless}}

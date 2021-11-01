@@ -18,7 +18,7 @@
 
 /**
  *    @file
- *      This file implements unit tests for AttributePathParams
+ *      This file implements unit tests for ClusterInfo
  *
  */
 

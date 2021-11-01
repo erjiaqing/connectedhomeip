@@ -85,13 +85,12 @@ public:
 void TestWriteInteraction::AddAttributeDataElement(nlTestSuite * apSuite, void * apContext, WriteClientHandle & aWriteClient)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
-    AttributePathParams attributePathParams;
+    ClusterInfo attributePathParams;
     attributePathParams.mNodeId     = 1;
     attributePathParams.mEndpointId = 2;
     attributePathParams.mClusterId  = 3;
     attributePathParams.mFieldId    = 4;
     attributePathParams.mListIndex  = 5;
-    attributePathParams.mFlags.Set(AttributePathParams::Flags::kFieldIdValid);
 
     err = aWriteClient->PrepareAttribute(attributePathParams);
     NL_TEST_ASSERT(apSuite, err == CHIP_NO_ERROR);
@@ -108,13 +107,12 @@ void TestWriteInteraction::AddAttributeDataElement(nlTestSuite * apSuite, void *
 void TestWriteInteraction::AddAttributeStatus(nlTestSuite * apSuite, void * apContext, WriteHandler & aWriteHandler)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
-    AttributePathParams attributePathParams;
+    ClusterInfo attributePathParams;
     attributePathParams.mNodeId     = 1;
     attributePathParams.mEndpointId = 2;
     attributePathParams.mClusterId  = 3;
     attributePathParams.mFieldId    = 4;
     attributePathParams.mListIndex  = 5;
-    attributePathParams.mFlags.Set(AttributePathParams::Flags::kFieldIdValid);
 
     err = aWriteHandler.AddStatus(attributePathParams, Protocols::InteractionModel::Status::Success);
     NL_TEST_ASSERT(apSuite, err == CHIP_NO_ERROR);
@@ -269,8 +267,7 @@ CHIP_ERROR WriteSingleClusterData(ClusterInfo & aClusterInfo, TLV::TLVReader & a
     writer.Init(attributeDataTLV);
     writer.CopyElement(TLV::AnonymousTag, aReader);
     attributeDataTLVLen = writer.GetLengthWritten();
-    return aWriteHandler->AddStatus(AttributePathParams(aClusterInfo.mEndpointId, aClusterInfo.mClusterId, aClusterInfo.mFieldId),
-                                    Protocols::InteractionModel::Status::Success);
+    return aWriteHandler->AddStatus(aClusterInfo, Protocols::InteractionModel::Status::Success);
 }
 
 void TestWriteInteraction::TestWriteRoundtripWithClusterObjects(nlTestSuite * apSuite, void * apContext)
@@ -294,12 +291,11 @@ void TestWriteInteraction::TestWriteRoundtripWithClusterObjects(nlTestSuite * ap
 
     System::PacketBufferHandle buf = System::PacketBufferHandle::New(System::PacketBuffer::kMaxSize);
 
-    AttributePathParams attributePathParams;
+    ClusterInfo attributePathParams;
     attributePathParams.mNodeId     = 1;
     attributePathParams.mEndpointId = 2;
     attributePathParams.mClusterId  = 3;
     attributePathParams.mFieldId    = 4;
-    attributePathParams.mFlags.Set(AttributePathParams::Flags::kFieldIdValid);
 
     const uint8_t byteSpanData[] = { 0xde, 0xad, 0xbe, 0xef };
     const char charSpanData[]    = "a simple test string";

@@ -17,7 +17,7 @@
  */
 
 #pragma once
-#include <app/AttributePathParams.h>
+#include <app/ClusterInfo.h>
 #include <app/InteractionModelDelegate.h>
 #include <app/MessageDef/WriteResponse.h>
 #include <lib/core/CHIPCore.h>
@@ -72,14 +72,14 @@ public:
 
     CHIP_ERROR ProcessAttributeDataList(TLV::TLVReader & aAttributeDataListReader);
 
-    CHIP_ERROR AddStatus(const AttributePathParams & aAttributePathParams, const Protocols::InteractionModel::Status aStatus);
+    CHIP_ERROR AddStatus(const ClusterInfo & aAttributePathParams, const Protocols::InteractionModel::Status aStatus);
 
-    CHIP_ERROR AddClusterSpecificSuccess(const AttributePathParams & aAttributePathParams, uint8_t aClusterStatus)
+    CHIP_ERROR AddClusterSpecificSuccess(const ClusterInfo & aAttributePathParams, uint8_t aClusterStatus)
     {
         return CHIP_ERROR_NOT_IMPLEMENTED;
     }
 
-    CHIP_ERROR AddClusterSpecificFailure(const AttributePathParams & aAttributePathParams, uint8_t aClusterStatus)
+    CHIP_ERROR AddClusterSpecificFailure(const ClusterInfo & aAttributePathParams, uint8_t aClusterStatus)
     {
         return CHIP_ERROR_NOT_IMPLEMENTED;
     }
@@ -95,8 +95,7 @@ private:
     CHIP_ERROR ProcessWriteRequest(System::PacketBufferHandle && aPayload);
     CHIP_ERROR FinalizeMessage(System::PacketBufferHandle & packet);
     CHIP_ERROR SendWriteResponse();
-    CHIP_ERROR ConstructAttributePath(const AttributePathParams & aAttributePathParams,
-                                      AttributeStatusIB::Builder aAttributeStatusIB);
+    CHIP_ERROR ConstructAttributePath(const ClusterInfo & aAttributePathParams, AttributeStatusIB::Builder aAttributeStatusIB);
 
     void MoveToState(const State aTargetState);
     void ClearState();

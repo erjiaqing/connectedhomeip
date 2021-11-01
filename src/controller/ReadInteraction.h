@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <app/AttributePathParams.h>
+#include <app/ClusterInfo.h>
 #include <app/InteractionModelEngine.h>
 #include <app/ReadPrepareParams.h>
 #include <controller/TypedReadCallback.h>
@@ -41,7 +41,7 @@ CHIP_ERROR ReadAttribute(Messaging::ExchangeManager * aExchangeMgr, const Sessio
                          typename TypedReadCallback<AttributeTypeInfo>::OnSuccessCallbackType onSuccessCb,
                          typename TypedReadCallback<AttributeTypeInfo>::OnErrorCallbackType onErrorCb)
 {
-    app::AttributePathParams attributePath(endpointId, AttributeTypeInfo::GetClusterId(), AttributeTypeInfo::GetAttributeId());
+    app::ClusterInfo attributePath(endpointId, AttributeTypeInfo::GetClusterId(), AttributeTypeInfo::GetAttributeId());
     app::ReadPrepareParams readParams(sessionHandle);
     app::ReadClient * readClient         = nullptr;
     app::InteractionModelEngine * engine = app::InteractionModelEngine::GetInstance();

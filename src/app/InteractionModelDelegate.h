@@ -23,7 +23,6 @@
 
 #pragma once
 
-#include <app/AttributePathParams.h>
 #include <app/ClusterInfo.h>
 #include <app/MessageDef/StatusIB.h>
 #include <lib/core/CHIPCore.h>

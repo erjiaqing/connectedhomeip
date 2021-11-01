@@ -133,7 +133,7 @@ exit:
     return err;
 }
 
-CHIP_ERROR WriteClient::PrepareAttribute(const AttributePathParams & attributePathParams)
+CHIP_ERROR WriteClient::PrepareAttribute(const ClusterInfo & attributePathParams)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
@@ -168,16 +168,14 @@ TLV::TLVWriter * WriteClient::GetAttributeDataElementTLVWriter()
     return mWriteRequestBuilder.GetAttributeDataListBuilder().GetAttributeDataElementBuilder().GetWriter();
 }
 
-CHIP_ERROR WriteClient::ConstructAttributePath(const AttributePathParams & aAttributePathParams,
+CHIP_ERROR WriteClient::ConstructAttributePath(const ClusterInfo & aAttributePathParams,
                                                AttributeDataElement::Builder aAttributeDataElement)
 {
     AttributePath::Builder attributePath = aAttributeDataElement.CreateAttributePathBuilder();
-    if (aAttributePathParams.mFlags.Has(AttributePathParams::Flags::kFieldIdValid))
-    {
-        attributePath.FieldId(aAttributePathParams.mFieldId);
-    }
+    VerifyOrReturnError(!aAttributePathParams.HasWildcard() && aAttributePathParams.IsValidAttributePath(),
+                        CHIP_ERROR_INVALID_PATH_LIST);
 
-    if (aAttributePathParams.mFlags.Has(AttributePathParams::Flags::kListIndexValid))
+    if (aAttributePathParams.HasValidListIndex())
     {
         attributePath.ListIndex(aAttributePathParams.mListIndex);
     }
@@ -185,6 +183,7 @@ CHIP_ERROR WriteClient::ConstructAttributePath(const AttributePathParams & aAttr
     attributePath.NodeId(aAttributePathParams.mNodeId)
         .ClusterId(aAttributePathParams.mClusterId)
         .EndpointId(aAttributePathParams.mEndpointId)
+        .FieldId(aAttributePathParams.mFieldId)
         .EndOfAttributePath();
 
     return attributePath.GetError();
@@ -323,7 +322,7 @@ CHIP_ERROR WriteClient::ProcessAttributeStatusIB(AttributeStatusIB::Parser & aAt
     AttributePath::Parser attributePath;
     StatusIB statusIB;
     StatusIB::Parser StatusIBParser;
-    AttributePathParams attributePathParams;
+    ClusterInfo attributePathParams;
 
     mAttributeStatusIndex++;
     err = aAttributeStatusIB.GetAttributePath(&attributePath);
@@ -334,25 +333,15 @@ CHIP_ERROR WriteClient::ProcessAttributeStatusIB(AttributeStatusIB::Parser & aAt
     SuccessOrExit(err);
     err = attributePath.GetEndpointId(&(attributePathParams.mEndpointId));
     SuccessOrExit(err);
-
     err = attributePath.GetFieldId(&(attributePathParams.mFieldId));
-    if (CHIP_NO_ERROR == err)
-    {
-        attributePathParams.mFlags.Set(AttributePathParams::Flags::kFieldIdValid);
-    }
-    else if (CHIP_END_OF_TLV == err)
+    SuccessOrExit(err);
+    err = attributePath.GetListIndex(&(attributePathParams.mListIndex));
+    if (err == CHIP_END_OF_TLV)
     {
         err = CHIP_NO_ERROR;
     }
-    SuccessOrExit(err);
 
-    err = attributePath.GetListIndex(&(attributePathParams.mListIndex));
-    if (CHIP_NO_ERROR == err)
-    {
-        VerifyOrExit(attributePathParams.mFlags.Has(AttributePathParams::Flags::kFieldIdValid),
-                     err = CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
-        attributePathParams.mFlags.Set(AttributePathParams::Flags::kListIndexValid);
-    }
+    VerifyOrReturnError(attributePathParams.IsValidAttributePath(), CHIP_ERROR_IM_MALFORMED_ATTRIBUTE_PATH);
 
     err = aAttributeStatusIB.GetStatusIB(&(StatusIBParser));
     if (CHIP_NO_ERROR == err)

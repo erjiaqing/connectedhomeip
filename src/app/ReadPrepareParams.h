@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include <app/AttributePathParams.h>
+#include <app/ClusterInfo.h>
 #include <app/EventPathParams.h>
 #include <app/util/basic-types.h>
 #include <lib/core/CHIPCore.h>
@@ -30,15 +30,15 @@ namespace app {
 struct ReadPrepareParams
 {
     SessionHandle mSessionHandle;
-    EventPathParams * mpEventPathParamsList         = nullptr;
-    size_t mEventPathParamsListSize                 = 0;
-    AttributePathParams * mpAttributePathParamsList = nullptr;
-    size_t mAttributePathParamsListSize             = 0;
-    EventNumber mEventNumber                        = 0;
-    System::Clock::Timeout mTimeout                 = kImMessageTimeout;
-    uint16_t mMinIntervalFloorSeconds               = 0;
-    uint16_t mMaxIntervalCeilingSeconds             = 0;
-    bool mKeepSubscriptions                         = true;
+    EventPathParams * mpEventPathParamsList = nullptr;
+    size_t mEventPathParamsListSize         = 0;
+    ClusterInfo * mpAttributePathParamsList = nullptr;
+    size_t mAttributePathParamsListSize     = 0;
+    EventNumber mEventNumber                = 0;
+    System::Clock::Timeout mTimeout         = kImMessageTimeout;
+    uint16_t mMinIntervalFloorSeconds       = 0;
+    uint16_t mMaxIntervalCeilingSeconds     = 0;
+    bool mKeepSubscriptions                 = true;
 
     ReadPrepareParams(SessionHandle sessionHandle) : mSessionHandle(sessionHandle) {}
     ReadPrepareParams(ReadPrepareParams && other) : mSessionHandle(other.mSessionHandle)

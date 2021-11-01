@@ -88,12 +88,12 @@ CHIP_ERROR WriteSingleClusterData(ClusterInfo & aClusterInfo, TLV::TLVReader & a
 
             VerifyOrReturnError(i == 4, CHIP_ERROR_INVALID_ARGUMENT);
 
-            AttributePathParams attributePathParams(aClusterInfo.mClusterId, aClusterInfo.mEndpointId, aClusterInfo.mFieldId);
+            ClusterInfo attributePathParams(aClusterInfo.mClusterId, aClusterInfo.mEndpointId, aClusterInfo.mFieldId);
             aWriteHandler->AddStatus(attributePathParams, Protocols::InteractionModel::Status::Success);
         }
         else
         {
-            AttributePathParams attributePathParams(aClusterInfo.mClusterId, aClusterInfo.mEndpointId, aClusterInfo.mFieldId);
+            ClusterInfo attributePathParams(aClusterInfo.mClusterId, aClusterInfo.mEndpointId, aClusterInfo.mFieldId);
             aWriteHandler->AddStatus(attributePathParams, Protocols::InteractionModel::Status::Failure);
         }
 

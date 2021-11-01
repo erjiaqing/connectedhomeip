@@ -133,10 +133,10 @@ public:
     void SetDelegate(DeviceStatusDelegate * delegate) { mStatusDelegate = delegate; }
 
     // ----- Messaging -----
-    CHIP_ERROR SendReadAttributeRequest(app::AttributePathParams aPath, Callback::Cancelable * onSuccessCallback,
+    CHIP_ERROR SendReadAttributeRequest(app::ClusterInfo aPath, Callback::Cancelable * onSuccessCallback,
                                         Callback::Cancelable * onFailureCallback, app::TLVDataFilter aTlvDataFilter);
 
-    CHIP_ERROR SendSubscribeAttributeRequest(app::AttributePathParams aPath, uint16_t mMinIntervalFloorSeconds,
+    CHIP_ERROR SendSubscribeAttributeRequest(app::ClusterInfo aPath, uint16_t mMinIntervalFloorSeconds,
                                              uint16_t mMaxIntervalCeilingSeconds, Callback::Cancelable * onSuccessCallback,
                                              Callback::Cancelable * onFailureCallback);
 
