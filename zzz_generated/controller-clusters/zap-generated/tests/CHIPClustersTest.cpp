@@ -40,7 +40,7 @@ CHIP_ERROR AccountLoginClusterTest::WriteAttributeClusterRevision(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, AccountLogin::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, AccountLogin::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -52,7 +52,7 @@ CHIP_ERROR AdministratorCommissioningClusterTest::WriteAttributeClusterRevision(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, AdministratorCommissioning::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, AdministratorCommissioning::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -63,7 +63,7 @@ CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeVendorName(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationBasic::Attributes::VendorName::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationBasic::Attributes::VendorName::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeVendorId(Callback::Cancelable * onSuccessCallback,
@@ -73,7 +73,7 @@ CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeVendorId(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationBasic::Attributes::VendorId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationBasic::Attributes::VendorId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeApplicationName(Callback::Cancelable * onSuccessCallback,
@@ -84,7 +84,7 @@ CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeApplicationName(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationBasic::Attributes::ApplicationName::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationBasic::Attributes::ApplicationName::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeProductId(Callback::Cancelable * onSuccessCallback,
@@ -94,7 +94,7 @@ CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeProductId(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationBasic::Attributes::ProductId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationBasic::Attributes::ProductId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeApplicationId(Callback::Cancelable * onSuccessCallback,
@@ -104,7 +104,7 @@ CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeApplicationId(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationBasic::Attributes::ApplicationId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationBasic::Attributes::ApplicationId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeCatalogVendorId(Callback::Cancelable * onSuccessCallback,
@@ -114,7 +114,7 @@ CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeCatalogVendorId(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationBasic::Attributes::CatalogVendorId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationBasic::Attributes::CatalogVendorId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeApplicationStatus(Callback::Cancelable * onSuccessCallback,
@@ -124,7 +124,7 @@ CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeApplicationStatus(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationBasic::Attributes::ApplicationStatus::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationBasic::Attributes::ApplicationStatus::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -134,7 +134,7 @@ CHIP_ERROR ApplicationBasicClusterTest::WriteAttributeClusterRevision(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationBasic::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationBasic::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -145,7 +145,7 @@ CHIP_ERROR ApplicationLauncherClusterTest::WriteAttributeCatalogVendorId(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationLauncher::Attributes::CatalogVendorId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationLauncher::Attributes::CatalogVendorId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationLauncherClusterTest::WriteAttributeApplicationId(Callback::Cancelable * onSuccessCallback,
@@ -155,7 +155,7 @@ CHIP_ERROR ApplicationLauncherClusterTest::WriteAttributeApplicationId(Callback:
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationLauncher::Attributes::ApplicationId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationLauncher::Attributes::ApplicationId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ApplicationLauncherClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -165,7 +165,7 @@ CHIP_ERROR ApplicationLauncherClusterTest::WriteAttributeClusterRevision(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ApplicationLauncher::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ApplicationLauncher::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -176,7 +176,7 @@ CHIP_ERROR AudioOutputClusterTest::WriteAttributeCurrentAudioOutput(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, AudioOutput::Attributes::CurrentAudioOutput::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, AudioOutput::Attributes::CurrentAudioOutput::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR AudioOutputClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -186,7 +186,7 @@ CHIP_ERROR AudioOutputClusterTest::WriteAttributeClusterRevision(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, AudioOutput::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, AudioOutput::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -197,7 +197,7 @@ CHIP_ERROR BarrierControlClusterTest::WriteAttributeBarrierMovingState(Callback:
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BarrierControl::Attributes::BarrierMovingState::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BarrierControl::Attributes::BarrierMovingState::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BarrierControlClusterTest::WriteAttributeBarrierSafetyStatus(Callback::Cancelable * onSuccessCallback,
@@ -207,7 +207,7 @@ CHIP_ERROR BarrierControlClusterTest::WriteAttributeBarrierSafetyStatus(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BarrierControl::Attributes::BarrierSafetyStatus::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BarrierControl::Attributes::BarrierSafetyStatus::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BarrierControlClusterTest::WriteAttributeBarrierCapabilities(Callback::Cancelable * onSuccessCallback,
@@ -217,7 +217,7 @@ CHIP_ERROR BarrierControlClusterTest::WriteAttributeBarrierCapabilities(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BarrierControl::Attributes::BarrierCapabilities::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BarrierControl::Attributes::BarrierCapabilities::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BarrierControlClusterTest::WriteAttributeBarrierPosition(Callback::Cancelable * onSuccessCallback,
@@ -227,7 +227,7 @@ CHIP_ERROR BarrierControlClusterTest::WriteAttributeBarrierPosition(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BarrierControl::Attributes::BarrierPosition::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BarrierControl::Attributes::BarrierPosition::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BarrierControlClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -237,7 +237,7 @@ CHIP_ERROR BarrierControlClusterTest::WriteAttributeClusterRevision(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BarrierControl::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BarrierControl::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -248,7 +248,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeInteractionModelVersion(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::InteractionModelVersion::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::InteractionModelVersion::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeVendorName(Callback::Cancelable * onSuccessCallback,
@@ -258,7 +258,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeVendorName(Callback::Cancelable * onS
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::VendorName::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::VendorName::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeVendorID(Callback::Cancelable * onSuccessCallback,
@@ -267,8 +267,8 @@ CHIP_ERROR BasicClusterTest::WriteAttributeVendorID(Callback::Cancelable * onSuc
     app::WriteClientHandle handle;
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
-    ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::VendorID::Id), value));
+    ReturnErrorOnFailure(
+        handle.EncodeAttributeWritePayload(chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::VendorID::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeProductName(Callback::Cancelable * onSuccessCallback,
@@ -278,7 +278,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeProductName(Callback::Cancelable * on
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::ProductName::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::ProductName::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeProductID(Callback::Cancelable * onSuccessCallback,
@@ -287,8 +287,8 @@ CHIP_ERROR BasicClusterTest::WriteAttributeProductID(Callback::Cancelable * onSu
     app::WriteClientHandle handle;
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
-    ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::ProductID::Id), value));
+    ReturnErrorOnFailure(
+        handle.EncodeAttributeWritePayload(chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::ProductID::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeHardwareVersion(Callback::Cancelable * onSuccessCallback,
@@ -298,7 +298,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeHardwareVersion(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::HardwareVersion::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::HardwareVersion::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeHardwareVersionString(Callback::Cancelable * onSuccessCallback,
@@ -308,7 +308,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeHardwareVersionString(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::HardwareVersionString::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::HardwareVersionString::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeSoftwareVersion(Callback::Cancelable * onSuccessCallback,
@@ -318,7 +318,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeSoftwareVersion(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::SoftwareVersion::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::SoftwareVersion::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeSoftwareVersionString(Callback::Cancelable * onSuccessCallback,
@@ -328,7 +328,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeSoftwareVersionString(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::SoftwareVersionString::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::SoftwareVersionString::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeManufacturingDate(Callback::Cancelable * onSuccessCallback,
@@ -338,7 +338,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeManufacturingDate(Callback::Cancelabl
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::ManufacturingDate::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::ManufacturingDate::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributePartNumber(Callback::Cancelable * onSuccessCallback,
@@ -348,7 +348,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributePartNumber(Callback::Cancelable * onS
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::PartNumber::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::PartNumber::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeProductURL(Callback::Cancelable * onSuccessCallback,
@@ -358,7 +358,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeProductURL(Callback::Cancelable * onS
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::ProductURL::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::ProductURL::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeProductLabel(Callback::Cancelable * onSuccessCallback,
@@ -368,7 +368,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeProductLabel(Callback::Cancelable * o
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::ProductLabel::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::ProductLabel::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeSerialNumber(Callback::Cancelable * onSuccessCallback,
@@ -378,7 +378,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeSerialNumber(Callback::Cancelable * o
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::SerialNumber::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::SerialNumber::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeReachable(Callback::Cancelable * onSuccessCallback,
@@ -387,8 +387,8 @@ CHIP_ERROR BasicClusterTest::WriteAttributeReachable(Callback::Cancelable * onSu
     app::WriteClientHandle handle;
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
-    ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::Reachable::Id), value));
+    ReturnErrorOnFailure(
+        handle.EncodeAttributeWritePayload(chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::Reachable::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BasicClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -398,7 +398,7 @@ CHIP_ERROR BasicClusterTest::WriteAttributeClusterRevision(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Basic::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Basic::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -409,7 +409,7 @@ CHIP_ERROR BinaryInputBasicClusterTest::WriteAttributeStatusFlags(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BinaryInputBasic::Attributes::StatusFlags::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BinaryInputBasic::Attributes::StatusFlags::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BinaryInputBasicClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -419,7 +419,7 @@ CHIP_ERROR BinaryInputBasicClusterTest::WriteAttributeClusterRevision(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BinaryInputBasic::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BinaryInputBasic::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -430,7 +430,7 @@ CHIP_ERROR BindingClusterTest::WriteAttributeClusterRevision(Callback::Cancelabl
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Binding::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Binding::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -441,7 +441,7 @@ CHIP_ERROR BooleanStateClusterTest::WriteAttributeStateValue(Callback::Cancelabl
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BooleanState::Attributes::StateValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BooleanState::Attributes::StateValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BooleanStateClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -451,7 +451,7 @@ CHIP_ERROR BooleanStateClusterTest::WriteAttributeClusterRevision(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BooleanState::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BooleanState::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -462,7 +462,7 @@ CHIP_ERROR BridgedActionsClusterTest::WriteAttributeSetupUrl(Callback::Cancelabl
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedActions::Attributes::SetupUrl::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedActions::Attributes::SetupUrl::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedActionsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -472,7 +472,7 @@ CHIP_ERROR BridgedActionsClusterTest::WriteAttributeClusterRevision(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedActions::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedActions::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -483,7 +483,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeVendorName(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::VendorName::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::VendorName::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeVendorID(Callback::Cancelable * onSuccessCallback,
@@ -493,7 +493,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeVendorID(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::VendorID::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::VendorID::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeProductName(Callback::Cancelable * onSuccessCallback,
@@ -503,7 +503,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeProductName(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ProductName::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ProductName::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeHardwareVersion(Callback::Cancelable * onSuccessCallback,
@@ -513,7 +513,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeHardwareVersion(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::HardwareVersion::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::HardwareVersion::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeHardwareVersionString(Callback::Cancelable * onSuccessCallback,
@@ -524,7 +524,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeHardwareVersionString(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::HardwareVersionString::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::HardwareVersionString::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeSoftwareVersion(Callback::Cancelable * onSuccessCallback,
@@ -534,7 +534,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeSoftwareVersion(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::SoftwareVersion::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::SoftwareVersion::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeSoftwareVersionString(Callback::Cancelable * onSuccessCallback,
@@ -545,7 +545,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeSoftwareVersionString(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::SoftwareVersionString::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::SoftwareVersionString::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeManufacturingDate(Callback::Cancelable * onSuccessCallback,
@@ -556,7 +556,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeManufacturingDate(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ManufacturingDate::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ManufacturingDate::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributePartNumber(Callback::Cancelable * onSuccessCallback,
@@ -566,7 +566,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributePartNumber(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::PartNumber::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::PartNumber::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeProductURL(Callback::Cancelable * onSuccessCallback,
@@ -576,7 +576,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeProductURL(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ProductURL::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ProductURL::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeProductLabel(Callback::Cancelable * onSuccessCallback,
@@ -586,7 +586,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeProductLabel(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ProductLabel::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ProductLabel::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeSerialNumber(Callback::Cancelable * onSuccessCallback,
@@ -596,7 +596,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeSerialNumber(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::SerialNumber::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::SerialNumber::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeReachable(Callback::Cancelable * onSuccessCallback,
@@ -606,7 +606,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeReachable(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::Reachable::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::Reachable::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -616,7 +616,7 @@ CHIP_ERROR BridgedDeviceBasicClusterTest::WriteAttributeClusterRevision(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, BridgedDeviceBasic::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -627,7 +627,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeCurrentHue(Callback::Cancelabl
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::CurrentHue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::CurrentHue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeCurrentSaturation(Callback::Cancelable * onSuccessCallback,
@@ -637,7 +637,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeCurrentSaturation(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::CurrentSaturation::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::CurrentSaturation::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeRemainingTime(Callback::Cancelable * onSuccessCallback,
@@ -647,7 +647,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeRemainingTime(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::RemainingTime::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::RemainingTime::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeCurrentX(Callback::Cancelable * onSuccessCallback,
@@ -657,7 +657,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeCurrentX(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::CurrentX::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::CurrentX::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeCurrentY(Callback::Cancelable * onSuccessCallback,
@@ -667,7 +667,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeCurrentY(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::CurrentY::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::CurrentY::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeDriftCompensation(Callback::Cancelable * onSuccessCallback,
@@ -677,7 +677,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeDriftCompensation(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::DriftCompensation::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::DriftCompensation::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeCompensationText(Callback::Cancelable * onSuccessCallback,
@@ -687,7 +687,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeCompensationText(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::CompensationText::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::CompensationText::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorTemperature(Callback::Cancelable * onSuccessCallback,
@@ -697,7 +697,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorTemperature(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorTemperature::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorTemperature::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorMode(Callback::Cancelable * onSuccessCallback,
@@ -707,7 +707,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorMode(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorMode::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorMode::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeNumberOfPrimaries(Callback::Cancelable * onSuccessCallback,
@@ -717,7 +717,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeNumberOfPrimaries(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::NumberOfPrimaries::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::NumberOfPrimaries::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary1X(Callback::Cancelable * onSuccessCallback,
@@ -727,7 +727,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary1X(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary1X::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary1X::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary1Y(Callback::Cancelable * onSuccessCallback,
@@ -737,7 +737,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary1Y(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary1Y::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary1Y::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary1Intensity(Callback::Cancelable * onSuccessCallback,
@@ -747,7 +747,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary1Intensity(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary1Intensity::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary1Intensity::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary2X(Callback::Cancelable * onSuccessCallback,
@@ -757,7 +757,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary2X(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary2X::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary2X::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary2Y(Callback::Cancelable * onSuccessCallback,
@@ -767,7 +767,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary2Y(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary2Y::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary2Y::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary2Intensity(Callback::Cancelable * onSuccessCallback,
@@ -777,7 +777,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary2Intensity(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary2Intensity::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary2Intensity::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary3X(Callback::Cancelable * onSuccessCallback,
@@ -787,7 +787,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary3X(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary3X::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary3X::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary3Y(Callback::Cancelable * onSuccessCallback,
@@ -797,7 +797,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary3Y(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary3Y::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary3Y::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary3Intensity(Callback::Cancelable * onSuccessCallback,
@@ -807,7 +807,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary3Intensity(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary3Intensity::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary3Intensity::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary4X(Callback::Cancelable * onSuccessCallback,
@@ -817,7 +817,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary4X(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary4X::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary4X::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary4Y(Callback::Cancelable * onSuccessCallback,
@@ -827,7 +827,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary4Y(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary4Y::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary4Y::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary4Intensity(Callback::Cancelable * onSuccessCallback,
@@ -837,7 +837,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary4Intensity(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary4Intensity::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary4Intensity::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary5X(Callback::Cancelable * onSuccessCallback,
@@ -847,7 +847,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary5X(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary5X::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary5X::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary5Y(Callback::Cancelable * onSuccessCallback,
@@ -857,7 +857,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary5Y(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary5Y::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary5Y::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary5Intensity(Callback::Cancelable * onSuccessCallback,
@@ -867,7 +867,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary5Intensity(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary5Intensity::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary5Intensity::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary6X(Callback::Cancelable * onSuccessCallback,
@@ -877,7 +877,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary6X(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary6X::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary6X::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary6Y(Callback::Cancelable * onSuccessCallback,
@@ -887,7 +887,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary6Y(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary6Y::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary6Y::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary6Intensity(Callback::Cancelable * onSuccessCallback,
@@ -897,7 +897,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributePrimary6Intensity(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::Primary6Intensity::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::Primary6Intensity::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeEnhancedCurrentHue(Callback::Cancelable * onSuccessCallback,
@@ -907,7 +907,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeEnhancedCurrentHue(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::EnhancedCurrentHue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::EnhancedCurrentHue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeEnhancedColorMode(Callback::Cancelable * onSuccessCallback,
@@ -917,7 +917,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeEnhancedColorMode(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::EnhancedColorMode::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::EnhancedColorMode::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopActive(Callback::Cancelable * onSuccessCallback,
@@ -927,7 +927,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopActive(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopActive::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopActive::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopDirection(Callback::Cancelable * onSuccessCallback,
@@ -937,7 +937,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopDirection(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopDirection::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopDirection::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopTime(Callback::Cancelable * onSuccessCallback,
@@ -947,7 +947,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopTime(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopTime::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopTime::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopStartEnhancedHue(Callback::Cancelable * onSuccessCallback,
@@ -958,7 +958,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopStartEnhancedHue(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopStartEnhancedHue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopStartEnhancedHue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopStoredEnhancedHue(Callback::Cancelable * onSuccessCallback,
@@ -969,7 +969,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorLoopStoredEnhancedHue(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopStoredEnhancedHue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorLoopStoredEnhancedHue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorCapabilities(Callback::Cancelable * onSuccessCallback,
@@ -979,7 +979,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorCapabilities(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorCapabilities::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorCapabilities::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorTempPhysicalMin(Callback::Cancelable * onSuccessCallback,
@@ -989,7 +989,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorTempPhysicalMin(Callback:
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorTempPhysicalMin::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorTempPhysicalMin::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeColorTempPhysicalMax(Callback::Cancelable * onSuccessCallback,
@@ -999,7 +999,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeColorTempPhysicalMax(Callback:
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ColorTempPhysicalMax::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ColorTempPhysicalMax::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeCoupleColorTempToLevelMinMireds(Callback::Cancelable * onSuccessCallback,
@@ -1010,8 +1010,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeCoupleColorTempToLevelMinMired
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::CoupleColorTempToLevelMinMireds::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::CoupleColorTempToLevelMinMireds::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ColorControlClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1021,7 +1020,7 @@ CHIP_ERROR ColorControlClusterTest::WriteAttributeClusterRevision(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ColorControl::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ColorControl::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1032,7 +1031,7 @@ CHIP_ERROR ContentLauncherClusterTest::WriteAttributeClusterRevision(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ContentLauncher::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ContentLauncher::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1043,7 +1042,7 @@ CHIP_ERROR DescriptorClusterTest::WriteAttributeClusterRevision(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Descriptor::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Descriptor::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1054,7 +1053,7 @@ CHIP_ERROR DoorLockClusterTest::WriteAttributeLockState(Callback::Cancelable * o
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, DoorLock::Attributes::LockState::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, DoorLock::Attributes::LockState::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR DoorLockClusterTest::WriteAttributeLockType(Callback::Cancelable * onSuccessCallback,
@@ -1064,7 +1063,7 @@ CHIP_ERROR DoorLockClusterTest::WriteAttributeLockType(Callback::Cancelable * on
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, DoorLock::Attributes::LockType::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, DoorLock::Attributes::LockType::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR DoorLockClusterTest::WriteAttributeActuatorEnabled(Callback::Cancelable * onSuccessCallback,
@@ -1074,7 +1073,7 @@ CHIP_ERROR DoorLockClusterTest::WriteAttributeActuatorEnabled(Callback::Cancelab
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, DoorLock::Attributes::ActuatorEnabled::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, DoorLock::Attributes::ActuatorEnabled::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR DoorLockClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1084,7 +1083,7 @@ CHIP_ERROR DoorLockClusterTest::WriteAttributeClusterRevision(Callback::Cancelab
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, DoorLock::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, DoorLock::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1095,7 +1094,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeMeasurementType(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::MeasurementType::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::MeasurementType::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeTotalActivePower(Callback::Cancelable * onSuccessCallback,
@@ -1105,7 +1104,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeTotalActivePower(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::TotalActivePower::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::TotalActivePower::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsVoltage(Callback::Cancelable * onSuccessCallback,
@@ -1115,7 +1114,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsVoltage(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsVoltage::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsVoltage::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsVoltageMin(Callback::Cancelable * onSuccessCallback,
@@ -1125,7 +1124,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsVoltageMin(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsVoltageMin::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsVoltageMin::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsVoltageMax(Callback::Cancelable * onSuccessCallback,
@@ -1135,7 +1134,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsVoltageMax(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsVoltageMax::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsVoltageMax::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsCurrent(Callback::Cancelable * onSuccessCallback,
@@ -1145,7 +1144,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsCurrent(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsCurrent::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsCurrent::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsCurrentMin(Callback::Cancelable * onSuccessCallback,
@@ -1155,7 +1154,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsCurrentMin(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsCurrentMin::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsCurrentMin::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsCurrentMax(Callback::Cancelable * onSuccessCallback,
@@ -1165,7 +1164,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeRmsCurrentMax(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsCurrentMax::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::RmsCurrentMax::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeActivePower(Callback::Cancelable * onSuccessCallback,
@@ -1175,7 +1174,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeActivePower(Callback:
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::ActivePower::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::ActivePower::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeActivePowerMin(Callback::Cancelable * onSuccessCallback,
@@ -1185,7 +1184,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeActivePowerMin(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::ActivePowerMin::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::ActivePowerMin::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeActivePowerMax(Callback::Cancelable * onSuccessCallback,
@@ -1195,7 +1194,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeActivePowerMax(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::ActivePowerMax::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::ActivePowerMax::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1205,7 +1204,7 @@ CHIP_ERROR ElectricalMeasurementClusterTest::WriteAttributeClusterRevision(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ElectricalMeasurement::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1216,7 +1215,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributePHYRate(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::PHYRate::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::PHYRate::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeFullDuplex(Callback::Cancelable * onSuccessCallback,
@@ -1226,7 +1225,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeFullDuplex(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::FullDuplex::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::FullDuplex::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributePacketRxCount(Callback::Cancelable * onSuccessCallback,
@@ -1237,7 +1236,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributePacketRxCount(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::PacketRxCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::PacketRxCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributePacketTxCount(Callback::Cancelable * onSuccessCallback,
@@ -1248,7 +1247,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributePacketTxCount(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::PacketTxCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::PacketTxCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeTxErrCount(Callback::Cancelable * onSuccessCallback,
@@ -1258,7 +1257,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeTxErrCount(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::TxErrCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::TxErrCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeCollisionCount(Callback::Cancelable * onSuccessCallback,
@@ -1269,7 +1268,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeCollisionCount(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::CollisionCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::CollisionCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeOverrunCount(Callback::Cancelable * onSuccessCallback,
@@ -1280,7 +1279,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeOverrunCount(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::OverrunCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::OverrunCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeCarrierDetect(Callback::Cancelable * onSuccessCallback,
@@ -1290,7 +1289,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeCarrierDetect(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::CarrierDetect::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::CarrierDetect::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeTimeSinceReset(Callback::Cancelable * onSuccessCallback,
@@ -1301,7 +1300,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeTimeSinceReset(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::TimeSinceReset::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::TimeSinceReset::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1312,7 +1311,7 @@ CHIP_ERROR EthernetNetworkDiagnosticsClusterTest::WriteAttributeClusterRevision(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, EthernetNetworkDiagnostics::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1323,7 +1322,7 @@ CHIP_ERROR FixedLabelClusterTest::WriteAttributeClusterRevision(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, FixedLabel::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, FixedLabel::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1334,7 +1333,7 @@ CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeMeasuredValue(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, FlowMeasurement::Attributes::MeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, FlowMeasurement::Attributes::MeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeMinMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -1344,7 +1343,7 @@ CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeMinMeasuredValue(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, FlowMeasurement::Attributes::MinMeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, FlowMeasurement::Attributes::MinMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -1354,7 +1353,7 @@ CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, FlowMeasurement::Attributes::MaxMeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, FlowMeasurement::Attributes::MaxMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeTolerance(Callback::Cancelable * onSuccessCallback,
@@ -1364,7 +1363,7 @@ CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeTolerance(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, FlowMeasurement::Attributes::Tolerance::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, FlowMeasurement::Attributes::Tolerance::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1374,7 +1373,7 @@ CHIP_ERROR FlowMeasurementClusterTest::WriteAttributeClusterRevision(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, FlowMeasurement::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, FlowMeasurement::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1385,7 +1384,7 @@ CHIP_ERROR GeneralCommissioningClusterTest::WriteAttributeClusterRevision(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, GeneralCommissioning::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, GeneralCommissioning::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1396,7 +1395,7 @@ CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeRebootCount(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::RebootCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::RebootCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeUpTime(Callback::Cancelable * onSuccessCallback,
@@ -1406,7 +1405,7 @@ CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeUpTime(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::UpTime::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::UpTime::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeTotalOperationalHours(Callback::Cancelable * onSuccessCallback,
@@ -1417,7 +1416,7 @@ CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeTotalOperationalHours(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::TotalOperationalHours::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::TotalOperationalHours::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeBootReasons(Callback::Cancelable * onSuccessCallback,
@@ -1427,7 +1426,7 @@ CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeBootReasons(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::BootReasons::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::BootReasons::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1437,7 +1436,7 @@ CHIP_ERROR GeneralDiagnosticsClusterTest::WriteAttributeClusterRevision(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, GeneralDiagnostics::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1448,7 +1447,7 @@ CHIP_ERROR GroupKeyManagementClusterTest::WriteAttributeClusterRevision(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, GroupKeyManagement::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, GroupKeyManagement::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1459,7 +1458,7 @@ CHIP_ERROR GroupsClusterTest::WriteAttributeNameSupport(Callback::Cancelable * o
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Groups::Attributes::NameSupport::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Groups::Attributes::NameSupport::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR GroupsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1469,7 +1468,7 @@ CHIP_ERROR GroupsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Groups::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Groups::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1480,7 +1479,7 @@ CHIP_ERROR IdentifyClusterTest::WriteAttributeIdentifyType(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Identify::Attributes::IdentifyType::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Identify::Attributes::IdentifyType::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR IdentifyClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1490,7 +1489,7 @@ CHIP_ERROR IdentifyClusterTest::WriteAttributeClusterRevision(Callback::Cancelab
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Identify::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Identify::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1501,7 +1500,7 @@ CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeMeasuredValue(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::MeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::MeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeMinMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -1512,7 +1511,7 @@ CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeMinMeasuredValue(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::MinMeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::MinMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -1523,7 +1522,7 @@ CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::MaxMeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::MaxMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeTolerance(Callback::Cancelable * onSuccessCallback,
@@ -1533,7 +1532,7 @@ CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeTolerance(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::Tolerance::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::Tolerance::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeLightSensorType(Callback::Cancelable * onSuccessCallback,
@@ -1543,7 +1542,7 @@ CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeLightSensorType(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::LightSensorType::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::LightSensorType::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1554,7 +1553,7 @@ CHIP_ERROR IlluminanceMeasurementClusterTest::WriteAttributeClusterRevision(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, IlluminanceMeasurement::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1565,7 +1564,7 @@ CHIP_ERROR KeypadInputClusterTest::WriteAttributeClusterRevision(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, KeypadInput::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, KeypadInput::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1576,7 +1575,7 @@ CHIP_ERROR LevelControlClusterTest::WriteAttributeCurrentLevel(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LevelControl::Attributes::CurrentLevel::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LevelControl::Attributes::CurrentLevel::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR LevelControlClusterTest::WriteAttributeRemainingTime(Callback::Cancelable * onSuccessCallback,
@@ -1586,7 +1585,7 @@ CHIP_ERROR LevelControlClusterTest::WriteAttributeRemainingTime(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LevelControl::Attributes::RemainingTime::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LevelControl::Attributes::RemainingTime::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR LevelControlClusterTest::WriteAttributeMinLevel(Callback::Cancelable * onSuccessCallback,
@@ -1596,7 +1595,7 @@ CHIP_ERROR LevelControlClusterTest::WriteAttributeMinLevel(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LevelControl::Attributes::MinLevel::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LevelControl::Attributes::MinLevel::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR LevelControlClusterTest::WriteAttributeMaxLevel(Callback::Cancelable * onSuccessCallback,
@@ -1606,7 +1605,7 @@ CHIP_ERROR LevelControlClusterTest::WriteAttributeMaxLevel(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LevelControl::Attributes::MaxLevel::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LevelControl::Attributes::MaxLevel::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR LevelControlClusterTest::WriteAttributeCurrentFrequency(Callback::Cancelable * onSuccessCallback,
@@ -1616,7 +1615,7 @@ CHIP_ERROR LevelControlClusterTest::WriteAttributeCurrentFrequency(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LevelControl::Attributes::CurrentFrequency::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LevelControl::Attributes::CurrentFrequency::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR LevelControlClusterTest::WriteAttributeMinFrequency(Callback::Cancelable * onSuccessCallback,
@@ -1626,7 +1625,7 @@ CHIP_ERROR LevelControlClusterTest::WriteAttributeMinFrequency(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LevelControl::Attributes::MinFrequency::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LevelControl::Attributes::MinFrequency::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR LevelControlClusterTest::WriteAttributeMaxFrequency(Callback::Cancelable * onSuccessCallback,
@@ -1636,7 +1635,7 @@ CHIP_ERROR LevelControlClusterTest::WriteAttributeMaxFrequency(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LevelControl::Attributes::MaxFrequency::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LevelControl::Attributes::MaxFrequency::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR LevelControlClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1646,7 +1645,7 @@ CHIP_ERROR LevelControlClusterTest::WriteAttributeClusterRevision(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LevelControl::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LevelControl::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1657,7 +1656,7 @@ CHIP_ERROR LowPowerClusterTest::WriteAttributeClusterRevision(Callback::Cancelab
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, LowPower::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, LowPower::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1668,7 +1667,7 @@ CHIP_ERROR MediaInputClusterTest::WriteAttributeCurrentMediaInput(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaInput::Attributes::CurrentMediaInput::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaInput::Attributes::CurrentMediaInput::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaInputClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1678,7 +1677,7 @@ CHIP_ERROR MediaInputClusterTest::WriteAttributeClusterRevision(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaInput::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaInput::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1689,7 +1688,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributePlaybackState(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::PlaybackState::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::PlaybackState::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeStartTime(Callback::Cancelable * onSuccessCallback,
@@ -1699,7 +1698,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeStartTime(Callback::Cancelabl
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::StartTime::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::StartTime::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeDuration(Callback::Cancelable * onSuccessCallback,
@@ -1709,7 +1708,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeDuration(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::Duration::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::Duration::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaPlaybackClusterTest::WriteAttributePositionUpdatedAt(Callback::Cancelable * onSuccessCallback,
@@ -1719,7 +1718,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributePositionUpdatedAt(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::PositionUpdatedAt::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::PositionUpdatedAt::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaPlaybackClusterTest::WriteAttributePosition(Callback::Cancelable * onSuccessCallback,
@@ -1729,7 +1728,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributePosition(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::Position::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::Position::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaPlaybackClusterTest::WriteAttributePlaybackSpeed(Callback::Cancelable * onSuccessCallback,
@@ -1739,7 +1738,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributePlaybackSpeed(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::PlaybackSpeed::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::PlaybackSpeed::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeSeekRangeEnd(Callback::Cancelable * onSuccessCallback,
@@ -1749,7 +1748,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeSeekRangeEnd(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::SeekRangeEnd::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::SeekRangeEnd::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeSeekRangeStart(Callback::Cancelable * onSuccessCallback,
@@ -1759,7 +1758,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeSeekRangeStart(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::SeekRangeStart::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::SeekRangeStart::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1769,7 +1768,7 @@ CHIP_ERROR MediaPlaybackClusterTest::WriteAttributeClusterRevision(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, MediaPlayback::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, MediaPlayback::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1780,7 +1779,7 @@ CHIP_ERROR ModeSelectClusterTest::WriteAttributeCurrentMode(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ModeSelect::Attributes::CurrentMode::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ModeSelect::Attributes::CurrentMode::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ModeSelectClusterTest::WriteAttributeStartUpMode(Callback::Cancelable * onSuccessCallback,
@@ -1790,7 +1789,7 @@ CHIP_ERROR ModeSelectClusterTest::WriteAttributeStartUpMode(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ModeSelect::Attributes::StartUpMode::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ModeSelect::Attributes::StartUpMode::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ModeSelectClusterTest::WriteAttributeDescription(Callback::Cancelable * onSuccessCallback,
@@ -1800,7 +1799,7 @@ CHIP_ERROR ModeSelectClusterTest::WriteAttributeDescription(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ModeSelect::Attributes::Description::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ModeSelect::Attributes::Description::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ModeSelectClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1810,7 +1809,7 @@ CHIP_ERROR ModeSelectClusterTest::WriteAttributeClusterRevision(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ModeSelect::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ModeSelect::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1821,7 +1820,7 @@ CHIP_ERROR NetworkCommissioningClusterTest::WriteAttributeFeatureMap(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, NetworkCommissioning::Attributes::FeatureMap::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, NetworkCommissioning::Attributes::FeatureMap::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR NetworkCommissioningClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1831,7 +1830,7 @@ CHIP_ERROR NetworkCommissioningClusterTest::WriteAttributeClusterRevision(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, NetworkCommissioning::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, NetworkCommissioning::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1843,7 +1842,7 @@ CHIP_ERROR OtaSoftwareUpdateProviderClusterTest::WriteAttributeClusterRevision(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OtaSoftwareUpdateProvider::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OtaSoftwareUpdateProvider::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1854,7 +1853,7 @@ CHIP_ERROR OtaSoftwareUpdateRequestorClusterTest::WriteAttributeUpdatePossible(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OtaSoftwareUpdateRequestor::Attributes::UpdatePossible::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OtaSoftwareUpdateRequestor::Attributes::UpdatePossible::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OtaSoftwareUpdateRequestorClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1865,7 +1864,7 @@ CHIP_ERROR OtaSoftwareUpdateRequestorClusterTest::WriteAttributeClusterRevision(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OtaSoftwareUpdateRequestor::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OtaSoftwareUpdateRequestor::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1876,7 +1875,7 @@ CHIP_ERROR OccupancySensingClusterTest::WriteAttributeOccupancy(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OccupancySensing::Attributes::Occupancy::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OccupancySensing::Attributes::Occupancy::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OccupancySensingClusterTest::WriteAttributeOccupancySensorType(Callback::Cancelable * onSuccessCallback,
@@ -1886,7 +1885,7 @@ CHIP_ERROR OccupancySensingClusterTest::WriteAttributeOccupancySensorType(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OccupancySensing::Attributes::OccupancySensorType::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OccupancySensing::Attributes::OccupancySensorType::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OccupancySensingClusterTest::WriteAttributeOccupancySensorTypeBitmap(Callback::Cancelable * onSuccessCallback,
@@ -1897,7 +1896,7 @@ CHIP_ERROR OccupancySensingClusterTest::WriteAttributeOccupancySensorTypeBitmap(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OccupancySensing::Attributes::OccupancySensorTypeBitmap::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OccupancySensing::Attributes::OccupancySensorTypeBitmap::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OccupancySensingClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1907,7 +1906,7 @@ CHIP_ERROR OccupancySensingClusterTest::WriteAttributeClusterRevision(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OccupancySensing::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OccupancySensing::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1917,8 +1916,8 @@ CHIP_ERROR OnOffClusterTest::WriteAttributeOnOff(Callback::Cancelable * onSucces
     app::WriteClientHandle handle;
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
-    ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OnOff::Attributes::OnOff::Id), value));
+    ReturnErrorOnFailure(
+        handle.EncodeAttributeWritePayload(chip::app::ClusterInfo(mEndpoint, mClusterId, OnOff::Attributes::OnOff::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OnOffClusterTest::WriteAttributeGlobalSceneControl(Callback::Cancelable * onSuccessCallback,
@@ -1928,7 +1927,7 @@ CHIP_ERROR OnOffClusterTest::WriteAttributeGlobalSceneControl(Callback::Cancelab
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OnOff::Attributes::GlobalSceneControl::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OnOff::Attributes::GlobalSceneControl::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OnOffClusterTest::WriteAttributeFeatureMap(Callback::Cancelable * onSuccessCallback,
@@ -1938,7 +1937,7 @@ CHIP_ERROR OnOffClusterTest::WriteAttributeFeatureMap(Callback::Cancelable * onS
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OnOff::Attributes::FeatureMap::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OnOff::Attributes::FeatureMap::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OnOffClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1948,7 +1947,7 @@ CHIP_ERROR OnOffClusterTest::WriteAttributeClusterRevision(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OnOff::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OnOff::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1959,7 +1958,7 @@ CHIP_ERROR OnOffSwitchConfigurationClusterTest::WriteAttributeSwitchType(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OnOffSwitchConfiguration::Attributes::SwitchType::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OnOffSwitchConfiguration::Attributes::SwitchType::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OnOffSwitchConfigurationClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -1970,7 +1969,7 @@ CHIP_ERROR OnOffSwitchConfigurationClusterTest::WriteAttributeClusterRevision(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OnOffSwitchConfiguration::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OnOffSwitchConfiguration::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -1982,7 +1981,7 @@ CHIP_ERROR OperationalCredentialsClusterTest::WriteAttributeSupportedFabrics(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OperationalCredentials::Attributes::SupportedFabrics::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OperationalCredentials::Attributes::SupportedFabrics::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OperationalCredentialsClusterTest::WriteAttributeCommissionedFabrics(Callback::Cancelable * onSuccessCallback,
@@ -1993,7 +1992,7 @@ CHIP_ERROR OperationalCredentialsClusterTest::WriteAttributeCommissionedFabrics(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OperationalCredentials::Attributes::CommissionedFabrics::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OperationalCredentials::Attributes::CommissionedFabrics::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OperationalCredentialsClusterTest::WriteAttributeCurrentFabricIndex(Callback::Cancelable * onSuccessCallback,
@@ -2004,7 +2003,7 @@ CHIP_ERROR OperationalCredentialsClusterTest::WriteAttributeCurrentFabricIndex(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OperationalCredentials::Attributes::CurrentFabricIndex::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OperationalCredentials::Attributes::CurrentFabricIndex::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR OperationalCredentialsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2015,7 +2014,7 @@ CHIP_ERROR OperationalCredentialsClusterTest::WriteAttributeClusterRevision(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, OperationalCredentials::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, OperationalCredentials::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2026,7 +2025,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeStatus(Callback::Cancelable * o
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::Status::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::Status::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeOrder(Callback::Cancelable * onSuccessCallback,
@@ -2036,7 +2035,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeOrder(Callback::Cancelable * on
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::Order::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::Order::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeDescription(Callback::Cancelable * onSuccessCallback,
@@ -2046,7 +2045,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeDescription(Callback::Cancelabl
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::Description::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::Description::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryVoltage(Callback::Cancelable * onSuccessCallback,
@@ -2056,7 +2055,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryVoltage(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::BatteryVoltage::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::BatteryVoltage::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryPercentRemaining(Callback::Cancelable * onSuccessCallback,
@@ -2066,7 +2065,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryPercentRemaining(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::BatteryPercentRemaining::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::BatteryPercentRemaining::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryTimeRemaining(Callback::Cancelable * onSuccessCallback,
@@ -2076,7 +2075,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryTimeRemaining(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::BatteryTimeRemaining::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::BatteryTimeRemaining::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryChargeLevel(Callback::Cancelable * onSuccessCallback,
@@ -2086,7 +2085,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryChargeLevel(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::BatteryChargeLevel::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::BatteryChargeLevel::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryChargeState(Callback::Cancelable * onSuccessCallback,
@@ -2096,7 +2095,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeBatteryChargeState(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::BatteryChargeState::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::BatteryChargeState::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeFeatureMap(Callback::Cancelable * onSuccessCallback,
@@ -2106,7 +2105,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeFeatureMap(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::FeatureMap::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::FeatureMap::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PowerSourceClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2116,7 +2115,7 @@ CHIP_ERROR PowerSourceClusterTest::WriteAttributeClusterRevision(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PowerSource::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PowerSource::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2127,7 +2126,7 @@ CHIP_ERROR PressureMeasurementClusterTest::WriteAttributeMeasuredValue(Callback:
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PressureMeasurement::Attributes::MeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PressureMeasurement::Attributes::MeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PressureMeasurementClusterTest::WriteAttributeMinMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -2137,7 +2136,7 @@ CHIP_ERROR PressureMeasurementClusterTest::WriteAttributeMinMeasuredValue(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PressureMeasurement::Attributes::MinMeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PressureMeasurement::Attributes::MinMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PressureMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -2147,7 +2146,7 @@ CHIP_ERROR PressureMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PressureMeasurement::Attributes::MaxMeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PressureMeasurement::Attributes::MaxMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PressureMeasurementClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2157,7 +2156,7 @@ CHIP_ERROR PressureMeasurementClusterTest::WriteAttributeClusterRevision(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PressureMeasurement::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PressureMeasurement::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2169,7 +2168,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxPressure(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxPressure::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxPressure::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxSpeed(Callback::Cancelable * onSuccessCallback,
@@ -2179,7 +2178,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxSpeed(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxSpeed::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxSpeed::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxFlow(Callback::Cancelable * onSuccessCallback,
@@ -2189,7 +2188,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxFlow(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxFlow::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxFlow::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinConstPressure(Callback::Cancelable * onSuccessCallback,
@@ -2200,8 +2199,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinConstPressur
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinConstPressure::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinConstPressure::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxConstPressure(Callback::Cancelable * onSuccessCallback,
@@ -2212,8 +2210,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxConstPressur
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxConstPressure::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxConstPressure::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinCompPressure(Callback::Cancelable * onSuccessCallback,
@@ -2224,8 +2221,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinCompPressure
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinCompPressure::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinCompPressure::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxCompPressure(Callback::Cancelable * onSuccessCallback,
@@ -2236,8 +2232,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxCompPressure
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxCompPressure::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxCompPressure::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinConstSpeed(Callback::Cancelable * onSuccessCallback,
@@ -2248,7 +2243,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinConstSpeed(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinConstSpeed::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinConstSpeed::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxConstSpeed(Callback::Cancelable * onSuccessCallback,
@@ -2259,7 +2254,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxConstSpeed(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxConstSpeed::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxConstSpeed::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinConstFlow(Callback::Cancelable * onSuccessCallback,
@@ -2270,7 +2265,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinConstFlow(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinConstFlow::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinConstFlow::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxConstFlow(Callback::Cancelable * onSuccessCallback,
@@ -2281,7 +2276,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxConstFlow(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxConstFlow::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxConstFlow::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinConstTemp(Callback::Cancelable * onSuccessCallback,
@@ -2292,7 +2287,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMinConstTemp(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinConstTemp::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MinConstTemp::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxConstTemp(Callback::Cancelable * onSuccessCallback,
@@ -2303,7 +2298,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeMaxConstTemp(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxConstTemp::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::MaxConstTemp::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributePumpStatus(Callback::Cancelable * onSuccessCallback,
@@ -2314,7 +2309,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributePumpStatus(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::PumpStatus::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::PumpStatus::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeEffectiveOperationMode(Callback::Cancelable * onSuccessCallback,
@@ -2325,8 +2320,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeEffectiveOperat
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::EffectiveOperationMode::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::EffectiveOperationMode::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeEffectiveControlMode(Callback::Cancelable * onSuccessCallback,
@@ -2337,8 +2331,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeEffectiveContro
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::EffectiveControlMode::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::EffectiveControlMode::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeCapacity(Callback::Cancelable * onSuccessCallback,
@@ -2348,7 +2341,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeCapacity(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::Capacity::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::Capacity::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeSpeed(Callback::Cancelable * onSuccessCallback,
@@ -2358,7 +2351,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeSpeed(Callback:
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::Speed::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::Speed::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeLifetimeEnergyConsumed(Callback::Cancelable * onSuccessCallback,
@@ -2369,8 +2362,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeLifetimeEnergyC
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::LifetimeEnergyConsumed::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::LifetimeEnergyConsumed::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeAlarmMask(Callback::Cancelable * onSuccessCallback,
@@ -2380,7 +2372,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeAlarmMask(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::AlarmMask::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::AlarmMask::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeFeatureMap(Callback::Cancelable * onSuccessCallback,
@@ -2391,7 +2383,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeFeatureMap(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::FeatureMap::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::FeatureMap::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2402,8 +2394,7 @@ CHIP_ERROR PumpConfigurationAndControlClusterTest::WriteAttributeClusterRevision
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::ClusterRevision::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, PumpConfigurationAndControl::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2415,7 +2406,7 @@ CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeMeasuredValue(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::MeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::MeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeMinMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -2426,8 +2417,7 @@ CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeMinMeasuredValu
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::MinMeasuredValue::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::MinMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -2438,8 +2428,7 @@ CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeMaxMeasuredValu
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::MaxMeasuredValue::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::MaxMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeTolerance(Callback::Cancelable * onSuccessCallback,
@@ -2449,7 +2438,7 @@ CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeTolerance(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::Tolerance::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::Tolerance::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2460,8 +2449,7 @@ CHIP_ERROR RelativeHumidityMeasurementClusterTest::WriteAttributeClusterRevision
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::ClusterRevision::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, RelativeHumidityMeasurement::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2472,7 +2460,7 @@ CHIP_ERROR ScenesClusterTest::WriteAttributeSceneCount(Callback::Cancelable * on
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Scenes::Attributes::SceneCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Scenes::Attributes::SceneCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ScenesClusterTest::WriteAttributeCurrentScene(Callback::Cancelable * onSuccessCallback,
@@ -2482,7 +2470,7 @@ CHIP_ERROR ScenesClusterTest::WriteAttributeCurrentScene(Callback::Cancelable * 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Scenes::Attributes::CurrentScene::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Scenes::Attributes::CurrentScene::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ScenesClusterTest::WriteAttributeCurrentGroup(Callback::Cancelable * onSuccessCallback,
@@ -2492,7 +2480,7 @@ CHIP_ERROR ScenesClusterTest::WriteAttributeCurrentGroup(Callback::Cancelable * 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Scenes::Attributes::CurrentGroup::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Scenes::Attributes::CurrentGroup::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ScenesClusterTest::WriteAttributeSceneValid(Callback::Cancelable * onSuccessCallback,
@@ -2502,7 +2490,7 @@ CHIP_ERROR ScenesClusterTest::WriteAttributeSceneValid(Callback::Cancelable * on
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Scenes::Attributes::SceneValid::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Scenes::Attributes::SceneValid::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ScenesClusterTest::WriteAttributeNameSupport(Callback::Cancelable * onSuccessCallback,
@@ -2512,7 +2500,7 @@ CHIP_ERROR ScenesClusterTest::WriteAttributeNameSupport(Callback::Cancelable * o
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Scenes::Attributes::NameSupport::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Scenes::Attributes::NameSupport::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ScenesClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2522,7 +2510,7 @@ CHIP_ERROR ScenesClusterTest::WriteAttributeClusterRevision(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Scenes::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Scenes::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2533,7 +2521,7 @@ CHIP_ERROR SoftwareDiagnosticsClusterTest::WriteAttributeCurrentHeapFree(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, SoftwareDiagnostics::Attributes::CurrentHeapFree::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, SoftwareDiagnostics::Attributes::CurrentHeapFree::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR SoftwareDiagnosticsClusterTest::WriteAttributeCurrentHeapUsed(Callback::Cancelable * onSuccessCallback,
@@ -2543,7 +2531,7 @@ CHIP_ERROR SoftwareDiagnosticsClusterTest::WriteAttributeCurrentHeapUsed(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, SoftwareDiagnostics::Attributes::CurrentHeapUsed::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, SoftwareDiagnostics::Attributes::CurrentHeapUsed::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR SoftwareDiagnosticsClusterTest::WriteAttributeCurrentHeapHighWatermark(Callback::Cancelable * onSuccessCallback,
@@ -2554,8 +2542,7 @@ CHIP_ERROR SoftwareDiagnosticsClusterTest::WriteAttributeCurrentHeapHighWatermar
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, SoftwareDiagnostics::Attributes::CurrentHeapHighWatermark::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, SoftwareDiagnostics::Attributes::CurrentHeapHighWatermark::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR SoftwareDiagnosticsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2565,7 +2552,7 @@ CHIP_ERROR SoftwareDiagnosticsClusterTest::WriteAttributeClusterRevision(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, SoftwareDiagnostics::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, SoftwareDiagnostics::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2576,7 +2563,7 @@ CHIP_ERROR SwitchClusterTest::WriteAttributeNumberOfPositions(Callback::Cancelab
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Switch::Attributes::NumberOfPositions::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Switch::Attributes::NumberOfPositions::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR SwitchClusterTest::WriteAttributeCurrentPosition(Callback::Cancelable * onSuccessCallback,
@@ -2586,7 +2573,7 @@ CHIP_ERROR SwitchClusterTest::WriteAttributeCurrentPosition(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Switch::Attributes::CurrentPosition::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Switch::Attributes::CurrentPosition::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR SwitchClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2596,7 +2583,7 @@ CHIP_ERROR SwitchClusterTest::WriteAttributeClusterRevision(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Switch::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Switch::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2607,7 +2594,7 @@ CHIP_ERROR TvChannelClusterTest::WriteAttributeTvChannelLineup(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TvChannel::Attributes::TvChannelLineup::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TvChannel::Attributes::TvChannelLineup::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR TvChannelClusterTest::WriteAttributeCurrentTvChannel(Callback::Cancelable * onSuccessCallback,
@@ -2617,7 +2604,7 @@ CHIP_ERROR TvChannelClusterTest::WriteAttributeCurrentTvChannel(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TvChannel::Attributes::CurrentTvChannel::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TvChannel::Attributes::CurrentTvChannel::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR TvChannelClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2627,7 +2614,7 @@ CHIP_ERROR TvChannelClusterTest::WriteAttributeClusterRevision(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TvChannel::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TvChannel::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2638,7 +2625,7 @@ CHIP_ERROR TargetNavigatorClusterTest::WriteAttributeClusterRevision(Callback::C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TargetNavigator::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TargetNavigator::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2649,7 +2636,7 @@ CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeMeasuredValue(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::MeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::MeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeMinMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -2660,7 +2647,7 @@ CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeMinMeasuredValue(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::MinMeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::MinMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Callback::Cancelable * onSuccessCallback,
@@ -2671,7 +2658,7 @@ CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeMaxMeasuredValue(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::MaxMeasuredValue::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::MaxMeasuredValue::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeTolerance(Callback::Cancelable * onSuccessCallback,
@@ -2681,7 +2668,7 @@ CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeTolerance(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::Tolerance::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::Tolerance::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2692,7 +2679,7 @@ CHIP_ERROR TemperatureMeasurementClusterTest::WriteAttributeClusterRevision(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TemperatureMeasurement::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2703,7 +2690,7 @@ CHIP_ERROR TestClusterClusterTest::WriteAttributeClusterRevision(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, TestCluster::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, TestCluster::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2714,7 +2701,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeLocalTemperature(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::LocalTemperature::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::LocalTemperature::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeAbsMinHeatSetpointLimit(Callback::Cancelable * onSuccessCallback,
@@ -2724,7 +2711,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeAbsMinHeatSetpointLimit(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::AbsMinHeatSetpointLimit::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::AbsMinHeatSetpointLimit::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeAbsMaxHeatSetpointLimit(Callback::Cancelable * onSuccessCallback,
@@ -2734,7 +2721,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeAbsMaxHeatSetpointLimit(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::AbsMaxHeatSetpointLimit::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::AbsMaxHeatSetpointLimit::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeAbsMinCoolSetpointLimit(Callback::Cancelable * onSuccessCallback,
@@ -2744,7 +2731,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeAbsMinCoolSetpointLimit(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::AbsMinCoolSetpointLimit::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::AbsMinCoolSetpointLimit::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeAbsMaxCoolSetpointLimit(Callback::Cancelable * onSuccessCallback,
@@ -2754,7 +2741,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeAbsMaxCoolSetpointLimit(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::AbsMaxCoolSetpointLimit::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::AbsMaxCoolSetpointLimit::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeStartOfWeek(Callback::Cancelable * onSuccessCallback,
@@ -2764,7 +2751,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeStartOfWeek(Callback::Cancelable
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::StartOfWeek::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::StartOfWeek::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeNumberOfWeeklyTransitions(Callback::Cancelable * onSuccessCallback,
@@ -2774,7 +2761,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeNumberOfWeeklyTransitions(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::NumberOfWeeklyTransitions::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::NumberOfWeeklyTransitions::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeNumberOfDailyTransitions(Callback::Cancelable * onSuccessCallback,
@@ -2784,7 +2771,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeNumberOfDailyTransitions(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::NumberOfDailyTransitions::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::NumberOfDailyTransitions::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeFeatureMap(Callback::Cancelable * onSuccessCallback,
@@ -2794,7 +2781,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeFeatureMap(Callback::Cancelable 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::FeatureMap::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::FeatureMap::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThermostatClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -2804,7 +2791,7 @@ CHIP_ERROR ThermostatClusterTest::WriteAttributeClusterRevision(Callback::Cancel
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, Thermostat::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, Thermostat::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -2816,8 +2803,7 @@ CHIP_ERROR ThermostatUserInterfaceConfigurationClusterTest::WriteAttributeCluste
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId,
-                                       ThermostatUserInterfaceConfiguration::Attributes::ClusterRevision::Id),
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThermostatUserInterfaceConfiguration::Attributes::ClusterRevision::Id),
         value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
@@ -2829,7 +2815,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeChannel(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::Channel::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::Channel::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRoutingRole(Callback::Cancelable * onSuccessCallback,
@@ -2839,7 +2825,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRoutingRole(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RoutingRole::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RoutingRole::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeNetworkName(Callback::Cancelable * onSuccessCallback,
@@ -2850,7 +2836,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeNetworkName(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::NetworkName::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::NetworkName::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributePanId(Callback::Cancelable * onSuccessCallback,
@@ -2860,7 +2846,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributePanId(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::PanId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::PanId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeExtendedPanId(Callback::Cancelable * onSuccessCallback,
@@ -2871,7 +2857,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeExtendedPanId(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ExtendedPanId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ExtendedPanId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeMeshLocalPrefix(Callback::Cancelable * onSuccessCallback,
@@ -2882,7 +2868,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeMeshLocalPrefix(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::MeshLocalPrefix::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::MeshLocalPrefix::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeOverrunCount(Callback::Cancelable * onSuccessCallback,
@@ -2892,7 +2878,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeOverrunCount(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::OverrunCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::OverrunCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributePartitionId(Callback::Cancelable * onSuccessCallback,
@@ -2902,7 +2888,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributePartitionId(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::PartitionId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::PartitionId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeWeighting(Callback::Cancelable * onSuccessCallback,
@@ -2912,7 +2898,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeWeighting(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::Weighting::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::Weighting::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeDataVersion(Callback::Cancelable * onSuccessCallback,
@@ -2922,7 +2908,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeDataVersion(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::DataVersion::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::DataVersion::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeStableDataVersion(Callback::Cancelable * onSuccessCallback,
@@ -2933,7 +2919,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeStableDataVersion(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::StableDataVersion::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::StableDataVersion::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeLeaderRouterId(Callback::Cancelable * onSuccessCallback,
@@ -2944,7 +2930,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeLeaderRouterId(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::LeaderRouterId::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::LeaderRouterId::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeDetachedRoleCount(Callback::Cancelable * onSuccessCallback,
@@ -2955,7 +2941,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeDetachedRoleCount(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::DetachedRoleCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::DetachedRoleCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeChildRoleCount(Callback::Cancelable * onSuccessCallback,
@@ -2966,7 +2952,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeChildRoleCount(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ChildRoleCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ChildRoleCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRouterRoleCount(Callback::Cancelable * onSuccessCallback,
@@ -2977,7 +2963,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRouterRoleCount(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RouterRoleCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RouterRoleCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeLeaderRoleCount(Callback::Cancelable * onSuccessCallback,
@@ -2988,7 +2974,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeLeaderRoleCount(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::LeaderRoleCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::LeaderRoleCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeAttachAttemptCount(Callback::Cancelable * onSuccessCallback,
@@ -2999,8 +2985,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeAttachAttemptCount
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::AttachAttemptCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::AttachAttemptCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributePartitionIdChangeCount(Callback::Cancelable * onSuccessCallback,
@@ -3011,8 +2996,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributePartitionIdChangeC
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::PartitionIdChangeCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::PartitionIdChangeCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeBetterPartitionAttachAttemptCount(
@@ -3022,8 +3006,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeBetterPartitionAtt
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId,
-                                       ThreadNetworkDiagnostics::Attributes::BetterPartitionAttachAttemptCount::Id),
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::BetterPartitionAttachAttemptCount::Id),
         value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
@@ -3035,7 +3018,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeParentChangeCount(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ParentChangeCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ParentChangeCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxTotalCount(Callback::Cancelable * onSuccessCallback,
@@ -3045,7 +3028,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxTotalCount(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxTotalCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxTotalCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxUnicastCount(Callback::Cancelable * onSuccessCallback,
@@ -3056,7 +3039,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxUnicastCount(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxUnicastCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxUnicastCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxBroadcastCount(Callback::Cancelable * onSuccessCallback,
@@ -3067,7 +3050,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxBroadcastCount(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxBroadcastCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxBroadcastCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxAckRequestedCount(Callback::Cancelable * onSuccessCallback,
@@ -3078,8 +3061,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxAckRequestedCoun
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxAckRequestedCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxAckRequestedCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxAckedCount(Callback::Cancelable * onSuccessCallback,
@@ -3089,7 +3071,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxAckedCount(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxAckedCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxAckedCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxNoAckRequestedCount(Callback::Cancelable * onSuccessCallback,
@@ -3100,8 +3082,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxNoAckRequestedCo
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxNoAckRequestedCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxNoAckRequestedCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxDataCount(Callback::Cancelable * onSuccessCallback,
@@ -3111,7 +3092,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxDataCount(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxDataCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxDataCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxDataPollCount(Callback::Cancelable * onSuccessCallback,
@@ -3122,7 +3103,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxDataPollCount(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxDataPollCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxDataPollCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxBeaconCount(Callback::Cancelable * onSuccessCallback,
@@ -3133,7 +3114,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxBeaconCount(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxBeaconCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxBeaconCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxBeaconRequestCount(Callback::Cancelable * onSuccessCallback,
@@ -3144,8 +3125,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxBeaconRequestCou
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxBeaconRequestCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxBeaconRequestCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxOtherCount(Callback::Cancelable * onSuccessCallback,
@@ -3155,7 +3135,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxOtherCount(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxOtherCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxOtherCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxRetryCount(Callback::Cancelable * onSuccessCallback,
@@ -3165,7 +3145,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxRetryCount(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxRetryCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxRetryCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxDirectMaxRetryExpiryCount(Callback::Cancelable * onSuccessCallback,
@@ -3176,8 +3156,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxDirectMaxRetryEx
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId,
-                                       ThreadNetworkDiagnostics::Attributes::TxDirectMaxRetryExpiryCount::Id),
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxDirectMaxRetryExpiryCount::Id),
         value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
@@ -3188,8 +3167,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxIndirectMaxRetry
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId,
-                                       ThreadNetworkDiagnostics::Attributes::TxIndirectMaxRetryExpiryCount::Id),
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxIndirectMaxRetryExpiryCount::Id),
         value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
@@ -3201,7 +3179,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxErrCcaCount(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxErrCcaCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxErrCcaCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxErrAbortCount(Callback::Cancelable * onSuccessCallback,
@@ -3212,7 +3190,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxErrAbortCount(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxErrAbortCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxErrAbortCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxErrBusyChannelCount(Callback::Cancelable * onSuccessCallback,
@@ -3223,8 +3201,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeTxErrBusyChannelCo
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxErrBusyChannelCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::TxErrBusyChannelCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxTotalCount(Callback::Cancelable * onSuccessCallback,
@@ -3234,7 +3211,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxTotalCount(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxTotalCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxTotalCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxUnicastCount(Callback::Cancelable * onSuccessCallback,
@@ -3245,7 +3222,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxUnicastCount(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxUnicastCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxUnicastCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxBroadcastCount(Callback::Cancelable * onSuccessCallback,
@@ -3256,7 +3233,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxBroadcastCount(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxBroadcastCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxBroadcastCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxDataCount(Callback::Cancelable * onSuccessCallback,
@@ -3266,7 +3243,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxDataCount(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxDataCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxDataCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxDataPollCount(Callback::Cancelable * onSuccessCallback,
@@ -3277,7 +3254,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxDataPollCount(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxDataPollCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxDataPollCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxBeaconCount(Callback::Cancelable * onSuccessCallback,
@@ -3288,7 +3265,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxBeaconCount(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxBeaconCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxBeaconCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxBeaconRequestCount(Callback::Cancelable * onSuccessCallback,
@@ -3299,8 +3276,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxBeaconRequestCou
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxBeaconRequestCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxBeaconRequestCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxOtherCount(Callback::Cancelable * onSuccessCallback,
@@ -3310,7 +3286,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxOtherCount(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxOtherCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxOtherCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxAddressFilteredCount(Callback::Cancelable * onSuccessCallback,
@@ -3321,8 +3297,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxAddressFilteredC
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxAddressFilteredCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxAddressFilteredCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxDestAddrFilteredCount(Callback::Cancelable * onSuccessCallback,
@@ -3333,8 +3308,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxDestAddrFiltered
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxDestAddrFilteredCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxDestAddrFilteredCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxDuplicatedCount(Callback::Cancelable * onSuccessCallback,
@@ -3345,7 +3319,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxDuplicatedCount(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxDuplicatedCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxDuplicatedCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrNoFrameCount(Callback::Cancelable * onSuccessCallback,
@@ -3356,7 +3330,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrNoFrameCount(
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrNoFrameCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrNoFrameCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrUnknownNeighborCount(Callback::Cancelable * onSuccessCallback,
@@ -3367,8 +3341,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrUnknownNeighb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrUnknownNeighborCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrUnknownNeighborCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrInvalidSrcAddrCount(Callback::Cancelable * onSuccessCallback,
@@ -3379,8 +3352,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrInvalidSrcAdd
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrInvalidSrcAddrCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrInvalidSrcAddrCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrSecCount(Callback::Cancelable * onSuccessCallback,
@@ -3391,7 +3363,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrSecCount(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrSecCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrSecCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrFcsCount(Callback::Cancelable * onSuccessCallback,
@@ -3402,7 +3374,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrFcsCount(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrFcsCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrFcsCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrOtherCount(Callback::Cancelable * onSuccessCallback,
@@ -3413,7 +3385,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeRxErrOtherCount(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrOtherCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::RxErrOtherCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeActiveTimestamp(Callback::Cancelable * onSuccessCallback,
@@ -3424,7 +3396,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeActiveTimestamp(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ActiveTimestamp::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ActiveTimestamp::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributePendingTimestamp(Callback::Cancelable * onSuccessCallback,
@@ -3435,7 +3407,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributePendingTimestamp(C
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::PendingTimestamp::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::PendingTimestamp::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeDelay(Callback::Cancelable * onSuccessCallback,
@@ -3445,7 +3417,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeDelay(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::Delay::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::Delay::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeChannelMask(Callback::Cancelable * onSuccessCallback,
@@ -3456,7 +3428,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeChannelMask(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ChannelMask::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ChannelMask::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -3467,7 +3439,7 @@ CHIP_ERROR ThreadNetworkDiagnosticsClusterTest::WriteAttributeClusterRevision(Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, ThreadNetworkDiagnostics::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -3478,7 +3450,7 @@ CHIP_ERROR WakeOnLanClusterTest::WriteAttributeWakeOnLanMacAddress(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WakeOnLan::Attributes::WakeOnLanMacAddress::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WakeOnLan::Attributes::WakeOnLanMacAddress::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WakeOnLanClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -3488,7 +3460,7 @@ CHIP_ERROR WakeOnLanClusterTest::WriteAttributeClusterRevision(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WakeOnLan::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WakeOnLan::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -3499,7 +3471,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeBssid(Callback::Canc
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::Bssid::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::Bssid::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeSecurityType(Callback::Cancelable * onSuccessCallback,
@@ -3509,7 +3481,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeSecurityType(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::SecurityType::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::SecurityType::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeWiFiVersion(Callback::Cancelable * onSuccessCallback,
@@ -3519,7 +3491,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeWiFiVersion(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::WiFiVersion::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::WiFiVersion::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeChannelNumber(Callback::Cancelable * onSuccessCallback,
@@ -3529,7 +3501,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeChannelNumber(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::ChannelNumber::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::ChannelNumber::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeRssi(Callback::Cancelable * onSuccessCallback,
@@ -3539,7 +3511,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeRssi(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::Rssi::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::Rssi::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeBeaconLostCount(Callback::Cancelable * onSuccessCallback,
@@ -3550,7 +3522,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeBeaconLostCount(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::BeaconLostCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::BeaconLostCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeBeaconRxCount(Callback::Cancelable * onSuccessCallback,
@@ -3560,7 +3532,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeBeaconRxCount(Callba
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::BeaconRxCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::BeaconRxCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributePacketMulticastRxCount(Callback::Cancelable * onSuccessCallback,
@@ -3571,8 +3543,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributePacketMulticastRxCou
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::PacketMulticastRxCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::PacketMulticastRxCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributePacketMulticastTxCount(Callback::Cancelable * onSuccessCallback,
@@ -3583,8 +3554,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributePacketMulticastTxCou
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::PacketMulticastTxCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::PacketMulticastTxCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributePacketUnicastRxCount(Callback::Cancelable * onSuccessCallback,
@@ -3595,8 +3565,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributePacketUnicastRxCount
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::PacketUnicastRxCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::PacketUnicastRxCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributePacketUnicastTxCount(Callback::Cancelable * onSuccessCallback,
@@ -3607,8 +3576,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributePacketUnicastTxCount
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::PacketUnicastTxCount::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::PacketUnicastTxCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeCurrentMaxRate(Callback::Cancelable * onSuccessCallback,
@@ -3618,7 +3586,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeCurrentMaxRate(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::CurrentMaxRate::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::CurrentMaxRate::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeOverrunCount(Callback::Cancelable * onSuccessCallback,
@@ -3628,7 +3596,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeOverrunCount(Callbac
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::OverrunCount::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::OverrunCount::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -3639,7 +3607,7 @@ CHIP_ERROR WiFiNetworkDiagnosticsClusterTest::WriteAttributeClusterRevision(Call
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WiFiNetworkDiagnostics::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
@@ -3650,7 +3618,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeType(Callback::Cancelable * 
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::Type::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::Type::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionLift(Callback::Cancelable * onSuccessCallback,
@@ -3660,7 +3628,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionLift(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionLift::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionLift::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionTilt(Callback::Cancelable * onSuccessCallback,
@@ -3670,7 +3638,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionTilt(Callback
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionTilt::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionTilt::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeConfigStatus(Callback::Cancelable * onSuccessCallback,
@@ -3680,7 +3648,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeConfigStatus(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::ConfigStatus::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::ConfigStatus::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionLiftPercentage(Callback::Cancelable * onSuccessCallback,
@@ -3691,8 +3659,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionLiftPercentag
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionLiftPercentage::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionLiftPercentage::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionTiltPercentage(Callback::Cancelable * onSuccessCallback,
@@ -3703,8 +3670,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionTiltPercentag
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionTiltPercentage::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionTiltPercentage::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeOperationalStatus(Callback::Cancelable * onSuccessCallback,
@@ -3714,7 +3680,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeOperationalStatus(Callback::
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::OperationalStatus::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::OperationalStatus::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeTargetPositionLiftPercent100ths(Callback::Cancelable * onSuccessCallback,
@@ -3725,8 +3691,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeTargetPositionLiftPercent100
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::TargetPositionLiftPercent100ths::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::TargetPositionLiftPercent100ths::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeTargetPositionTiltPercent100ths(Callback::Cancelable * onSuccessCallback,
@@ -3737,8 +3702,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeTargetPositionTiltPercent100
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::TargetPositionTiltPercent100ths::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::TargetPositionTiltPercent100ths::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeEndProductType(Callback::Cancelable * onSuccessCallback,
@@ -3748,7 +3712,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeEndProductType(Callback::Can
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::EndProductType::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::EndProductType::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionLiftPercent100ths(Callback::Cancelable * onSuccessCallback,
@@ -3759,8 +3723,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionLiftPercent10
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionLiftPercent100ths::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionLiftPercent100ths::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionTiltPercent100ths(Callback::Cancelable * onSuccessCallback,
@@ -3771,8 +3734,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeCurrentPositionTiltPercent10
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionTiltPercent100ths::Id),
-        value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::CurrentPositionTiltPercent100ths::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeInstalledOpenLimitLift(Callback::Cancelable * onSuccessCallback,
@@ -3782,7 +3744,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeInstalledOpenLimitLift(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::InstalledOpenLimitLift::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::InstalledOpenLimitLift::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeInstalledClosedLimitLift(Callback::Cancelable * onSuccessCallback,
@@ -3793,7 +3755,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeInstalledClosedLimitLift(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::InstalledClosedLimitLift::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::InstalledClosedLimitLift::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeInstalledOpenLimitTilt(Callback::Cancelable * onSuccessCallback,
@@ -3803,7 +3765,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeInstalledOpenLimitTilt(Callb
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::InstalledOpenLimitTilt::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::InstalledOpenLimitTilt::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeInstalledClosedLimitTilt(Callback::Cancelable * onSuccessCallback,
@@ -3814,7 +3776,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeInstalledClosedLimitTilt(Cal
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::InstalledClosedLimitTilt::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::InstalledClosedLimitTilt::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeSafetyStatus(Callback::Cancelable * onSuccessCallback,
@@ -3824,7 +3786,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeSafetyStatus(Callback::Cance
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::SafetyStatus::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::SafetyStatus::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeFeatureMap(Callback::Cancelable * onSuccessCallback,
@@ -3834,7 +3796,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeFeatureMap(Callback::Cancela
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::FeatureMap::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::FeatureMap::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 CHIP_ERROR WindowCoveringClusterTest::WriteAttributeClusterRevision(Callback::Cancelable * onSuccessCallback,
@@ -3844,7 +3806,7 @@ CHIP_ERROR WindowCoveringClusterTest::WriteAttributeClusterRevision(Callback::Ca
     ReturnErrorOnFailure(
         app::InteractionModelEngine::GetInstance()->NewWriteClient(handle, mDevice->GetInteractionModelDelegate()));
     ReturnErrorOnFailure(handle.EncodeAttributeWritePayload(
-        chip::app::AttributePathParams(mEndpoint, mClusterId, WindowCovering::Attributes::ClusterRevision::Id), value));
+        chip::app::ClusterInfo(mEndpoint, mClusterId, WindowCovering::Attributes::ClusterRevision::Id), value));
     return mDevice->SendWriteAttributeRequest(std::move(handle), onSuccessCallback, onFailureCallback);
 }
 
