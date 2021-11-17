@@ -15,7 +15,7 @@
  *    limitations under the License.
  */
 
-#include "DeviceNetworkProvisioningDelegateImpl.h"
+#include "DeviceNetworkCommissioningDelegateImpl.h"
 
 #if CHIP_ENABLE_OPENTHREAD
 #include <platform/ThreadStackManager.h>
@@ -24,8 +24,7 @@
 namespace chip {
 namespace DeviceLayer {
 
-CHIP_ERROR
-DeviceNetworkProvisioningDelegateImpl::_ProvisionThreadNetwork(ByteSpan threadData)
+CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ConnectToThreadNetwork(ByteSpan threadData)
 {
 #if CHIP_ENABLE_OPENTHREAD
     CHIP_ERROR error = CHIP_NO_ERROR;

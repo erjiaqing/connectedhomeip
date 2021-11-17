@@ -17,7 +17,7 @@
 
 #pragma once
 
-#include <platform/internal/GenericDeviceNetworkProvisioningDelegateImpl.h>
+#include <platform/internal/GenericDeviceNetworkCommissioningDelegateImpl.h>
 
 namespace chip {
 namespace DeviceLayer {
@@ -25,18 +25,21 @@ namespace DeviceLayer {
 namespace Internal {
 
 template <class ImplClass>
-class GenericDeviceNetworkProvisioningDelegateImpl;
+class GenericDeviceNetworkCommissioningDelegateImpl;
 
 } // namespace Internal
 
-class DeviceNetworkProvisioningDelegateImpl final
-    : public Internal::GenericDeviceNetworkProvisioningDelegateImpl<DeviceNetworkProvisioningDelegateImpl>
+class DeviceNetworkCommissioningDelegateImpl final
+    : public Internal::GenericDeviceNetworkCommissioningDelegateImpl<DeviceNetworkCommissioningDelegateImpl>
 {
-    friend class GenericDeviceNetworkProvisioningDelegateImpl<DeviceNetworkProvisioningDelegateImpl>;
+    friend class GenericDeviceNetworkCommissioningDelegateImpl<DeviceNetworkCommissioningDelegateImpl>;
+
+public:
+    void ScanNetworks(System::Clock::Milliseconds32 timeout, ScanNetworkCallback * callback) override;
 
 private:
-    CHIP_ERROR _ProvisionWiFiNetwork(const char * ssid, const char * passwd) { return CHIP_ERROR_NOT_IMPLEMENTED; }
-    CHIP_ERROR _ProvisionThreadNetwork(ByteSpan threadData);
+    CHIP_ERROR _ProvisionWiFiNetwork(const char * ssid, const char * passwd);
+    CHIP_ERROR _ConnectToThreadNetwork(ByteSpan threadData);
 };
 
 } // namespace DeviceLayer

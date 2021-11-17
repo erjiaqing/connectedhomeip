@@ -31,9 +31,21 @@
 #include <app/CommandHandler.h>
 #include <app/ConcreteCommandPath.h>
 #include <app/util/af.h>
+#include <platform/CHIPDeviceLayer.h>
+
+#if defined(CHIP_DEVICE_LAYER_TARGET)
+#define DEVICENETWORKPROVISIONING_HEADER <platform/CHIP_DEVICE_LAYER_TARGET/DeviceNetworkCommissioningDelegateImpl.h>
+#include DEVICENETWORKPROVISIONING_HEADER
+#endif
 
 using namespace chip;
 using namespace chip::app::Clusters::NetworkCommissioning;
+
+namespace {
+#if defined(CHIP_DEVICE_LAYER_TARGET)
+chip::DeviceLayer::DeviceNetworkCommissioningDelegateImpl deviceNetworkCommissioningDelegate;
+#endif
+} // namespace
 
 bool emberAfNetworkCommissioningClusterAddThreadNetworkCallback(app::CommandHandler * commandObj,
                                                                 const app::ConcreteCommandPath & commandPath,
@@ -92,12 +104,6 @@ bool emberAfNetworkCommissioningClusterRemoveNetworkCallback(app::CommandHandler
     return false;
 }
 
-bool emberAfNetworkCommissioningClusterScanNetworksCallback(app::CommandHandler * commandObj,
-                                                            const app::ConcreteCommandPath & commandPath,
-                                                            const Commands::ScanNetworks::DecodableType & commandData)
-{
-    return false;
-}
 bool emberAfNetworkCommissioningClusterUpdateThreadNetworkCallback(app::CommandHandler * commandObj,
                                                                    const app::ConcreteCommandPath & commandPath,
                                                                    const Commands::UpdateThreadNetwork::DecodableType & commandData)
@@ -112,4 +118,10 @@ bool emberAfNetworkCommissioningClusterUpdateWiFiNetworkCallback(app::CommandHan
     return false;
 }
 
-void MatterNetworkCommissioningPluginServerInitCallback() {}
+void MatterNetworkCommissioningPluginServerInitCallback()
+{
+#if defined(CHIP_DEVICE_LAYER_TARGET)
+    ChipLogDetail(AppServer, "Init NetworkCommissioningCluster with DeviceNetworkCommissioningDelegate.");
+    SetDeviceNetworkCommissioningDelegate(&deviceNetworkCommissioningDelegate);
+#endif
+}

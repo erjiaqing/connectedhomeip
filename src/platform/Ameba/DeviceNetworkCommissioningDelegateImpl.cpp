@@ -1,6 +1,7 @@
 /*
  *
  *    Copyright (c) 2020 Project CHIP Authors
+ *    All rights reserved.
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,29 +16,28 @@
  *    limitations under the License.
  */
 
-#pragma once
+#include <support/ErrorStr.h>
+#include <support/logging/CHIPLogging.h>
 
-#include <platform/internal/GenericDeviceNetworkProvisioningDelegateImpl.h>
+#include "DeviceNetworkCommissioningDelegateImpl.h"
+#include "ServiceProvisioning.h"
 
 namespace chip {
 namespace DeviceLayer {
 
-namespace Internal {
-
-template <class ImplClass>
-class GenericDeviceNetworkProvisioningDelegateImpl;
-
-} // namespace Internal
-
-class DeviceNetworkProvisioningDelegateImpl final
-    : public Internal::GenericDeviceNetworkProvisioningDelegateImpl<DeviceNetworkProvisioningDelegateImpl>
+CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ProvisionWiFiNetwork(const char * ssid, const char * key)
 {
-    friend class GenericDeviceNetworkProvisioningDelegateImpl<DeviceNetworkProvisioningDelegateImpl>;
+    CHIP_ERROR err = CHIP_NO_ERROR;
 
-private:
-    CHIP_ERROR _ProvisionWiFiNetwork(const char * ssid, const char * passwd);
-    CHIP_ERROR _ProvisionThreadNetwork(ByteSpan threadData) { return CHIP_ERROR_NOT_IMPLEMENTED; }
-};
+    ChipLogProgress(NetworkProvisioning, "AmebaNetworkProvisioningDelegate: SSID: %s", ssid);
+    err = SetWiFiStationProvisioning(ssid, key);
+    if (err != CHIP_NO_ERROR)
+    {
+        ChipLogError(NetworkProvisioning, "Failed to connect to WiFi network: %s", chip::ErrorStr(err));
+    }
+
+    return err;
+}
 
 } // namespace DeviceLayer
 } // namespace chip

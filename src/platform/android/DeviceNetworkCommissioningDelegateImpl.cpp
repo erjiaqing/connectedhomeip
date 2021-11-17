@@ -18,12 +18,12 @@
 #include <lib/support/ErrorStr.h>
 #include <lib/support/logging/CHIPLogging.h>
 
-#include "DeviceNetworkProvisioningDelegateImpl.h"
+#include "DeviceNetworkCommissioningDelegateImpl.h"
 
 namespace chip {
 namespace DeviceLayer {
 
-CHIP_ERROR DeviceNetworkProvisioningDelegateImpl::_ProvisionWiFiNetwork(const char * ssid, const char * key)
+CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ProvisionWiFiNetwork(const char * ssid, const char * key)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 

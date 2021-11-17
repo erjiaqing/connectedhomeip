@@ -264,8 +264,8 @@ DeviceCommon
 DeviceController
 DeviceId
 DeviceLayer
-DeviceNetworkProvisioningDelegate
-DeviceNetworkProvisioningDelegateImpl
+DeviceNetworkCommissioningDelegate
+DeviceNetworkCommissioningDelegateImpl
 DevicePairingDelegate
 DevKitC
 DevKitM

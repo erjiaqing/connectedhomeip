@@ -21,9 +21,9 @@ this code will have parallels in any new adaptation.
     functionality
 -   Very much a work-in-progress in the nrfconnect branch
 
-`include/platform/nrfconnect/DeviceNetworkProvisioningDelegateImpl.h`<br>`nrfconnect/DeviceNetworkProvisioningDelegateImpl.cpp`
+`include/platform/nrfconnect/DeviceNetworkCommissioningDelegateImpl.h`<br>`nrfconnect/DeviceNetworkCommissioningDelegateImpl.cpp`
 
--   Concrete implementation of DeviceNetworkProvisioningDelegate interface
+-   Concrete implementation of DeviceNetworkCommissioningDelegate interface
 -   Provides high-level APIs for managing network provisioning
 
 `include/platform/nrfconnect/ThreadStackManagerImpl.h`

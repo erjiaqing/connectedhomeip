@@ -15,29 +15,33 @@
  *    limitations under the License.
  */
 
-#pragma once
+#include <lib/support/ErrorStr.h>
+#include <lib/support/logging/CHIPLogging.h>
 
-#include <platform/internal/GenericDeviceNetworkProvisioningDelegateImpl.h>
+#include "DeviceNetworkCommissioningDelegateImpl.h"
 
 namespace chip {
 namespace DeviceLayer {
 
-namespace Internal {
-
-template <class ImplClass>
-class GenericDeviceNetworkProvisioningDelegateImpl;
-
-} // namespace Internal
-
-class DeviceNetworkProvisioningDelegateImpl final
-    : public Internal::GenericDeviceNetworkProvisioningDelegateImpl<DeviceNetworkProvisioningDelegateImpl>
+CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ProvisionWiFiNetwork(const char * ssid, const char * key)
 {
-    friend class GenericDeviceNetworkProvisioningDelegateImpl<DeviceNetworkProvisioningDelegateImpl>;
+    CHIP_ERROR err = CHIP_NO_ERROR;
 
-private:
-    CHIP_ERROR _ProvisionWiFiNetwork(const char * ssid, const char * passwd) { return CHIP_ERROR_NOT_IMPLEMENTED; }
-    CHIP_ERROR _ProvisionThreadNetwork(ByteSpan threadData);
-};
+    ChipLogProgress(NetworkProvisioning, "LinuxNetworkProvisioningDelegate: SSID: %s", ssid);
+
+#if CHIP_DEVICE_CONFIG_ENABLE_WPA
+    err = ConnectivityMgrImpl().ProvisionWiFiNetwork(ssid, key);
+#else
+    err = CHIP_ERROR_NOT_IMPLEMENTED;
+#endif
+
+    if (err != CHIP_NO_ERROR)
+    {
+        ChipLogError(NetworkProvisioning, "Failed to connect to WiFi network: %s", chip::ErrorStr(err));
+    }
+
+    return err;
+}
 
 } // namespace DeviceLayer
 } // namespace chip

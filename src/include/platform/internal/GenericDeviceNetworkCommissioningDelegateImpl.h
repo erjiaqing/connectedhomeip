@@ -28,26 +28,26 @@ namespace DeviceLayer {
 namespace Internal {
 
 template <class ImplClass>
-class GenericDeviceNetworkProvisioningDelegateImpl : public DeviceNetworkProvisioningDelegate
+class GenericDeviceNetworkCommissioningDelegateImpl : public DeviceNetworkCommissioningDelegate
 {
 public:
     CHIP_ERROR ProvisionWiFi(const char * ssid, const char * passwd) override;
-    CHIP_ERROR ProvisionThread(ByteSpan threadData) override;
+    CHIP_ERROR ConnectToThreadNetwork(ByteSpan threadData) override;
 
 private:
     ImplClass * Impl() { return static_cast<ImplClass *>(this); }
 };
 
 template <class ImplClass>
-inline CHIP_ERROR GenericDeviceNetworkProvisioningDelegateImpl<ImplClass>::ProvisionWiFi(const char * ssid, const char * passwd)
+inline CHIP_ERROR GenericDeviceNetworkCommissioningDelegateImpl<ImplClass>::ProvisionWiFi(const char * ssid, const char * passwd)
 {
     return Impl()->_ProvisionWiFiNetwork(ssid, passwd);
 }
 
 template <class ImplClass>
-inline CHIP_ERROR GenericDeviceNetworkProvisioningDelegateImpl<ImplClass>::ProvisionThread(ByteSpan threadData)
+inline CHIP_ERROR GenericDeviceNetworkCommissioningDelegateImpl<ImplClass>::ConnectToThreadNetwork(ByteSpan threadData)
 {
-    return Impl()->_ProvisionThreadNetwork(threadData);
+    return Impl()->_ConnectToThreadNetwork(threadData);
 }
 
 } // namespace Internal

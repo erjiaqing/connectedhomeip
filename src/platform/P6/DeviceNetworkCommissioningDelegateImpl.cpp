@@ -18,13 +18,13 @@
 #include <lib/support/ErrorStr.h>
 #include <lib/support/logging/CHIPLogging.h>
 
-#include "DeviceNetworkProvisioningDelegateImpl.h"
+#include "DeviceNetworkCommissioningDelegateImpl.h"
 #include "platform/P6/P6Utils.h"
 
 namespace chip {
 namespace DeviceLayer {
 
-CHIP_ERROR DeviceNetworkProvisioningDelegateImpl::_ProvisionWiFiNetwork(const char * ssid, const char * passwd)
+CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ProvisionWiFiNetwork(const char * ssid, const char * passwd)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
     cy_rslt_t rslt = CY_RSLT_SUCCESS;

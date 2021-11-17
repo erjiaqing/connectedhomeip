@@ -1,6 +1,6 @@
 /*
  *
- *    Copyright (c) 2021 Project CHIP Authors
+ *    Copyright (c) 2020 Project CHIP Authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -15,29 +15,29 @@
  *    limitations under the License.
  */
 
-#include "DeviceNetworkProvisioningDelegateImpl.h"
+#pragma once
 
-#if CHIP_ENABLE_OPENTHREAD
-#include <platform/ThreadStackManager.h>
-#endif
+#include <platform/internal/GenericDeviceNetworkCommissioningDelegateImpl.h>
 
 namespace chip {
 namespace DeviceLayer {
 
-CHIP_ERROR DeviceNetworkProvisioningDelegateImpl::_ProvisionThreadNetwork(ByteSpan threadData)
-{
-#if CHIP_ENABLE_OPENTHREAD
-    CHIP_ERROR error = CHIP_NO_ERROR;
+namespace Internal {
 
-    SuccessOrExit(error = ThreadStackMgr().SetThreadEnabled(false));
-    SuccessOrExit(error = ThreadStackMgr().SetThreadProvision(threadData));
-    SuccessOrExit(error = ThreadStackMgr().SetThreadEnabled(true));
-exit:
-    return error;
-#else
-    return CHIP_ERROR_NOT_IMPLEMENTED;
-#endif // CHIP_ENABLE_OPENTHREAD
-}
+template <class ImplClass>
+class GenericDeviceNetworkCommissioningDelegateImpl;
+
+} // namespace Internal
+
+class DeviceNetworkCommissioningDelegateImpl final
+    : public Internal::GenericDeviceNetworkCommissioningDelegateImpl<DeviceNetworkCommissioningDelegateImpl>
+{
+private:
+    friend class GenericDeviceNetworkCommissioningDelegateImpl<DeviceNetworkCommissioningDelegateImpl>;
+
+    CHIP_ERROR _ProvisionWiFiNetwork(const char * ssid, const char * passwd);
+    CHIP_ERROR _ConnectToThreadNetwork(ByteSpan threadData);
+};
 
 } // namespace DeviceLayer
 } // namespace chip

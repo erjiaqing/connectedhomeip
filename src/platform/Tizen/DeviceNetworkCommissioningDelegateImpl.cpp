@@ -1,7 +1,6 @@
 /*
  *
- *    Copyright (c) 2020 Project CHIP Authors
- *    All rights reserved.
+ *    Copyright (c) 2021 Project CHIP Authors
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
@@ -16,21 +15,21 @@
  *    limitations under the License.
  */
 
-#include <support/ErrorStr.h>
-#include <support/logging/CHIPLogging.h>
+#include <lib/support/ErrorStr.h>
+#include <lib/support/logging/CHIPLogging.h>
 
-#include "DeviceNetworkProvisioningDelegateImpl.h"
-#include "ServiceProvisioning.h"
+#include "DeviceNetworkCommissioningDelegateImpl.h"
 
 namespace chip {
 namespace DeviceLayer {
 
-CHIP_ERROR DeviceNetworkProvisioningDelegateImpl::_ProvisionWiFiNetwork(const char * ssid, const char * key)
+CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ProvisionWiFiNetwork(const char * ssid, const char * key)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
-    ChipLogProgress(NetworkProvisioning, "AmebaNetworkProvisioningDelegate: SSID: %s", ssid);
-    err = SetWiFiStationProvisioning(ssid, key);
+    ChipLogProgress(NetworkProvisioning, "TizenNetworkProvisioningDelegate: SSID: %s", ssid);
+
+    err = ConnectivityMgrImpl().ProvisionWiFiNetwork(ssid, key);
     if (err != CHIP_NO_ERROR)
     {
         ChipLogError(NetworkProvisioning, "Failed to connect to WiFi network: %s", chip::ErrorStr(err));

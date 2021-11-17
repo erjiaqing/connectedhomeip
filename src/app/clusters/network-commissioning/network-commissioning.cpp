@@ -21,6 +21,7 @@
 #include <cstring>
 #include <type_traits>
 
+#include <app-common/zap-generated/cluster-objects.h>
 #include <lib/support/CodeUtils.h>
 #include <lib/support/SafeInt.h>
 #include <lib/support/Span.h>
@@ -30,24 +31,6 @@
 #include <platform/ConnectivityManager.h>
 #include <platform/internal/DeviceControlServer.h>
 
-#include <app-common/zap-generated/cluster-objects.h>
-
-#if CHIP_DEVICE_CONFIG_ENABLE_THREAD
-#include <platform/ThreadStackManager.h>
-#endif // CHIP_DEVICE_CONFIG_ENABLE_THREAD
-
-// Include DeviceNetworkProvisioningDelegateImpl for WiFi provisioning.
-// TODO: Enable wifi network should be done by ConnectivityManager. (Or other platform neutral interfaces)
-#if defined(CHIP_DEVICE_LAYER_TARGET)
-#define DEVICENETWORKPROVISIONING_HEADER <platform/CHIP_DEVICE_LAYER_TARGET/DeviceNetworkProvisioningDelegateImpl.h>
-#include DEVICENETWORKPROVISIONING_HEADER
-#endif
-
-// TODO: Configuration should move to build-time configuration
-#ifndef CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_NETWORKS
-#define CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_NETWORKS 4
-#endif // CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_NETWORKS
-
 using namespace chip;
 using namespace chip::app;
 
@@ -56,61 +39,23 @@ namespace app {
 namespace Clusters {
 namespace NetworkCommissioning {
 
-constexpr uint8_t kMaxNetworkIDLen       = 32;
-constexpr uint8_t kMaxThreadDatasetLen   = 254; // As defined in Thread spec.
-constexpr uint8_t kMaxWiFiSSIDLen        = 32;
-constexpr uint8_t kMaxWiFiCredentialsLen = 64;
-constexpr uint8_t kMaxNetworks           = CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_NETWORKS;
-
-enum class NetworkType : uint8_t
-{
-    kUndefined = 0,
-    kWiFi      = 1,
-    kThread    = 2,
-    kEthernet  = 3,
-};
-
-struct ThreadNetworkInfo
-{
-    uint8_t mDataset[kMaxThreadDatasetLen];
-    uint8_t mDatasetLen;
-};
-
-struct WiFiNetworkInfo
-{
-    uint8_t mSSID[kMaxWiFiSSIDLen + 1];
-    uint8_t mSSIDLen;
-    uint8_t mCredentials[kMaxWiFiCredentialsLen];
-    uint8_t mCredentialsLen;
-};
-
-struct NetworkInfo
-{
-    uint8_t mNetworkID[kMaxNetworkIDLen];
-    uint8_t mNetworkIDLen;
-    uint8_t mEnabled;
-    NetworkType mNetworkType;
-    union NetworkData
-    {
-#if CHIP_DEVICE_CONFIG_ENABLE_THREAD
-        Thread::OperationalDataset mThread;
-#endif
-#if defined(CHIP_DEVICE_LAYER_TARGET)
-        WiFiNetworkInfo mWiFi;
-#endif
-    } mData;
-};
-
 namespace {
 // The internal network info containing credentials. Need to find some better place to save these info.
 NetworkInfo sNetworks[kMaxNetworks];
+DeviceLayer::Internal::DeviceNetworkCommissioningDelegate * commissioningDelegate = nullptr;
 } // namespace
+
+namespace Internal {
+DeviceLayer::Internal::DeviceNetworkCommissioningDelegate * GetDeviceNetworkCommissioningDelegate()
+{
+    return commissioningDelegate;
+}
+} // namespace Internal
 
 void OnAddThreadNetworkCommandCallbackInternal(app::CommandHandler * apCommandHandler, const app::ConcreteCommandPath & commandPath,
                                                ByteSpan operationalDataset, uint64_t breadcrumb, uint32_t timeoutMs)
 {
     Commands::AddThreadNetworkResponse::Type response;
-#if CHIP_DEVICE_CONFIG_ENABLE_THREAD
     EmberAfNetworkCommissioningError err = EMBER_ZCL_NETWORK_COMMISSIONING_ERROR_BOUNDS_EXCEEDED;
 
     for (size_t i = 0; i < kMaxNetworks; i++)
@@ -148,11 +93,6 @@ exit:
 
     ChipLogDetail(Zcl, "AddThreadNetwork: %" PRIu8, err);
     response.errorCode = err;
-#else
-    // The target does not supports ThreadNetwork. We should not add AddThreadNetwork command in that case then the upper layer will
-    // return "Command not found" error.
-    response.errorCode = EMBER_ZCL_NETWORK_COMMISSIONING_ERROR_UNKNOWN_ERROR;
-#endif
     apCommandHandler->AddResponseData(commandPath, response);
 }
 
@@ -160,7 +100,6 @@ void OnAddWiFiNetworkCommandCallbackInternal(app::CommandHandler * apCommandHand
                                              ByteSpan ssid, ByteSpan credentials, uint64_t breadcrumb, uint32_t timeoutMs)
 {
     Commands::AddWiFiNetworkResponse::Type response;
-#if defined(CHIP_DEVICE_LAYER_TARGET)
     EmberAfNetworkCommissioningError err = EMBER_ZCL_NETWORK_COMMISSIONING_ERROR_BOUNDS_EXCEEDED;
 
     for (size_t i = 0; i < kMaxNetworks; i++)
@@ -206,11 +145,6 @@ exit:
 
     ChipLogDetail(Zcl, "AddWiFiNetwork: %" PRIu8, err);
     response.errorCode = err;
-#else
-    // The target does not supports WiFiNetwork.
-    // return "Command not found" error.
-    response.errorCode = EMBER_ZCL_NETWORK_COMMISSIONING_ERROR_UNKNOWN_ERROR;
-#endif
     apCommandHandler->AddResponseData(commandPath, response);
 }
 
@@ -220,32 +154,13 @@ CHIP_ERROR DoEnableNetwork(NetworkInfo * network)
     switch (network->mNetworkType)
     {
     case NetworkType::kThread:
-#if CHIP_DEVICE_CONFIG_ENABLE_THREAD
-// TODO: On linux, we are using Reset() instead of Detach() to disable thread network, which is not expected.
-// Upstream issue: https://github.com/openthread/ot-br-posix/issues/755
-#if !CHIP_DEVICE_LAYER_TARGET_LINUX
-        ReturnErrorOnFailure(DeviceLayer::ThreadStackMgr().SetThreadEnabled(false));
-#endif
-        ReturnErrorOnFailure(DeviceLayer::ThreadStackMgr().SetThreadProvision(network->mData.mThread.AsByteSpan()));
-        ReturnErrorOnFailure(DeviceLayer::ThreadStackMgr().SetThreadEnabled(true));
-#else
-        return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
-#endif
+        ReturnErrorOnFailure(commissioningDelegate->ConnectToThreadNetwork(network->mData.mThread.AsByteSpan()));
         break;
     case NetworkType::kWiFi:
-#if defined(CHIP_DEVICE_LAYER_TARGET)
-    {
-        // TODO: Currently, DeviceNetworkProvisioningDelegateImpl assumes that ssid and credentials are null terminated strings,
-        // which is not correct, this should be changed once we have better method for commissioning wifi networks.
-        DeviceLayer::DeviceNetworkProvisioningDelegateImpl deviceDelegate;
-        ReturnErrorOnFailure(deviceDelegate.ProvisionWiFi(reinterpret_cast<const char *>(network->mData.mWiFi.mSSID),
-                                                          reinterpret_cast<const char *>(network->mData.mWiFi.mCredentials)));
+        ReturnErrorOnFailure(
+            commissioningDelegate->ProvisionWiFi(reinterpret_cast<const char *>(network->mData.mWiFi.mSSID),
+                                                 reinterpret_cast<const char *>(network->mData.mWiFi.mCredentials)));
         break;
-    }
-#else
-        return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE;
-#endif
-    break;
     case NetworkType::kEthernet:
     case NetworkType::kUndefined:
     default:
@@ -284,6 +199,16 @@ exit:
     }
     response.errorCode = err;
     apCommandHandler->AddResponseData(commandPath, response);
+}
+
+void SetDeviceNetworkCommissioningDelegate(DeviceLayer::Internal::DeviceNetworkCommissioningDelegate * delegate)
+{
+    commissioningDelegate = delegate;
+}
+
+DeviceLayer::Internal::DeviceNetworkCommissioningDelegate * GetDeviceNetworkCommissioningDelegate()
+{
+    return commissioningDelegate;
 }
 
 } // namespace NetworkCommissioning

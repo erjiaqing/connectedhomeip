@@ -108,7 +108,7 @@ class CHIPToolActivity :
     showFragment(BarcodeFragment.newInstance(), false)
   }
 
-  override fun onProvisionThreadCredentialsClicked() {
+  override fun onConnectToThreadNetworkCredentialsClicked() {
     networkType = ProvisionNetworkType.THREAD
     showFragment(BarcodeFragment.newInstance(), false)
   }
