@@ -224,7 +224,11 @@ CHIP_ERROR ReadSingleClusterData(FabricIndex aAccessingFabricIndex, const Concre
     aAttributeReport.Checkpoint(backup);
 
     attributeDataIBBuilder = aAttributeReport.CreateAttributeData();
+    ReturnErrorOnFailure(attributeDataIBBuilder.GetError());
+
     attributePathIBBuilder = attributeDataIBBuilder.CreatePath();
+    ReturnErrorOnFailure(attributePathIBBuilder.GetError());
+
     attributePathIBBuilder.Endpoint(aPath.mEndpointId)
         .Cluster(aPath.mClusterId)
         .Attribute(aPath.mAttributeId)
@@ -434,19 +438,27 @@ CHIP_ERROR ReadSingleClusterData(FabricIndex aAccessingFabricIndex, const Concre
     else
     {
         aAttributeReport.Rollback(backup);
+
         attributeStatusIBBuilder = aAttributeReport.CreateAttributeStatus();
-        attributePathIBBuilder   = attributeStatusIBBuilder.CreatePath();
+        ReturnErrorOnFailure(attributeStatusIBBuilder.GetError());
+
+        attributePathIBBuilder = attributeStatusIBBuilder.CreatePath();
+        ReturnErrorOnFailure(attributePathIBBuilder.GetError());
+
         attributePathIBBuilder.Endpoint(aPath.mEndpointId)
             .Cluster(aPath.mClusterId)
             .Attribute(aPath.mAttributeId)
             .EndOfAttributePathIB();
         ReturnErrorOnFailure(attributePathIBBuilder.GetError());
+
         StatusIB::Builder statusIBBuilder = attributeStatusIBBuilder.CreateErrorStatus();
         statusIBBuilder.EncodeStatusIB(StatusIB(imStatus));
         ReturnErrorOnFailure(statusIBBuilder.GetError());
+
         attributeStatusIBBuilder.EndOfAttributeStatusIB();
         ReturnErrorOnFailure(attributeStatusIBBuilder.GetError());
     }
+
     return CHIP_NO_ERROR;
 }
 
