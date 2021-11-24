@@ -2151,6 +2151,7 @@ void CHIPNetworkCommissioningClusterScanNetworksResponseCallbackBridge::OnSucces
             newElement_0.bssid = [NSData dataWithBytes:entry_0.bssid.data() length:entry_0.bssid.size()];
             newElement_0.channel = [NSNumber numberWithUnsignedChar:entry_0.channel];
             newElement_0.frequencyBand = [NSNumber numberWithUnsignedInt:entry_0.frequencyBand];
+            newElement_0.rssi = [NSNumber numberWithChar:entry_0.rssi];
             [array_0 addObject:newElement_0];
         }
         if (iter_0.GetStatus() != CHIP_NO_ERROR) {
@@ -2168,8 +2169,16 @@ void CHIPNetworkCommissioningClusterScanNetworksResponseCallbackBridge::OnSucces
             auto & entry_0 = iter_0.GetValue();
             CHIPNetworkCommissioningClusterThreadInterfaceScanResult * newElement_0;
             newElement_0 = [CHIPNetworkCommissioningClusterThreadInterfaceScanResult new];
-            newElement_0.discoveryResponse = [NSData dataWithBytes:entry_0.discoveryResponse.data()
-                                                            length:entry_0.discoveryResponse.size()];
+            newElement_0.panId = [NSNumber numberWithUnsignedShort:entry_0.panId];
+            newElement_0.extendedPanId = [NSNumber numberWithUnsignedLongLong:entry_0.extendedPanId];
+            newElement_0.networkName = [[NSString alloc] initWithBytes:entry_0.networkName.data()
+                                                                length:entry_0.networkName.size()
+                                                              encoding:NSUTF8StringEncoding];
+            newElement_0.channel = [NSNumber numberWithUnsignedShort:entry_0.channel];
+            newElement_0.version = [NSNumber numberWithUnsignedChar:entry_0.version];
+            newElement_0.extendedAddress = [NSNumber numberWithUnsignedLongLong:entry_0.extendedAddress];
+            newElement_0.rssi = [NSNumber numberWithChar:entry_0.rssi];
+            newElement_0.lqi = [NSNumber numberWithUnsignedChar:entry_0.lqi];
             [array_0 addObject:newElement_0];
         }
         if (iter_0.GetStatus() != CHIP_NO_ERROR) {

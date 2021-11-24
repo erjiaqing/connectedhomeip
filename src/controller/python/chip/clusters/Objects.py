@@ -6956,10 +6956,31 @@ class NetworkCommissioning(Cluster):
                 return ClusterObjectDescriptor(
                     Fields=[
                         ClusterObjectFieldDescriptor(
-                            Label="discoveryResponse", Tag=0, Type=bytes),
+                            Label="panId", Tag=0, Type=uint),
+                        ClusterObjectFieldDescriptor(
+                            Label="extendedPanId", Tag=1, Type=uint),
+                        ClusterObjectFieldDescriptor(
+                            Label="networkName", Tag=2, Type=str),
+                        ClusterObjectFieldDescriptor(
+                            Label="channel", Tag=3, Type=uint),
+                        ClusterObjectFieldDescriptor(
+                            Label="version", Tag=4, Type=uint),
+                        ClusterObjectFieldDescriptor(
+                            Label="extendedAddress", Tag=5, Type=uint),
+                        ClusterObjectFieldDescriptor(
+                            Label="rssi", Tag=6, Type=int),
+                        ClusterObjectFieldDescriptor(
+                            Label="lqi", Tag=7, Type=uint),
                     ])
 
-            discoveryResponse: 'bytes' = None
+            panId: 'uint' = None
+            extendedPanId: 'uint' = None
+            networkName: 'str' = None
+            channel: 'uint' = None
+            version: 'uint' = None
+            extendedAddress: 'uint' = None
+            rssi: 'int' = None
+            lqi: 'uint' = None
 
         @dataclass
         class WiFiInterfaceScanResult(ClusterObject):
@@ -6977,6 +6998,8 @@ class NetworkCommissioning(Cluster):
                             Label="channel", Tag=3, Type=uint),
                         ClusterObjectFieldDescriptor(
                             Label="frequencyBand", Tag=4, Type=uint),
+                        ClusterObjectFieldDescriptor(
+                            Label="rssi", Tag=5, Type=int),
                     ])
 
             security: 'uint' = None
@@ -6984,6 +7007,7 @@ class NetworkCommissioning(Cluster):
             bssid: 'bytes' = None
             channel: 'uint' = None
             frequencyBand: 'uint' = None
+            rssi: 'int' = None
 
     class Commands:
         @dataclass

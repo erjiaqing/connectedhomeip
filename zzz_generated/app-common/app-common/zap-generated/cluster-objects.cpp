@@ -5526,7 +5526,14 @@ CHIP_ERROR Type::Encode(TLV::TLVWriter & writer, TLV::Tag tag) const
 {
     TLV::TLVType outer;
     ReturnErrorOnFailure(writer.StartContainer(tag, TLV::kTLVType_Structure, outer));
-    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kDiscoveryResponse)), discoveryResponse));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kPanId)), panId));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kExtendedPanId)), extendedPanId));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kNetworkName)), networkName));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kChannel)), channel));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kVersion)), version));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kExtendedAddress)), extendedAddress));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kRssi)), rssi));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kLqi)), lqi));
     ReturnErrorOnFailure(writer.EndContainer(outer));
     return CHIP_NO_ERROR;
 }
@@ -5543,8 +5550,29 @@ CHIP_ERROR DecodableType::Decode(TLV::TLVReader & reader)
         VerifyOrReturnError(TLV::IsContextTag(reader.GetTag()), CHIP_ERROR_INVALID_TLV_TAG);
         switch (TLV::TagNumFromTag(reader.GetTag()))
         {
-        case to_underlying(Fields::kDiscoveryResponse):
-            ReturnErrorOnFailure(DataModel::Decode(reader, discoveryResponse));
+        case to_underlying(Fields::kPanId):
+            ReturnErrorOnFailure(DataModel::Decode(reader, panId));
+            break;
+        case to_underlying(Fields::kExtendedPanId):
+            ReturnErrorOnFailure(DataModel::Decode(reader, extendedPanId));
+            break;
+        case to_underlying(Fields::kNetworkName):
+            ReturnErrorOnFailure(DataModel::Decode(reader, networkName));
+            break;
+        case to_underlying(Fields::kChannel):
+            ReturnErrorOnFailure(DataModel::Decode(reader, channel));
+            break;
+        case to_underlying(Fields::kVersion):
+            ReturnErrorOnFailure(DataModel::Decode(reader, version));
+            break;
+        case to_underlying(Fields::kExtendedAddress):
+            ReturnErrorOnFailure(DataModel::Decode(reader, extendedAddress));
+            break;
+        case to_underlying(Fields::kRssi):
+            ReturnErrorOnFailure(DataModel::Decode(reader, rssi));
+            break;
+        case to_underlying(Fields::kLqi):
+            ReturnErrorOnFailure(DataModel::Decode(reader, lqi));
             break;
         default:
             break;
@@ -5567,6 +5595,7 @@ CHIP_ERROR Type::Encode(TLV::TLVWriter & writer, TLV::Tag tag) const
     ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kBssid)), bssid));
     ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kChannel)), channel));
     ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kFrequencyBand)), frequencyBand));
+    ReturnErrorOnFailure(DataModel::Encode(writer, TLV::ContextTag(to_underlying(Fields::kRssi)), rssi));
     ReturnErrorOnFailure(writer.EndContainer(outer));
     return CHIP_NO_ERROR;
 }
@@ -5597,6 +5626,9 @@ CHIP_ERROR DecodableType::Decode(TLV::TLVReader & reader)
             break;
         case to_underlying(Fields::kFrequencyBand):
             ReturnErrorOnFailure(DataModel::Decode(reader, frequencyBand));
+            break;
+        case to_underlying(Fields::kRssi):
+            ReturnErrorOnFailure(DataModel::Decode(reader, rssi));
             break;
         default:
             break;

@@ -154,7 +154,21 @@ NS_ASSUME_NONNULL_BEGIN
 {
     if (self = [super init]) {
 
-        _discoveryResponse = [NSData data];
+        _panId = @(0);
+
+        _extendedPanId = @(0);
+
+        _networkName = @"";
+
+        _channel = @(0);
+
+        _version = @(0);
+
+        _extendedAddress = @(0);
+
+        _rssi = @(0);
+
+        _lqi = @(0);
     }
     return self;
 }
@@ -174,6 +188,8 @@ NS_ASSUME_NONNULL_BEGIN
         _channel = @(0);
 
         _frequencyBand = @(0);
+
+        _rssi = @(0);
     }
     return self;
 }

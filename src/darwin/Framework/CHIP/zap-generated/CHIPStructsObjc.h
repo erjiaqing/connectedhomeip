@@ -85,7 +85,14 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 @interface CHIPNetworkCommissioningClusterThreadInterfaceScanResult : NSObject
-@property (strong, nonatomic) NSData * _Nonnull discoveryResponse;
+@property (strong, nonatomic) NSNumber * _Nonnull panId;
+@property (strong, nonatomic) NSNumber * _Nonnull extendedPanId;
+@property (strong, nonatomic) NSString * _Nonnull networkName;
+@property (strong, nonatomic) NSNumber * _Nonnull channel;
+@property (strong, nonatomic) NSNumber * _Nonnull version;
+@property (strong, nonatomic) NSNumber * _Nonnull extendedAddress;
+@property (strong, nonatomic) NSNumber * _Nonnull rssi;
+@property (strong, nonatomic) NSNumber * _Nonnull lqi;
 - (instancetype)init;
 @end
 
@@ -95,6 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic) NSData * _Nonnull bssid;
 @property (strong, nonatomic) NSNumber * _Nonnull channel;
 @property (strong, nonatomic) NSNumber * _Nonnull frequencyBand;
+@property (strong, nonatomic) NSNumber * _Nonnull rssi;
 - (instancetype)init;
 @end
 

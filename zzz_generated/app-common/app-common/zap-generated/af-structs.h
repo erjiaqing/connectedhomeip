@@ -416,7 +416,14 @@ typedef struct _TestListStructOctet
 // Struct for ThreadInterfaceScanResult
 typedef struct _ThreadInterfaceScanResult
 {
-    chip::ByteSpan DiscoveryResponse;
+    uint16_t PanId;
+    uint64_t ExtendedPanId;
+    chip::CharSpan NetworkName;
+    uint16_t Channel;
+    uint8_t Version;
+    uint64_t ExtendedAddress;
+    int8_t RSSI;
+    uint8_t LQI;
 } ThreadInterfaceScanResult;
 
 // Struct for ThreadMetrics
@@ -467,6 +474,7 @@ typedef struct _WiFiInterfaceScanResult
     chip::ByteSpan BSSID;
     uint8_t Channel;
     uint32_t FrequencyBand;
+    int8_t RSSI;
 } WiFiInterfaceScanResult;
 
 // Struct for WiredFaultChangeType

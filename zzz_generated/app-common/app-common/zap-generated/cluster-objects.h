@@ -8446,13 +8446,27 @@ namespace Structs {
 namespace ThreadInterfaceScanResult {
 enum class Fields
 {
-    kDiscoveryResponse = 0,
+    kPanId           = 0,
+    kExtendedPanId   = 1,
+    kNetworkName     = 2,
+    kChannel         = 3,
+    kVersion         = 4,
+    kExtendedAddress = 5,
+    kRssi            = 6,
+    kLqi             = 7,
 };
 
 struct Type
 {
 public:
-    chip::ByteSpan discoveryResponse;
+    uint16_t panId;
+    uint64_t extendedPanId;
+    chip::CharSpan networkName;
+    uint16_t channel;
+    uint8_t version;
+    uint64_t extendedAddress;
+    int8_t rssi;
+    uint8_t lqi;
 
     CHIP_ERROR Encode(TLV::TLVWriter & writer, TLV::Tag tag) const;
     CHIP_ERROR Decode(TLV::TLVReader & reader);
@@ -8469,6 +8483,7 @@ enum class Fields
     kBssid         = 2,
     kChannel       = 3,
     kFrequencyBand = 4,
+    kRssi          = 5,
 };
 
 struct Type
@@ -8479,6 +8494,7 @@ public:
     chip::ByteSpan bssid;
     uint8_t channel;
     uint32_t frequencyBand;
+    int8_t rssi;
 
     CHIP_ERROR Encode(TLV::TLVWriter & writer, TLV::Tag tag) const;
     CHIP_ERROR Decode(TLV::TLVReader & reader);

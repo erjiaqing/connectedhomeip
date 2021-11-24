@@ -524,11 +524,67 @@ CHIP_ERROR LogValue(const char * label, size_t indent,
 {
     ChipLogProgress(chipTool, "%s%s: {", IndentStr(indent).c_str(), label);
     {
-        CHIP_ERROR err = LogValue("DiscoveryResponse", indent + 1, value.discoveryResponse);
+        CHIP_ERROR err = LogValue("PanId", indent + 1, value.panId);
         if (err != CHIP_NO_ERROR)
         {
-            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'DiscoveryResponse'",
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'PanId'", IndentStr(indent + 1).c_str());
+            return err;
+        }
+    }
+    {
+        CHIP_ERROR err = LogValue("ExtendedPanId", indent + 1, value.extendedPanId);
+        if (err != CHIP_NO_ERROR)
+        {
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'ExtendedPanId'", IndentStr(indent + 1).c_str());
+            return err;
+        }
+    }
+    {
+        CHIP_ERROR err = LogValue("NetworkName", indent + 1, value.networkName);
+        if (err != CHIP_NO_ERROR)
+        {
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'NetworkName'", IndentStr(indent + 1).c_str());
+            return err;
+        }
+    }
+    {
+        CHIP_ERROR err = LogValue("Channel", indent + 1, value.channel);
+        if (err != CHIP_NO_ERROR)
+        {
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'Channel'", IndentStr(indent + 1).c_str());
+            return err;
+        }
+    }
+    {
+        CHIP_ERROR err = LogValue("Version", indent + 1, value.version);
+        if (err != CHIP_NO_ERROR)
+        {
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'Version'", IndentStr(indent + 1).c_str());
+            return err;
+        }
+    }
+    {
+        CHIP_ERROR err = LogValue("ExtendedAddress", indent + 1, value.extendedAddress);
+        if (err != CHIP_NO_ERROR)
+        {
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'ExtendedAddress'",
                             IndentStr(indent + 1).c_str());
+            return err;
+        }
+    }
+    {
+        CHIP_ERROR err = LogValue("Rssi", indent + 1, value.rssi);
+        if (err != CHIP_NO_ERROR)
+        {
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'Rssi'", IndentStr(indent + 1).c_str());
+            return err;
+        }
+    }
+    {
+        CHIP_ERROR err = LogValue("Lqi", indent + 1, value.lqi);
+        if (err != CHIP_NO_ERROR)
+        {
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'Lqi'", IndentStr(indent + 1).c_str());
             return err;
         }
     }
@@ -576,6 +632,14 @@ CHIP_ERROR LogValue(const char * label, size_t indent,
         if (err != CHIP_NO_ERROR)
         {
             ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'FrequencyBand'", IndentStr(indent + 1).c_str());
+            return err;
+        }
+    }
+    {
+        CHIP_ERROR err = LogValue("Rssi", indent + 1, value.rssi);
+        if (err != CHIP_NO_ERROR)
+        {
+            ChipLogProgress(chipTool, "%sStruct truncated due to invalid value for 'Rssi'", IndentStr(indent + 1).c_str());
             return err;
         }
     }
