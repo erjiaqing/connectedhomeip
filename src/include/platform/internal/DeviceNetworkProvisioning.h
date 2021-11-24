@@ -80,8 +80,18 @@ public:
         OnWiFiNetworkDiscovered(const app::Clusters::NetworkCommissioning::Structs::WiFiInterfaceScanResult::Type & network) = 0;
         virtual void OnThreadNetworkDiscovered(
             const app::Clusters::NetworkCommissioning::Structs::ThreadInterfaceScanResult::Type & network) = 0;
-        virtual void OnError(CHIP_ERROR err)                                                               = 0;
-        virtual void OnDone()                                                                              = 0;
+
+        /**
+         * Indicates there is an error during scanning the network.
+         * OnError() must be called inside CHIP Mainloop
+         */
+        virtual void OnError(CHIP_ERROR err) = 0;
+
+        /**
+         * Indicates the network scan is finished, this function will always be called for one network scan session.
+         * OnDone() must be called inside CHIP Mainloop
+         */
+        virtual void OnDone() = 0;
 
         virtual ~ScanNetworkCallback() = default;
     };

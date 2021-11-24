@@ -1,4 +1,5 @@
 #include <app/ConcreteCommandPath.h>
+#include <app/StatusResponse.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 
 using namespace chip;
@@ -10,38 +11,27 @@ app::CommandHandler::Handle asyncCommandHandle;
 
 class ScanNetworkCallback : public DeviceLayer::Internal::DeviceNetworkCommissioningDelegate::ScanNetworkCallback
 {
+private:
+    static constexpr TLV::Tag kWifiNetworkTag   = TLV::ContextTag(0);
+    static constexpr TLV::Tag kThreadNetworkTag = TLV::ContextTag(1);
+
 public:
-    void SetCommandPath(const ConcreteCommandPath & path) { mPath = path; }
+    CHIP_ERROR Init(const ConcreteCommandPath & path)
+    {
+        chip::System::PacketBufferHandle bufHandle = System::PacketBufferHandle::New(chip::app::kMaxSecureSduLengthBytes);
+        mPath                                      = path;
+        VerifyOrReturnError(!bufHandle.IsNull(), CHIP_ERROR_NO_MEMORY);
+        mScanResults.Init(std::move(bufHandle));
+        return mScanResults.StartContainer(TLV::AnonymousTag, TLV::kTLVType_List, mDummyType);
+    }
     void OnWiFiNetworkDiscovered(const Structs::WiFiInterfaceScanResult::Type & network) override
     {
-        for (size_t i = 0; i < CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_WIFI_SCAN_RESULTS; i++)
-        {
-            if (mWiFiScanResults[i].frequencyBand == 0)
-            {
-                mWiFiScanResults[i].security      = network.security;
-                mWiFiScanResults[i].channel       = network.channel;
-                mWiFiScanResults[i].frequencyBand = network.frequencyBand;
-
-                memcpy(mWiFiScanResults[i].ssid, network.ssid.data(), network.ssid.size());
-                mWiFiScanResults[i].ssidLen = static_cast<uint8_t>(network.ssid.size());
-                memcpy(mWiFiScanResults[i].bssid, network.bssid.data(), network.bssid.size());
-                mWiFiScanResults[i].bssidLen = static_cast<uint8_t>(network.bssid.size());
-                break;
-            }
-        }
+        DataModel::Encode(mScanResults, kWifiNetworkTag, network);
     }
 
     void OnThreadNetworkDiscovered(const Structs::ThreadInterfaceScanResult::Type & network) override
     {
-        for (size_t i = 0; i < CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_THREAD_SCAN_RESULTS; i++)
-        {
-            if (mThreadScanResults[i].mDatasetLen == 0)
-            {
-                memcpy(mThreadScanResults[i].mDataset, network.discoveryResponse.data(), network.discoveryResponse.size());
-                mThreadScanResults[i].mDatasetLen = static_cast<uint8_t>(network.discoveryResponse.size());
-                break;
-            }
-        }
+        DataModel::Encode(mScanResults, kThreadNetworkTag, network);
     }
 
     void OnError(CHIP_ERROR err) override
@@ -68,45 +58,59 @@ public:
             // Oh, this is a response of a network scan from unclean shutdown, ignore it.
             return;
         }
+
+        auto commandHandleRef = std::move(asyncCommandHandle);
         Commands::ScanNetworksResponse::Type response;
         response.errorCode = EMBER_ZCL_NETWORK_COMMISSIONING_ERROR_SUCCESS;
 
-        Structs::WiFiInterfaceScanResult::Type wifiScanResults[CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_WIFI_SCAN_RESULTS];
-        Structs::ThreadInterfaceScanResult::Type threadScanResults[CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_THREAD_SCAN_RESULTS];
-        size_t numWiFiNetworkFound = 0, numThreadNetworkFound = 0;
-        for (int i = 0; i < CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_WIFI_SCAN_RESULTS; i++)
+        CHIP_ERROR err = mScanResults.EndContainer(mDummyType);
+
+        if (err != CHIP_NO_ERROR)
         {
-            if (mWiFiScanResults[i].frequencyBand != 0)
-            {
-                auto writeItem           = &wifiScanResults[numWiFiNetworkFound];
-                writeItem->frequencyBand = mWiFiScanResults[i].frequencyBand;
-                writeItem->security      = mWiFiScanResults[i].security;
-                writeItem->channel       = mWiFiScanResults[i].channel;
-                writeItem->ssid          = ByteSpan(mWiFiScanResults[i].ssid, mWiFiScanResults[i].ssidLen);
-                writeItem->bssid         = ByteSpan(mWiFiScanResults[i].bssid, mWiFiScanResults[i].bssidLen);
-                numWiFiNetworkFound++;
-            }
+            response.errorCode = EMBER_ZCL_NETWORK_COMMISSIONING_ERROR_UNKNOWN_ERROR;
+            commandHandle->AddResponseData(mPath, response);
+            return;
         }
-        for (int i = 0; i < CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_THREAD_SCAN_RESULTS; i++)
+
+        chip::System::PacketBufferHandle bufHandle;
+        err = mScanResults.Finalize(&bufHandle);
+        if (err != CHIP_NO_ERROR)
         {
-            if (mThreadScanResults[i].mDatasetLen != 0)
+            response.errorCode = EMBER_ZCL_NETWORK_COMMISSIONING_ERROR_UNKNOWN_ERROR;
+            commandHandle->AddResponseData(mPath, response);
+            return;
+        }
+
+        chip::System::PacketBufferTLVReader reader;
+        reader.Init(std::move(bufHandle));
+
+        reader.EnterContainer(mDummyType);
+        Structs::WiFiInterfaceScanResult::Type wifiScanResult[CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_WIFI_SCAN_RESULTS];
+        Structs::ThreadInterfaceScanResult::Type threadScanResult[CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_THREAD_SCAN_RESULTS];
+        size_t numWiFiNetwork = 0, numThreadNetwork = 0;
+        while ((err = reader.Next()) == CHIP_NO_ERROR)
+        {
+            TLV::TLVReader dataDecodeReader;
+            dataDecodeReader.Init(reader);
+            if (reader.GetTag() == kWifiNetworkTag)
             {
-                threadScanResults[numThreadNetworkFound].discoveryResponse =
-                    ByteSpan(mThreadScanResults[i].mDataset, mThreadScanResults[i].mDatasetLen);
+                DataModel::Decode(dataDecodeReader, wifiScanResult[numWiFiNetwork++]);
+            }
+            else if (reader.GetTag() == kThreadNetworkTag)
+            {
+                DataModel::Decode(dataDecodeReader, threadScanResult[numThreadNetwork++]);
             }
         }
 
-        response.wifiScanResults = DataModel::List<Structs::WiFiInterfaceScanResult::Type>(wifiScanResults, numWiFiNetworkFound);
-        response.threadScanResults =
-            DataModel::List<Structs::ThreadInterfaceScanResult::Type>(threadScanResults, numThreadNetworkFound);
+        response.wifiScanResults   = DataModel::List<Structs::WiFiInterfaceScanResult::Type>(wifiScanResult, numWiFiNetwork);
+        response.threadScanResults = DataModel::List<Structs::ThreadInterfaceScanResult::Type>(threadScanResult, numThreadNetwork);
         commandHandle->AddResponseData(mPath, response);
-        asyncCommandHandle = nullptr;
     }
 
 private:
     ConcreteCommandPath mPath = ConcreteCommandPath(0, 0, 0);
-    WiFiScanInfo mWiFiScanResults[CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_WIFI_SCAN_RESULTS];
-    ThreadNetworkInfo mThreadScanResults[CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_THREAD_SCAN_RESULTS];
+    chip::System::PacketBufferTLVWriter mScanResults;
+    TLV::TLVType mDummyType;
 };
 
 ScanNetworkCallback scanNetworkCallback;
@@ -133,7 +137,7 @@ bool emberAfNetworkCommissioningClusterScanNetworksCallback(app::CommandHandler 
 
     // Set the current background work to this command.
     asyncCommandHandle = app::CommandHandler::Handle(commandObj);
-    scanNetworkCallback.SetCommandPath(commandPath);
+    scanNetworkCallback.Init(commandPath);
 
     commissioningDelegate->ScanNetworks(System::Clock::Milliseconds32(commandData.timeoutMs), &scanNetworkCallback);
     return true;

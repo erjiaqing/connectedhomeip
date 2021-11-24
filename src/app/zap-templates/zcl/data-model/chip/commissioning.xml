@@ -53,10 +53,18 @@ limitations under the License.
         <item name="BSSID" type="OCTET_STRING"/>
         <item name="Channel" type="INT8U"/>
         <item name="FrequencyBand" type="INT32U"/>
+        <item name="RSSI" type="INT8S"/>
     </struct>
     <struct name="ThreadInterfaceScanResult">
         <cluster code="0x0031"/>
-        <item name="DiscoveryResponse" type="OCTET_STRING"/>
+        <item name="PanId" type="INT16U"/>
+        <item name="ExtendedPanId" type="INT64U"/>
+        <item name="NetworkName" type="CHAR_STRING"/>
+        <item name="Channel" type="INT16U"/>
+        <item name="Version" type="INT8U"/>
+        <item name="ExtendedAddress" type="INT64U"/>
+        <item name="RSSI" type="INT8S"/>
+        <item name="LQI" type="INT8U"/>
     </struct>
     <cluster>
         <name>Network Commissioning</name>

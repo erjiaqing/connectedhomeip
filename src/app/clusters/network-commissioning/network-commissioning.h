@@ -41,11 +41,12 @@ namespace app {
 namespace Clusters {
 namespace NetworkCommissioning {
 
-constexpr uint8_t kMaxNetworkIDLen       = 32;
-constexpr uint8_t kMaxThreadDatasetLen   = 254; // As defined in Thread spec.
-constexpr uint8_t kMaxWiFiSSIDLen        = 32;
-constexpr uint8_t kMaxWiFiCredentialsLen = 64;
-constexpr uint8_t kMaxNetworks           = CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_NETWORKS;
+constexpr uint8_t kMaxNetworkIDLen         = 32;
+constexpr uint8_t kMaxThreadDatasetLen     = 254; // As defined in Thread spec.
+constexpr uint8_t kMaxWiFiSSIDLen          = 32;
+constexpr uint8_t kMaxWiFiCredentialsLen   = 64;
+constexpr uint8_t kMaxThreadNetworkNameLen = 16; // Section 6.3.2 in network commissioning
+constexpr uint8_t kMaxNetworks             = CHIP_CLUSTER_NETWORK_COMMISSIONING_MAX_NETWORKS;
 
 enum class NetworkType : uint8_t
 {
@@ -61,7 +62,7 @@ struct ThreadNetworkInfo
     uint8_t mDatasetLen;
 };
 
-struct WiFiScanInfo
+struct WiFiScanResult
 {
     uint8_t security;
     uint8_t ssid[kMaxWiFiSSIDLen + 1];
@@ -70,6 +71,19 @@ struct WiFiScanInfo
     uint8_t bssidLen;
     uint8_t channel;
     uint32_t frequencyBand;
+    int8_t rssi;
+};
+
+struct ThreadScanResult
+{
+    uint16_t panId;
+    uint64_t extendedPanId;
+    char networkName[kMaxThreadNetworkNameLen];
+    uint8_t networkNameLen;
+    uint8_t version;
+    uint64_t extendedAddress;
+    int8_t rssi;
+    uint8_t lqi;
 };
 
 struct WiFiNetworkInfo

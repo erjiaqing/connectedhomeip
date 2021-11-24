@@ -17,6 +17,7 @@
 
 #include <lib/support/ErrorStr.h>
 #include <lib/support/logging/CHIPLogging.h>
+#include <platform/CHIPDeviceLayer.h>
 
 #include "DeviceNetworkCommissioningDelegateImpl.h"
 
@@ -41,6 +42,19 @@ CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ProvisionWiFiNetwork(const c
     }
 
     return err;
+}
+
+CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ConnectToThreadNetwork(ByteSpan threadData)
+{
+    ReturnErrorOnFailure(DeviceLayer::ThreadStackMgr().SetThreadEnabled(false));
+    ReturnErrorOnFailure(DeviceLayer::ThreadStackMgr().SetThreadProvision(threadData));
+    ReturnErrorOnFailure(DeviceLayer::ThreadStackMgr().SetThreadEnabled(true));
+    return CHIP_NO_ERROR;
+}
+
+void DeviceNetworkCommissioningDelegateImpl::ScanNetworks(System::Clock::Milliseconds32 timeout, ScanNetworkCallback * callback)
+{
+    callback->OnDone();
 }
 
 } // namespace DeviceLayer
