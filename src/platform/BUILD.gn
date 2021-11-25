@@ -268,7 +268,7 @@ if (chip_device_platform != "none") {
       "../include/platform/internal/CHIPDeviceLayerInternal.h",
       "../include/platform/internal/DeviceControlServer.h",
       "../include/platform/internal/DeviceNetworkInfo.h",
-      "../include/platform/internal/DeviceNetworkProvisioning.h",
+      "../include/platform/internal/DeviceNetworkCommissioning.h",
       "../include/platform/internal/EventLogging.h",
       "../include/platform/internal/GenericConfigurationManagerImpl.h",
       "../include/platform/internal/GenericConnectivityManagerImpl.h",

@@ -24,6 +24,7 @@
 #include <platform/Linux/GlibTypeDeleter.h>
 #include <platform/Linux/dbus/openthread/introspect.h>
 #include <platform/internal/CHIPDeviceLayerInternal.h>
+#include <platform/internal/DeviceNetworkCommissioning.h>
 #include <platform/internal/DeviceNetworkInfo.h>
 
 namespace chip {
@@ -49,6 +50,9 @@ public:
     CHIP_ERROR _GetThreadProvision(ByteSpan & netInfo);
 
     CHIP_ERROR _SetThreadProvision(ByteSpan netInfo);
+
+    void _OnNetworkScanFinished(GAsyncResult * res);
+    static void _OnNetworkScanFinished(GObject * source_object, GAsyncResult * res, gpointer user_data);
 
     void _ErasePersistentInfo();
 

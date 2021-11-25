@@ -35,7 +35,7 @@ class DeviceNetworkCommissioningDelegateImpl final
     friend class GenericDeviceNetworkCommissioningDelegateImpl<DeviceNetworkCommissioningDelegateImpl>;
 
 public:
-    void ScanNetworks(System::Clock::Milliseconds32 timeout, ScanNetworkCallback * callback) override;
+    void ScanWiFiNetworks(System::Clock::Milliseconds32 timeout, ByteSpan ssid, ScanWiFiNetworkCallback * callback) override;
 
 private:
     CHIP_ERROR _ProvisionWiFiNetwork(const char * ssid, const char * passwd);

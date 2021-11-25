@@ -43,6 +43,9 @@
 #include <platform/Linux/dbus/wpa/DBusWpaNetwork.h>
 #endif
 
+#include <platform/internal/DeviceNetworkCommissioning.h>
+#include <vector>
+
 namespace chip {
 namespace Inet {
 class IPAddress;
@@ -113,6 +116,7 @@ public:
     CHIP_ERROR GetWiFiBssId(ByteSpan & value);
     CHIP_ERROR GetWiFiSecurityType(uint8_t & securityType);
     CHIP_ERROR GetWiFiVersion(uint8_t & wiFiVersion);
+    CHIP_ERROR StartWiFiScan(ByteSpan ssid, Internal::DeviceNetworkCommissioningDelegate::ScanWiFiNetworkCallback * callback);
 #endif
 
     const char * GetEthernetIfName() { return (mEthIfName[0] == '\0') ? nullptr : mEthIfName; }
@@ -123,6 +127,18 @@ public:
 
 private:
     // ===== Members that implement the ConnectivityManager abstract interface.
+
+    struct WiFiNetworkScanned
+    {
+        // The fields matches WiFiInterfaceScanResult::Type.
+        uint8_t ssid[Internal::kMaxWiFiSSIDLength];
+        uint8_t ssidLen;
+        uint8_t bssid[6];
+        int8_t rssi;
+        uint16_t frequencyBand;
+        uint8_t channel;
+        uint8_t security;
+    };
 
     CHIP_ERROR _Init();
     void _OnPlatformEvent(const ChipDeviceEvent * event);
@@ -156,6 +172,9 @@ private:
     static void _OnWpaInterfaceReady(GObject * source_object, GAsyncResult * res, gpointer user_data);
     static void _OnWpaInterfaceProxyReady(GObject * source_object, GAsyncResult * res, gpointer user_data);
     static void _OnWpaBssProxyReady(GObject * source_object, GAsyncResult * res, gpointer user_data);
+    static void _OnWpaInterfaceScanDone(GObject * source_object, GAsyncResult * res, gpointer user_data);
+
+    static bool _GetBssInfo(const gchar * bssPath, WiFiNetworkScanned & result);
 
     static BitFlags<ConnectivityFlags> mConnectivityFlag;
     static struct GDBusWpaSupplicant mWpaSupplicant;
@@ -194,6 +213,9 @@ private:
 #if CHIP_DEVICE_CONFIG_ENABLE_WIFI
     static char sWiFiIfName[IFNAMSIZ];
 #endif
+
+    static std::vector<WiFiNetworkScanned> mScannedNetwork;
+    static Internal::DeviceNetworkCommissioningDelegate::ScanWiFiNetworkCallback * mpScanNetworkCallback;
 };
 
 #if CHIP_DEVICE_CONFIG_ENABLE_WPA

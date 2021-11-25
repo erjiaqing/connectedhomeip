@@ -21,7 +21,7 @@
 
 #include <platform/internal/CHIPDeviceLayerInternal.h>
 
-#include "DeviceNetworkProvisioning.h"
+#include "DeviceNetworkCommissioning.h"
 
 namespace chip {
 namespace DeviceLayer {

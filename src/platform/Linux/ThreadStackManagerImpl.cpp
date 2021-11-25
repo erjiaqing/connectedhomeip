@@ -472,6 +472,59 @@ CHIP_ERROR ThreadStackManagerImpl::_JoinerStart()
     return CHIP_ERROR_NOT_IMPLEMENTED;
 }
 
+void ThreadStackManagerImpl::_OnNetworkScanFinished(GObject * source_object, GAsyncResult * res, gpointer user_data)
+{
+    ThreadStackManagerImpl * this_ = reinterpret_cast<ThreadStackManagerImpl *>(user_data);
+    this_->_OnNetworkScanFinished(res);
+}
+
+void ThreadStackManagerImpl::_OnNetworkScanFinished(GAsyncResult * res)
+{
+    std::unique_ptr<GVariant, GVariantDeleter> scan_result;
+    std::unique_ptr<GError, GErrorDeleter> err;
+    {
+        gboolean result = openthread_io_openthread_border_router_call_scan_finish(
+            mProxy.get(), &MakeUniquePointerReceiver(scan_result).Get(), res, &MakeUniquePointerReceiver(err).Get());
+        if (!result)
+        {
+            ChipLogError(DeviceLayer, "Failed to perform finish Thread network scan: %s",
+                         err == nullptr ? "unknown error" : err->message);
+            // mNetworkScanCallback->OnError(CHIP_ERROR_INTERNAL);
+            return;
+        }
+    }
+
+    if (g_variant_n_children(scan_result.get()) > 0)
+    {
+        std::unique_ptr<GVariantIter, GVariantIterDeleter> iter;
+        g_variant_get(scan_result.get(), "a(tstayqqyyyybb)", &MakeUniquePointerReceiver(iter).Get());
+        if (!iter)
+            return;
+
+        guint64 ext_address;
+        const gchar * network_name;
+        guint64 ext_panid;
+        const gchar * steering_data;
+        guint16 panid;
+        guint16 joiner_udp_port;
+        guint8 channel;
+        guint8 rssi;
+        guint8 lqi;
+        guint8 version;
+        gboolean is_native;
+        gboolean is_joinable;
+
+        while (g_variant_iter_loop(iter.get(), "(tstayqqyyyybb)", &ext_address, &network_name, &ext_panid, &steering_data, &panid,
+                                   &joiner_udp_port, &channel, &rssi, &lqi, &version, &is_native, &is_joinable))
+        {
+            ChipLogProgress(DeviceLayer,
+                            "Thread Network: %s (%016" PRIx64 ") ExtPanId(%016" PRIx64 ") RSSI %" PRIu16 " LQI %" PRIu8
+                            " Version %" PRIu8,
+                            network_name, ext_address, ext_panid, rssi, lqi, version);
+        }
+    }
+}
+
 void ThreadStackManagerImpl::_ResetThreadNetworkDiagnosticsCounts() {}
 
 CHIP_ERROR ThreadStackManagerImpl::_WriteThreadNetworkDiagnosticAttributeToTlv(AttributeId attributeId,

@@ -52,9 +52,14 @@ CHIP_ERROR DeviceNetworkCommissioningDelegateImpl::_ConnectToThreadNetwork(ByteS
     return CHIP_NO_ERROR;
 }
 
-void DeviceNetworkCommissioningDelegateImpl::ScanNetworks(System::Clock::Milliseconds32 timeout, ScanNetworkCallback * callback)
+void DeviceNetworkCommissioningDelegateImpl::ScanWiFiNetworks(System::Clock::Milliseconds32 timeout, ByteSpan ssid,
+                                                              ScanWiFiNetworkCallback * callback)
 {
-    callback->OnDone();
+    CHIP_ERROR err = DeviceLayer::ConnectivityMgrImpl().StartWiFiScan(ssid, callback);
+    if (err != CHIP_NO_ERROR)
+    {
+        callback->OnError(err);
+    }
 }
 
 } // namespace DeviceLayer
