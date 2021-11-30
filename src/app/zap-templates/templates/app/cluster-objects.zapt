@@ -72,6 +72,15 @@ namespace {{asUpperCamelCase name}} {
         {{#unless struct_contains_array}}
         CHIP_ERROR Decode(TLV::TLVReader &reader);
         {{/unless}}
+
+        bool FabricIdxMatch(const FabricIdx id)
+        {
+            {{#if struct_contains_fabric_idx}}
+            return true;
+            {{#else}}
+            return {{ struct_fabric_idx_field }} == id;
+            {{/if}}
+        }
     };
 
     {{#if struct_contains_array}}
