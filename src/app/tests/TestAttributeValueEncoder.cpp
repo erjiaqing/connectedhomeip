@@ -22,6 +22,7 @@
  *
  */
 
+#include <app-common/zap-generated/cluster-objects.h>
 #include <app/AttributeAccessInterface.h>
 #include <app/MessageDef/AttributeDataIB.h>
 #include <lib/support/CodeUtils.h>
@@ -39,14 +40,15 @@ constexpr EndpointId kRandomEndpointId   = 0x55;
 constexpr ClusterId kRandomClusterId     = 0xaa;
 constexpr AttributeId kRandomAttributeId = 0xcc;
 constexpr DataVersion kRandomDataVersion = 0x99;
+constexpr FabricIndex kTestFabricIndex   = 0x00;
 
 template <size_t N>
 struct LimitedTestSetup
 {
-    LimitedTestSetup(nlTestSuite * aSuite,
+    LimitedTestSetup(nlTestSuite * aSuite, FabricIndex aFabricIndex = kTestFabricIndex,
                      const AttributeValueEncoder::AttributeEncodeState & aState = AttributeValueEncoder::AttributeEncodeState()) :
-        encoder(builder, 0, ConcreteAttributePath(kRandomEndpointId, kRandomClusterId, kRandomAttributeId), kRandomDataVersion,
-                aState)
+        encoder(builder, aFabricIndex, ConcreteAttributePath(kRandomEndpointId, kRandomClusterId, kRandomAttributeId),
+                kRandomDataVersion, aState)
     {
         writer.Init(buf);
         {
@@ -252,7 +254,7 @@ void TestEncodeListChunking(nlTestSuite * aSuite, void * aContext)
     };
 
     {
-        LimitedTestSetup<60> test1(aSuite);
+        LimitedTestSetup<60> test1(aSuite, kTestFabricIndex);
         CHIP_ERROR err = test1.encoder.EncodeList(listEncoder);
         NL_TEST_ASSERT(aSuite, err == CHIP_ERROR_NO_MEMORY || err == CHIP_ERROR_BUFFER_TOO_SMALL);
         state = test1.encoder.GetState();
@@ -291,7 +293,7 @@ void TestEncodeListChunking(nlTestSuite * aSuite, void * aContext)
         VERIFY_BUFFER_STATE(aSuite, test1, expected);
     }
     {
-        LimitedTestSetup<60> test2(aSuite, state);
+        LimitedTestSetup<60> test2(aSuite, kTestFabricIndex, state);
         CHIP_ERROR err = test2.encoder.EncodeList(listEncoder);
         NL_TEST_ASSERT(aSuite, err == CHIP_NO_ERROR);
 
@@ -316,18 +318,86 @@ void TestEncodeListChunking(nlTestSuite * aSuite, void * aContext)
     }
 }
 
+template <typename T, decltype(&T::FabricIndexMatch) = nullptr>
+CHIP_ERROR Encodedasdhasjd(T aArgs)
+{
+    ChipLogError(DataManagement, "!!!!!!!!!!!!!!");
+    return CHIP_NO_ERROR;
+}
+
+void TestEncodeFabricFilter(nlTestSuite * aSuite, void * aContext)
+{
+    auto listEncoder = [](auto encoder) -> CHIP_ERROR {
+        {
+            app::Clusters::OperationalCredentials::Structs::NOCStruct::Type item1;
+            item1.fabricIndex = 0;
+            ReturnErrorOnFailure(encoder.Encode(item1));
+
+            Encodedasdhasjd(item1);
+        }
+        {
+            app::Clusters::OperationalCredentials::Structs::NOCStruct::Type item2;
+            item2.fabricIndex = 1;
+            ReturnErrorOnFailure(encoder.Encode(item2));
+            Encodedasdhasjd(item2);
+        }
+        return CHIP_NO_ERROR;
+    };
+
+    {
+        TestSetup test1(aSuite);
+        CHIP_ERROR err = test1.encoder.EncodeList(listEncoder);
+        NL_TEST_ASSERT(aSuite, err == CHIP_NO_ERROR);
+
+        const uint8_t expected[] = {
+            // clang-format off
+            0x15, 0x36, 0x01, // Test overhead, Start Anonymous struct + Start 1 byte Tag Array + Tag (01)
+            0x15, // Start anonymous struct
+              0x35, 0x01, // Start 1 byte tag struct + Tag (01)
+                0x37, 0x01, // Start 1 byte tag list + Tag (01) (Attribute Path)
+                  0x24, 0x02, 0x55, // Tag (02) Value (1 byte uint) 0x55
+                  0x24, 0x03, 0xaa, // Tag (03) Value (1 byte uint) 0xaa
+                  0x24, 0x04, 0xcc, // Tag (04) Value (1 byte uint) 0xcc
+                0x18, // End of container
+                0x24, 0x00, 0x99, // Tag (00) Value (1 byte uint) 0x99 (Attribute Version)
+                // Intended empty array
+                0x36, 0x02, // Start 1 byte tag array + Tag (02) (Attribute Value)
+                0x18, // End of container
+              0x18, // End of container
+            0x18, // End of container
+
+            0x15, // Start anonymous struct
+              0x35, 0x01, // Start 1 byte tag struct + Tag (01)
+                0x37, 0x01, // Start 1 byte tag list + Tag (01) (Attribute Path)
+                  0x24, 0x02, 0x55, // Tag (02) Value (1 byte uint) 0x55
+                  0x24, 0x03, 0xaa, // Tag (03) Value (1 byte uint) 0xaa
+                  0x24, 0x04, 0xcc, // Tag (04) Value (1 byte uint) 0xcc
+                  0x34, 0x05, // Tag (05) Null
+                0x18, // End of container
+                0x24, 0x00, 0x99, // Tag (00) Value (1 byte uint) 0x99 (Attribute Version)
+                0x35, 0x02, // Tag (02) Type Struct
+                  0x24, 0x01, 0x00, // Value Tag 1
+                  0x30, 0x02, 0x00, // Value Tag 2
+                0x18,
+              0x18,
+            0x18,
+            // clang-format on
+        };
+        VERIFY_BUFFER_STATE(aSuite, test1, expected);
+    }
+}
+
 #undef VERIFY_STATE
 
 } // anonymous namespace
 
 namespace {
-const nlTest sTests[] = { NL_TEST_DEF("TestEncodeNothing", TestEncodeNothing),
-                          NL_TEST_DEF("TestEncodeBool", TestEncodeBool),
-                          NL_TEST_DEF("TestEncodeEmptyList", TestEncodeEmptyList),
-                          NL_TEST_DEF("TestEncodeListOfBools1", TestEncodeListOfBools1),
-                          NL_TEST_DEF("TestEncodeListOfBools2", TestEncodeListOfBools2),
-                          NL_TEST_DEF("TestEncodeListChunking", TestEncodeListChunking),
-                          NL_TEST_SENTINEL() };
+const nlTest sTests[] = {
+    NL_TEST_DEF("TestEncodeNothing", TestEncodeNothing),           NL_TEST_DEF("TestEncodeBool", TestEncodeBool),
+    NL_TEST_DEF("TestEncodeEmptyList", TestEncodeEmptyList),       NL_TEST_DEF("TestEncodeListOfBools1", TestEncodeListOfBools1),
+    NL_TEST_DEF("TestEncodeListOfBools2", TestEncodeListOfBools2), NL_TEST_DEF("TestEncodeListChunking", TestEncodeListChunking),
+    NL_TEST_DEF("TestEncodeFabricFilter", TestEncodeFabricFilter), NL_TEST_SENTINEL()
+};
 }
 
 int TestAttributeValueEncoder()

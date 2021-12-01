@@ -23,11 +23,13 @@
 #include <app/MessageDef/AttributeReportIBs.h>
 #include <app/data-model/Decode.h>
 #include <app/data-model/Encode.h>
+#include <app/data-model/FabricSensitive.h>
 #include <app/data-model/List.h> // So we can encode lists
 #include <app/data-model/TagBoundEncoder.h>
 #include <app/util/basic-types.h>
 #include <lib/core/CHIPTLV.h>
 #include <lib/core/Optional.h>
+#include <lib/support/FunctionTraits.h>
 
 /**
  * Callback class that clusters can implement in order to interpose custom
@@ -69,11 +71,11 @@ public:
      */
     CHIP_ERROR FinishAttribute();
 
-    template <typename... Ts>
-    CHIP_ERROR Encode(Ts... aArgs)
+    template <typename T>
+    CHIP_ERROR Encode(T aArgs)
     {
         return DataModel::Encode(*mAttributeDataIBBuilder.GetWriter(), TLV::ContextTag(to_underlying(AttributeDataIB::Tag::kData)),
-                                 std::forward<Ts>(aArgs)...);
+                                 std::forward<T>(aArgs));
     }
 
 private:
@@ -97,10 +99,10 @@ public:
     public:
         ListEncodeHelper(AttributeValueEncoder & encoder) : mAttributeValueEncoder(&encoder) {}
 
-        template <typename... Ts>
-        CHIP_ERROR Encode(Ts... aArgs) const
+        template <typename T>
+        CHIP_ERROR Encode(T aArgs) const
         {
-            return mAttributeValueEncoder->EncodeListItem(std::forward<Ts>(aArgs)...);
+            return mAttributeValueEncoder->EncodeListItem(std::forward<T>(aArgs));
         }
 
     private:
@@ -130,8 +132,8 @@ public:
         mAccessingFabricIndex(aAccessingFabricIndex), mPath(aPath), mDataVersion(aDataVersion), mEncodeState(aState)
     {}
 
-    template <typename... Ts>
-    CHIP_ERROR Encode(Ts... aArgs)
+    template <typename T, std::enable_if_t<!DataModel::IsFabricSensitive<T>::value, bool> = true>
+    CHIP_ERROR Encode(T aArgs)
     {
         mTriedEncode = true;
         AttributeReportBuilder builder;
@@ -145,7 +147,33 @@ public:
                                           : ConcreteDataAttributePath::ListOperation::AppendItem,
                                       mCurrentEncodingListIndex),
             mDataVersion));
-        ReturnErrorOnFailure(builder.Encode(std::forward<Ts>(aArgs)...));
+        ReturnErrorOnFailure(builder.Encode(std::forward<T>(aArgs)));
+
+        return builder.FinishAttribute();
+    }
+
+    template <typename T, std::enable_if_t<DataModel::IsFabricSensitive<T>::value, bool> = true>
+    CHIP_ERROR Encode(T aArgs)
+    {
+        if (!aArgs.FabricIndexMatch(mAccessingFabricIndex))
+        {
+            return CHIP_NO_ERROR;
+        }
+
+        mTriedEncode = true;
+
+        AttributeReportBuilder builder;
+
+        ReturnErrorOnFailure(builder.PrepareAttribute(
+            mAttributeReportIBsBuilder,
+            ConcreteDataAttributePath(mPath.mEndpointId, mPath.mClusterId, mPath.mAttributeId,
+                                      // We only use the two operations here to indicate if we need to encode a null list index
+                                      mCurrentEncodingListIndex == kInvalidListIndex
+                                          ? ConcreteDataAttributePath::ListOperation::NotList
+                                          : ConcreteDataAttributePath::ListOperation::AppendItem,
+                                      mCurrentEncodingListIndex),
+            mDataVersion));
+        ReturnErrorOnFailure(builder.Encode(std::forward<T>(aArgs)));
 
         return builder.FinishAttribute();
     }
