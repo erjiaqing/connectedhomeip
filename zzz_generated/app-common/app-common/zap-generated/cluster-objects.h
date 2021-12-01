@@ -11966,7 +11966,7 @@ enum class Fields
 struct Type
 {
 public:
-    uint8_t fabricIndex;
+    chip::FabricIndex fabricIndex;
     chip::ByteSpan rootPublicKey;
     uint16_t vendorId;
     chip::FabricId fabricId;
@@ -11975,6 +11975,8 @@ public:
 
     CHIP_ERROR Encode(TLV::TLVWriter & writer, TLV::Tag tag) const;
     CHIP_ERROR Decode(TLV::TLVReader & reader);
+
+    inline bool FabricIndexMatch(const FabricIndex rhs) { return fabricIndex == rhs; }
 };
 
 using DecodableType = Type;
@@ -11990,11 +11992,13 @@ enum class Fields
 struct Type
 {
 public:
-    uint8_t fabricIndex;
+    chip::FabricIndex fabricIndex;
     chip::ByteSpan noc;
 
     CHIP_ERROR Encode(TLV::TLVWriter & writer, TLV::Tag tag) const;
     CHIP_ERROR Decode(TLV::TLVReader & reader);
+
+    inline bool FabricIndexMatch(const FabricIndex rhs) { return fabricIndex == rhs; }
 };
 
 using DecodableType = Type;

@@ -191,7 +191,7 @@ typedef struct _EndpointListStruct
 // Struct for FabricDescriptor
 typedef struct _FabricDescriptor
 {
-    uint8_t FabricIndex;
+    chip::FabricIndex FabricIndex;
     chip::ByteSpan RootPublicKey;
     uint16_t VendorId;
     chip::FabricId FabricId;
@@ -258,7 +258,7 @@ typedef struct _ModeOptionStruct
 // Struct for NOCStruct
 typedef struct _NOCStruct
 {
-    uint8_t FabricIndex;
+    chip::FabricIndex FabricIndex;
     chip::ByteSpan NOC;
 } NOCStruct;
 
