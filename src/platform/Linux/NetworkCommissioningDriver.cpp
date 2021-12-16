@@ -22,6 +22,7 @@
 #include <platform/Linux/ThreadStackManagerImpl.h>
 #include <platform/ThreadStackManager.h>
 
+#include <limits>
 #include <string>
 #include <vector>
 
@@ -36,7 +37,7 @@ namespace NetworkCommissioning {
 CHIP_ERROR LinuxWiFiDriver::CommitConfiguration()
 {
     mRunningNetwork = mStagingNetwork;
-    return CHIP_NO_ERROR;
+    return ConnectivityMgrImpl().CommitConfig();
 }
 
 CHIP_ERROR LinuxWiFiDriver::RevertConfiguration()
@@ -45,48 +46,47 @@ CHIP_ERROR LinuxWiFiDriver::RevertConfiguration()
     return CHIP_NO_ERROR;
 }
 
+bool WiFiNetworkMatch(const WiFiNetwork & network, ByteSpan networkId)
+{
+    return networkId.size() == network.ssidLen && memcmp(networkId.data(), network.ssid, network.ssidLen) == 0;
+}
+
 Status LinuxWiFiDriver::AddOrUpdateNetwork(ByteSpan ssid, ByteSpan credentials)
 {
-    VerifyOrReturnError(
-        mStagingNetwork.ssidLen == 0 ||
-            (ssid.size() == mStagingNetwork.ssidLen && memcmp(ssid.data(), mStagingNetwork.ssid, mStagingNetwork.ssidLen) == 0),
-        Status::kBoundsExceeded);
+    VerifyOrReturnError(mStagingNetwork.ssidLen == 0 || NetworkMatch(mStagingNetwork, ssid), Status::kBoundsExceeded);
 
+    static_assert(sizeof(WiFiScanResponse::ssid) <= std::numeric_limits<decltype(WiFiScanResponse::ssidLen)>,
+                  "Max length of WiFi ssid exceeds the limit of ssidLen field");
+    static_assert(sizeof(WiFiScanResponse::credentials) <= std::numeric_limits<decltype(WiFiScanResponse::credentialsLen)>,
+                  "Max length of WiFi credentials exceeds the limit of credentialsLen field");
+
+    // Do the check before setting the values, so the data is not updated on error.
     VerifyOrReturnError(credentials.size() <= sizeof(mStagingNetwork.credentials), Status::kOutOfRange);
-    memcpy(mStagingNetwork.credentials, credentials.data(), credentials.size());
-
-    using WiFiCredentialsLenType = decltype(mStagingNetwork.credentialsLen);
-    VerifyOrReturnError(CanCastTo<WiFiCredentialsLenType>(credentials.size()), Status::kOutOfRange);
-    mStagingNetwork.credentialsLen = static_cast<WiFiCredentialsLenType>(credentials.size());
-
     VerifyOrReturnError(ssid.size() <= sizeof(mStagingNetwork.ssid), Status::kOutOfRange);
-    memcpy(mStagingNetwork.ssid, ssid.data(), ssid.size());
 
-    using WiFiSSIDLenType = decltype(mStagingNetwork.ssidLen);
-    VerifyOrReturnError(CanCastTo<WiFiSSIDLenType>(ssid.size()), Status::kOutOfRange);
-    mStagingNetwork.ssidLen = static_cast<WiFiSSIDLenType>(ssid.size());
+    memcpy(mStagingNetwork.credentials, credentials.data(), credentials.size());
+    mStagingNetwork.credentialsLen = static_cast<decltype(mStagingNetwork.credentialsLen)>(credentials.size());
+
+    memcpy(mStagingNetwork.ssid, ssid.data(), ssid.size());
+    mStagingNetwork.ssidLen = static_cast<decltype(mStagingNetwork.ssidLen)>(ssid.size());
 
     return Status::kSuccess;
 }
 
 Status LinuxWiFiDriver::RemoveNetwork(ByteSpan networkId)
 {
-    VerifyOrReturnError(networkId.size() == mStagingNetwork.ssidLen &&
-                            memcmp(networkId.data(), mStagingNetwork.ssid, mStagingNetwork.ssidLen) == 0,
-                        Status::kNetworkNotFound);
+    VerifyOrReturnError(NetworkMatch(mStagingNetwork, networkId), Status::kNetworkIDNotFound);
 
+    // Use empty ssid for representing invalid network
     mStagingNetwork.ssidLen = 0;
     return Status::kSuccess;
 }
 
 Status LinuxWiFiDriver::ReorderNetwork(ByteSpan networkId, uint8_t index)
 {
+    VerifyOrReturnError(NetworkMatch(mStagingNetwork, networkId), Status::kNetworkIDNotFound);
     // We only support one network, so reorder is actually no-op.
-    VerifyOrReturnError(networkId.size() == mStagingNetwork.ssidLen &&
-                            memcmp(networkId.data(), mStagingNetwork.ssid, mStagingNetwork.ssidLen) == 0,
-                        Status::kNetworkNotFound);
 
-    mStagingNetwork.ssidLen = 0;
     return Status::kSuccess;
 }
 
@@ -96,24 +96,19 @@ void LinuxWiFiDriver::ConnectNetwork(ByteSpan networkId, ConnectCallback * callb
     Status networkingStatus = Status::kSuccess;
 
     // We only support one network, so reorder is actually no-op.
-    VerifyOrExit(networkId.size() == mStagingNetwork.ssidLen &&
-                     memcmp(networkId.data(), mStagingNetwork.ssid, mStagingNetwork.ssidLen) == 0,
-                 networkingStatus = Status::kNetworkNotFound);
+    VerifyOrReturnError(NetworkMatch(mStagingNetwork, networkId), Status::kNetworkIDNotFound);
 
     ChipLogProgress(NetworkProvisioning, "LinuxNetworkCommissioningDelegate: SSID: %s", networkId.data());
 
-    err = ConnectivityMgrImpl().ProvisionWiFiNetwork(reinterpret_cast<const char *>(mStagingNetwork.ssid),
-                                                     reinterpret_cast<const char *>(mStagingNetwork.credentials));
-
+    err = ConnectivityMgrImpl().ConnectWiFiNetworkAsync(ByteSpan(mStagingNetwork.ssid, mStagingNetwork.ssidLen),
+                                                        ByteSpan(mStagingNetwork.credentials, mStagingNetwork.credentialsLen),
+                                                        callback);
 exit:
-
     if (err != CHIP_NO_ERROR)
     {
         ChipLogError(NetworkProvisioning, "Failed to connect to WiFi network: %s", chip::ErrorStr(err));
-        networkingStatus = Status::kUnknownError;
+        callback->OnResult(Status::kUnknownError, CharSpan(), 0);
     }
-
-    callback->OnResult(networkingStatus, CharSpan(), 0);
 }
 
 void LinuxWiFiDriver::ScanNetworks(ByteSpan ssid, WiFiDriver::ScanCallback * callback)

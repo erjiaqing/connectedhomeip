@@ -94,10 +94,10 @@ void ApplicationInit()
 {
 #if CHIP_DEVICE_LAYER_TARGET_LINUX && defined(ZCL_USING_LEVEL_CONTROL_CLUSTER_SERVER)
 #if CHIP_DEVICE_CONFIG_ENABLE_THREAD
-    sThreadNetworkCommissioningInstance.Register();
+    sThreadNetworkCommissioningInstance.Init();
 #endif
 #if CHIP_DEVICE_CONFIG_ENABLE_WPA
-    sWiFiNetworkCommissioningInstance.Register();
+    sWiFiNetworkCommissioningInstance.Init();
 #endif
 #endif
 }

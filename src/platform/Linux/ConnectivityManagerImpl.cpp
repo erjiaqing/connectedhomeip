@@ -876,6 +876,122 @@ void ConnectivityManagerImpl::DriveAPState(::chip::System::Layer * aLayer, void 
     sInstance.DriveAPState();
 }
 
+CHIP_ERROR
+ConnectivityManagerImpl::ConnectWiFiNetworkAsync(ByteSpan ssid, ByteSpan credentials,
+                                                 NetworkCommissioning::Internal::WirelessDriver::ConnectCallback * apCallback)
+{
+    CHIP_ERROR ret  = CHIP_NO_ERROR;
+    GError * err    = nullptr;
+    GVariant * args = nullptr;
+    GVariantBuilder builder;
+
+    if (mpConnectCallback != nullptr)
+    {
+        // We are busy handling another network connect request, reject incoming requests here.
+        return CHIP_ERROR_INCORRECT_STATE;
+    }
+
+    // Clean up current network if exists
+    if (mWpaSupplicant.networkPath)
+    {
+        GError * error = nullptr;
+
+        result = wpa_fi_w1_wpa_supplicant1_interface_call_remove_network_sync(mWpaSupplicant.iface, mWpaSupplicant.networkPath,
+                                                                              nullptr, &error);
+
+        if (result)
+        {
+            ChipLogProgress(DeviceLayer, "wpa_supplicant: removed network: %s", mWpaSupplicant.networkPath);
+            g_free(mWpaSupplicant.networkPath);
+            mWpaSupplicant.networkPath = nullptr;
+        }
+        else
+        {
+            ChipLogProgress(DeviceLayer, "wpa_supplicant: failed to stop AP mode with error: %s",
+                            error ? error->message : "unknown error");
+            ret = CHIP_ERROR_INTERNAL;
+        }
+
+        if (error != nullptr)
+            g_error_free(error);
+
+        SuccessOrExit(ret);
+    }
+
+    g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
+    g_variant_builder_add(&builder, "{sv}", "ssid", g_variant_new_string(ssid));
+    g_variant_builder_add(&builder, "{sv}", "psk", g_variant_new_string(key));
+    g_variant_builder_add(&builder, "{sv}", "key_mgmt", g_variant_new_string("WPA-PSK"));
+    args = g_variant_builder_end(&builder);
+
+    result = wpa_fi_w1_wpa_supplicant1_interface_call_add_network_sync(mWpaSupplicant.iface, args, &mWpaSupplicant.networkPath,
+                                                                       nullptr, &err);
+
+    if (result)
+    {
+        GError * error = nullptr;
+
+        ChipLogProgress(DeviceLayer, "wpa_supplicant: added network: SSID: %s: %s", ssid, mWpaSupplicant.networkPath);
+
+        wpa_fi_w1_wpa_supplicant1_interface_call_select_network(mWpaSupplicant.iface, mWpaSupplicant.networkPath, nullptr,
+                                                                _ConnectWiFiNetworkAsyncCallback, this);
+    }
+    else
+    {
+        ChipLogProgress(DeviceLayer, "wpa_supplicant: failed to add network: %s: %s", ssid, err ? err->message : "unknown error");
+
+        if (mWpaSupplicant.networkPath)
+        {
+            g_object_unref(mWpaSupplicant.networkPath);
+            mWpaSupplicant.networkPath = nullptr;
+        }
+
+        ret = CHIP_ERROR_INTERNAL;
+    }
+
+exit:
+    if (err != nullptr)
+        g_error_free(err);
+
+    return ret;
+}
+
+void ConnectivityManagerImpl::_ConnectWiFiNetworkAsyncCallback(GObject * source_object, GAsyncResult * res, gpointer user_data)
+{
+    ConnectivityManagerImpl * this_ = reinterpret_cast<ConnectivityManagerImpl *>(user_data);
+    std::unique_ptr<GVariant, GVariantDeleter> attachRes;
+    std::unique_ptr<GError, GErrorDeleter> err;
+    {
+        gboolean result = wpa_fi_w1_wpa_supplicant1_interface_call_select_network_finish(mWpaSupplicant.iface, res,
+                                                                                         &MakeUniquePointerReceiver(err).Get());
+        if (!result)
+        {
+            ChipLogError(DeviceLayer, "Failed to perform connect network: %s", err == nullptr ? "unknown error" : err->message);
+            DeviceLayer::SystemLayer().ScheduleLambda([]() {
+                if (mpConnectCallback != nullptr)
+                {
+                    // TODO: Replace this with actual thread attach result.
+                    this_->mpConnectCallback->OnResult(NetworkCommissioning::Status::kUnknownError, CharSpan(), 0);
+                    this_->mpConnectCallback = nullptr;
+                }
+                mpConnectCallback = nullptr;
+            })
+        }
+        else
+        {
+            DeviceLayer::SystemLayer().ScheduleLambda([this_]() {
+                if (this_->mpConnectCallback != nullptr)
+                {
+                    // TODO: Replace this with actual thread attach result.
+                    this_->mpConnectCallback->OnResult(NetworkCommissioning::Status::kSuccess, CharSpan(), 0);
+                    this_->mpConnectCallback = nullptr;
+                }
+                this_->PostNetworkConnect();
+            });
+        }
+    }
+}
+
 CHIP_ERROR ConnectivityManagerImpl::ProvisionWiFiNetwork(const char * ssid, const char * key)
 {
     CHIP_ERROR ret  = CHIP_NO_ERROR;
@@ -949,45 +1065,7 @@ CHIP_ERROR ConnectivityManagerImpl::ProvisionWiFiNetwork(const char * ssid, cons
             if (gerror != nullptr)
                 g_error_free(gerror);
 
-            // Iterate on the network interface to see if we already have beed assigned addresses.
-            // The temporary hack for getting IP address change on linux for network provisioning in the rendezvous session.
-            // This should be removed or find a better place once we depercate the rendezvous session.
-            for (chip::Inet::InterfaceAddressIterator it; it.HasCurrent(); it.Next())
-            {
-                char ifName[chip::Inet::InterfaceId::kMaxIfNameLength];
-                if (it.IsUp() && CHIP_NO_ERROR == it.GetInterfaceName(ifName, sizeof(ifName)) &&
-                    strncmp(ifName, sWiFiIfName, sizeof(ifName)) == 0)
-                {
-                    chip::Inet::IPAddress addr = it.GetAddress();
-                    if (addr.IsIPv4())
-                    {
-                        ChipDeviceEvent event;
-                        event.Type                            = DeviceEventType::kInternetConnectivityChange;
-                        event.InternetConnectivityChange.IPv4 = kConnectivity_Established;
-                        event.InternetConnectivityChange.IPv6 = kConnectivity_NoChange;
-                        addr.ToString(event.InternetConnectivityChange.address);
-
-                        ChipLogDetail(DeviceLayer, "Got IP address on interface: %s IP: %s", ifName,
-                                      event.InternetConnectivityChange.address);
-
-                        PlatformMgr().PostEventOrDie(&event);
-                    }
-                }
-            }
-
-            // Run dhclient for IP on WiFi.
-            // TODO: The wifi can be managed by networkmanager on linux so we don't have to care about this.
-            char cmdBuffer[128];
-            sprintf(cmdBuffer, CHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD, sWiFiIfName);
-            int dhclientSystemRet = system(cmdBuffer);
-            if (dhclientSystemRet != 0)
-            {
-                ChipLogError(DeviceLayer, "Failed to run dhclient, system() returns %d", dhclientSystemRet);
-            }
-            else
-            {
-                ChipLogProgress(DeviceLayer, "dhclient is running on the %s interface.", sWiFiIfName);
-            }
+            PostNetworkConnect();
 
             // Return success as long as the device is connected to the network
             ret = CHIP_NO_ERROR;
@@ -1021,6 +1099,68 @@ exit:
         g_error_free(err);
 
     return ret;
+}
+
+void ConnectivityManagerImpl::PostNetworkConnect()
+{
+    // Iterate on the network interface to see if we already have beed assigned addresses.
+    // The temporary hack for getting IP address change on linux for network provisioning in the rendezvous session.
+    // This should be removed or find a better place once we depercate the rendezvous session.
+    for (chip::Inet::InterfaceAddressIterator it; it.HasCurrent(); it.Next())
+    {
+        char ifName[chip::Inet::InterfaceId::kMaxIfNameLength];
+        if (it.IsUp() && CHIP_NO_ERROR == it.GetInterfaceName(ifName, sizeof(ifName)) &&
+            strncmp(ifName, sWiFiIfName, sizeof(ifName)) == 0)
+        {
+            chip::Inet::IPAddress addr = it.GetAddress();
+            if (addr.IsIPv4())
+            {
+                ChipDeviceEvent event;
+                event.Type                            = DeviceEventType::kInternetConnectivityChange;
+                event.InternetConnectivityChange.IPv4 = kConnectivity_Established;
+                event.InternetConnectivityChange.IPv6 = kConnectivity_NoChange;
+                addr.ToString(event.InternetConnectivityChange.address);
+
+                ChipLogDetail(DeviceLayer, "Got IP address on interface: %s IP: %s", ifName,
+                              event.InternetConnectivityChange.address);
+
+                PlatformMgr().PostEventOrDie(&event);
+            }
+        }
+    }
+
+    // Run dhclient for IP on WiFi.
+    // TODO: The wifi can be managed by networkmanager on linux so we don't have to care about this.
+    char cmdBuffer[128];
+    sprintf(cmdBuffer, CHIP_DEVICE_CONFIG_LINUX_DHCPC_CMD, sWiFiIfName);
+    int dhclientSystemRet = system(cmdBuffer);
+    if (dhclientSystemRet != 0)
+    {
+        ChipLogError(DeviceLayer, "Failed to run dhclient, system() returns %d", dhclientSystemRet);
+    }
+    else
+    {
+        ChipLogProgress(DeviceLayer, "dhclient is running on the %s interface.", sWiFiIfName);
+    }
+}
+
+CHIP_ERROR CommitConfig()
+{
+    std::unique_ptr<GError, GErrorDeleter> err;
+
+    ChipLogProgress(DeviceLayer, "wpa_supplicant: connected to network: SSID: %s", ssid);
+
+    result = wpa_fi_w1_wpa_supplicant1_interface_call_save_config_sync(mWpaSupplicant.iface, nullptr,
+                                                                       &MakeUniquePointerReceiver(err).Get());
+
+    if (!result)
+    {
+        ChipLogProgress(DeviceLayer, "wpa_supplicant: failed to save config: %s", gerror ? gerror->message : "unknown error");
+        return CHIP_ERROR_INTERNAL;
+    }
+
+    ChipLogProgress(DeviceLayer, "wpa_supplicant: save config succeeded!");
+    return CHIP_NO_ERROR;
 }
 
 CHIP_ERROR ConnectivityManagerImpl::GetWiFiBssId(ByteSpan & value)
@@ -1288,6 +1428,9 @@ bool ConnectivityManagerImpl::_GetBssInfo(const gchar * bssPath, NetworkCommissi
         return res & (0x7F);
     };
 
+    // Drop the network if its SSID or BSSID is illegal.
+    VerifyOrReturnError(ssidLen <= kMaxWiFiSSIDLength, false);
+    VerifyOrReturnError(bssidLen == kWiFiBSSIDLength, false);
     memcpy(result.ssid, ssidStr, ssidLen);
     memcpy(result.bssid, bssidBuf, bssidLen);
     if (signal < INT8_MIN)

@@ -113,6 +113,12 @@ class ConnectivityManagerImpl final : public ConnectivityManager,
 public:
 #if CHIP_DEVICE_CONFIG_ENABLE_WPA
     CHIP_ERROR ProvisionWiFiNetwork(const char * ssid, const char * key);
+    CHIP_ERROR ConnectWiFiNetworkAsync(ByteSpan ssid, ByteSpan credentials,
+                                       NetworkCommissioning::Internal::WirelessDriver::ConnectCallback * connectCallback);
+    void PostNetworkConnect();
+    static void _ConnectWiFiNetworkAsyncCallback(GObject * source_object, GAsyncResult * res, gpointer user_data);
+    CHIP_ERROR CommitConfig();
+
     void StartWiFiManagement();
     bool IsWiFiManagementStarted();
     CHIP_ERROR GetWiFiBssId(ByteSpan & value);

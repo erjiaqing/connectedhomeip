@@ -59,15 +59,35 @@ NetworkCommissioningStatus ToClusterObjectEnum(Status status)
     return static_cast<NetworkCommissioningStatus>(to_underlying(status));
 }
 
+NetworkCommissioning::WiFiBand ToClusterObjectEnum(DeviceLayer::NetworkCommissioning::WiFiBand band)
+{
+    using ClusterObject     = NetworkCommissioning::WiFiBand;
+    using PlatfromInterface = DeviceLayer::NetworkCommissioning::WiFiBand;
+
+    static_assert(to_underlying(ClusterObject::k2g4) == to_underlying(PlatfromInterface::k2g4), "k2g4 valus mismatch.");
+    static_assert(to_underlying(ClusterObject::k3g65) == to_underlying(PlatfromInterface::k3g65), "k3g65 valus mismatch.");
+    static_assert(to_underlying(ClusterObject::k5g) == to_underlying(PlatfromInterface::k5g), "k5g valus mismatch.");
+    static_assert(to_underlying(ClusterObject::k6g) == to_underlying(PlatfromInterface::k6g), "k6g valus mismatch.");
+    static_assert(to_underlying(ClusterObject::k60g) == to_underlying(PlatfromInterface::k60g), "k60g valus mismatch.");
+
+    return static_cast<ClusterObject>(to_underlying(band));
+}
+
 } // namespace
 
-CHIP_ERROR Instance::Register()
+CHIP_ERROR Instance::Init()
 {
     ReturnErrorOnFailure(chip::app::InteractionModelEngine::GetInstance()->RegisterCommandHandler(this));
     VerifyOrReturnError(registerAttributeAccessOverride(this), CHIP_ERROR_INCORRECT_STATE);
     ReturnErrorOnFailure(
         DeviceLayer::PlatformMgrImpl().AddEventHandler(_OnCommissioningComplete, reinterpret_cast<intptr_t>(this)));
+    ReturnErrorOnFailure(mpBaseDriver->Init());
     return CHIP_NO_ERROR;
+}
+
+CHIP_ERROR Instance::Shutdown()
+{
+    ReturnErrorOnFailure(mpBaseDriver->Shutdown());
 }
 
 void Instance::InvokeCommand(HandlerContext & ctxt)

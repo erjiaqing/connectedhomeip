@@ -42,7 +42,8 @@ public:
     /**
      * Register will register the network commissioning instance to the attribute and command dispatching route.
      */
-    CHIP_ERROR Register();
+    CHIP_ERROR Init();
+    CHIP_ERROR Shutdown();
 
     // CommandHandlerInterface
     void InvokeCommand(HandlerContext & ctx) override;
@@ -75,12 +76,12 @@ private:
 
     const uint32_t mType;
 
-    DeviceLayer::NetworkCommissioning::Internal::WirelessDriver * mpWirelessDriver;
-    DeviceLayer::NetworkCommissioning::Internal::BaseDriver * mpBaseDriver;
+    DeviceLayer::NetworkCommissioning::Internal::WirelessDriver * const mpWirelessDriver;
+    DeviceLayer::NetworkCommissioning::Internal::BaseDriver * const mpBaseDriver;
 
     // TODO: Use std::variant
-    DeviceLayer::NetworkCommissioning::WiFiDriver * mpWiFiDriver;
-    DeviceLayer::NetworkCommissioning::ThreadDriver * mpThreadDriver;
+    DeviceLayer::NetworkCommissioning::WiFiDriver * const mpWiFiDriver;
+    DeviceLayer::NetworkCommissioning::ThreadDriver * const mpThreadDriver;
 
     app::CommandHandler::Handle mAsyncCommandHandle;
 

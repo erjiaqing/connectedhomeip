@@ -28,13 +28,15 @@
 #include <lib/support/ThreadOperationalDataset.h>
 #include <platform/internal/DeviceNetworkInfo.h>
 
+#include <limits>
+
 namespace chip {
 namespace DeviceLayer {
 /**
  * We are using a namespace here, for most use cases, this namespace will be used by `using DeviceLayer::NetworkCommissioning`, but
  * this still worth a dedicated namespace since:
  *
- * - The BaseDriver / WirelessDriver is not expected to be implemented directly by users, the only occurrance is in the network
+ * - The BaseDriver / WirelessDriver is not expected to be implemented directly by users, the only occurrence is in the network
  *   commissioning cluster.
  * - We can safely name the drivers as WiFiDriver / ThreadDriver, it should not be ambiguous for most cases
  * - We can safely name the Status enum to Status, and some other structs -- if we are using using, then we should in the context of
@@ -71,7 +73,8 @@ protected:
 };
 
 /**
- * The content should match the one in zap_generated/cluster-objects.h
+ * The content should match the one in zap_generated/cluster-objects.h.
+ * Matching is validated by cluster code.
  */
 enum class Status : uint8_t
 {
@@ -90,6 +93,15 @@ enum class Status : uint8_t
     kUnknownError           = 0x0C,
 };
 
+enum class WiFiBand : uint8_t
+{
+    k2g4  = 0x00,
+    k3g65 = 0x01,
+    k5g   = 0x02,
+    k6g   = 0x03,
+    k60g  = 0x04,
+};
+
 // The following structs follows the generated cluster object structs.
 struct Network
 {
@@ -98,6 +110,9 @@ struct Network
     bool connected;
 };
 
+static_assert(sizeof(Network::networkID) <= std::numeric_limits<decltype(Network::networkIDLen)>,
+              "Max length of networkID ssid exceeds the limit of networkIDLen field");
+
 struct WiFiScanResponse
 {
 public:
@@ -105,10 +120,13 @@ public:
     uint8_t ssid[DeviceLayer::Internal::kMaxWiFiSSIDLength];
     uint8_t ssidLen;
     uint8_t bssid[6];
-    uint8_t channel;
-    uint32_t wiFiBand;
+    uint16_t channel;
+    WiFiBand wiFiBand;
     int8_t rssi;
 };
+
+static_assert(sizeof(WiFiScanResponse::ssid) <= std::numeric_limits<decltype(WiFiScanResponse::ssidLen)>,
+              "Max length of WiFi ssid exceeds the limit of ssidLen field");
 
 struct ThreadScanResponse
 {
@@ -116,13 +134,15 @@ struct ThreadScanResponse
     uint64_t extendedPanId;
     char networkName[16];
     uint8_t networkNameLen;
-    uint8_t ssidLen;
     uint16_t channel;
     uint8_t version;
     uint64_t extendedAddress;
     int8_t rssi;
     uint8_t lqi;
 };
+
+static_assert(sizeof(ThreadScanResponse::networkName) <= std::numeric_limits<decltype(ThreadScanResponse::networkNameLen)>,
+              "Max length of WiFi credentials exceeds the limit of credentialsLen field");
 
 using NetworkIterator            = Iterator<Network>;
 using WiFiScanResponseIterator   = Iterator<WiFiScanResponse>;
@@ -135,11 +155,23 @@ class BaseDriver
 {
 public:
     /**
+     * @brief Initialize the driver, this function will be called when initializing the network commissioning cluster.
+     */
+    virtual CHIP_ERROR Init() {}
+
+    /**
+     * @brief Shut down the driver, this function will be called when shutting down the network commissioning cluster.
+     */
+    virtual CHIP_ERROR Shutdown() {}
+
+    /**
      * @brief Returns maximum number of network configs can be added to the driver.
      */
     virtual uint8_t GetMaxNetworks() = 0;
+
     /**
-     * @brief Returns an iterator for reading the networks, the user will always call NetworkIterator::Release.
+     * @brief Returns an iterator for reading the networks, the user will always call NetworkIterator::Release. The iterator should
+     * be consumed in the same context as calling GetNetworks(). Users must call Release() when the iterator goes out of scope.
      */
     virtual NetworkIterator * GetNetworks() = 0;
 
@@ -147,6 +179,7 @@ public:
      * @brief Sets the status of the interface, this is an optional feature of a network driver.
      */
     virtual CHIP_ERROR SetEnabled(bool enabled) { return CHIP_ERROR_UNSUPPORTED_CHIP_FEATURE; }
+
     /**
      * @brief Returns the status of the interface, this is an optional feature of a network driver the driver will be enabled by
      * default.
@@ -200,9 +233,11 @@ public:
     public:
         /**
          * Indicates the scan is finished, and accepts a iterator of networks discovered.
-         * - Iterator::Release must be called inside this function.
          * - networks can be nullptr when no networks discovered, or error occurred during scanning the network.
          * OnFinished() must be called in a thread-safe manner with CHIP stack. (e.g. using ScheduleWork or ScheduleLambda)
+         * - Users can assume the networks will always be used (and Release will be called) inside this function call. However, the
+         * iterator might be not fully consumed (i.e. There are too many networks scanned to fit in the buffer for scan response
+         * message.)
          */
         virtual void OnFinished(Status status, CharSpan debugText, WiFiScanResponseIterator * networks) = 0;
 
@@ -230,9 +265,11 @@ public:
     public:
         /**
          * Indicates the scan is finished, and accepts a iterator of networks discovered.
-         * - Iterator::Release must be called inside this function.
-         * - networks can be nullptr, when no networks discovered, or error occurred during scanning the network.
+         * - networks can be nullptr when no networks discovered, or error occurred during scanning the network.
          * OnFinished() must be called in a thread-safe manner with CHIP stack. (e.g. using ScheduleWork or ScheduleLambda)
+         * - Users can assume the networks will always be used (and Release will be called) inside this function call. However, the
+         * iterator might be not fully consumed (i.e. There are too many networks scanned to fit in the buffer for scan response
+         * message.)
          */
         virtual void OnFinished(Status err, CharSpan debugText, ThreadScanResponseIterator * networks) = 0;
 

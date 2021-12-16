@@ -85,6 +85,8 @@ public:
         mWiFiIterator = WiFiNetworkIterator(this);
         return &mWiFiIterator;
     }
+    CHIP_ERROR Init();       // TODO: Load configurations from WPA supplicant
+    CHIP_ERROR Shutdown() {} // Nothing to do on linux for shutdown.
 
     // WirelessDriver
     uint8_t GetMaxNetworks() override { return 1; }
@@ -105,6 +107,8 @@ public:
 private:
     friend WiFiNetworkIterator;
     friend LinuxWiFiScanResponseIterator;
+
+    bool NetworkMatch(const WiFiNetwork & network, ByteSpan networkId);
 
     WiFiNetworkIterator mWiFiIterator = WiFiNetworkIterator(this);
     WiFiNetwork mRunningNetwork;
@@ -136,6 +140,8 @@ class LinuxThreadDriver final : public ThreadDriver
         mThreadIterator = ThreadNetworkIterator(this);
         return &mThreadIterator;
     }
+    CHIP_ERROR Init();       // TODO: Load configurations from otbr-agent
+    CHIP_ERROR Shutdown() {} // Nothing to do on linux for shutdown.
 
     // WirelessDriver
     uint8_t GetMaxNetworks() override { return 1; }
