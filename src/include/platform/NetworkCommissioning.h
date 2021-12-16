@@ -110,7 +110,7 @@ struct Network
     bool connected;
 };
 
-static_assert(sizeof(Network::networkID) <= std::numeric_limits<decltype(Network::networkIDLen)>,
+static_assert(sizeof(Network::networkID) <= std::numeric_limits<decltype(Network::networkIDLen)>::max(),
               "Max length of networkID ssid exceeds the limit of networkIDLen field");
 
 struct WiFiScanResponse
@@ -125,7 +125,7 @@ public:
     int8_t rssi;
 };
 
-static_assert(sizeof(WiFiScanResponse::ssid) <= std::numeric_limits<decltype(WiFiScanResponse::ssidLen)>,
+static_assert(sizeof(WiFiScanResponse::ssid) <= std::numeric_limits<decltype(WiFiScanResponse::ssidLen)>::max(),
               "Max length of WiFi ssid exceeds the limit of ssidLen field");
 
 struct ThreadScanResponse
@@ -141,7 +141,7 @@ struct ThreadScanResponse
     uint8_t lqi;
 };
 
-static_assert(sizeof(ThreadScanResponse::networkName) <= std::numeric_limits<decltype(ThreadScanResponse::networkNameLen)>,
+static_assert(sizeof(ThreadScanResponse::networkName) <= std::numeric_limits<decltype(ThreadScanResponse::networkNameLen)>::max(),
               "Max length of WiFi credentials exceeds the limit of credentialsLen field");
 
 using NetworkIterator            = Iterator<Network>;
@@ -157,12 +157,12 @@ public:
     /**
      * @brief Initialize the driver, this function will be called when initializing the network commissioning cluster.
      */
-    virtual CHIP_ERROR Init() {}
+    virtual CHIP_ERROR Init() { return CHIP_NO_ERROR; }
 
     /**
      * @brief Shut down the driver, this function will be called when shutting down the network commissioning cluster.
      */
-    virtual CHIP_ERROR Shutdown() {}
+    virtual CHIP_ERROR Shutdown() { return CHIP_NO_ERROR; }
 
     /**
      * @brief Returns maximum number of network configs can be added to the driver.

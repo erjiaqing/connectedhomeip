@@ -46,7 +46,7 @@ CHIP_ERROR LinuxWiFiDriver::RevertConfiguration()
     return CHIP_NO_ERROR;
 }
 
-bool WiFiNetworkMatch(const WiFiNetwork & network, ByteSpan networkId)
+bool LinuxWiFiDriver::NetworkMatch(const WiFiNetwork & network, ByteSpan networkId)
 {
     return networkId.size() == network.ssidLen && memcmp(networkId.data(), network.ssid, network.ssidLen) == 0;
 }
@@ -55,9 +55,9 @@ Status LinuxWiFiDriver::AddOrUpdateNetwork(ByteSpan ssid, ByteSpan credentials)
 {
     VerifyOrReturnError(mStagingNetwork.ssidLen == 0 || NetworkMatch(mStagingNetwork, ssid), Status::kBoundsExceeded);
 
-    static_assert(sizeof(WiFiScanResponse::ssid) <= std::numeric_limits<decltype(WiFiScanResponse::ssidLen)>,
+    static_assert(sizeof(WiFiNetwork::ssid) <= std::numeric_limits<decltype(WiFiNetwork::ssidLen)>::max(),
                   "Max length of WiFi ssid exceeds the limit of ssidLen field");
-    static_assert(sizeof(WiFiScanResponse::credentials) <= std::numeric_limits<decltype(WiFiScanResponse::credentialsLen)>,
+    static_assert(sizeof(WiFiNetwork::credentials) <= std::numeric_limits<decltype(WiFiNetwork::credentialsLen)>::max(),
                   "Max length of WiFi credentials exceeds the limit of credentialsLen field");
 
     // Do the check before setting the values, so the data is not updated on error.
@@ -96,7 +96,7 @@ void LinuxWiFiDriver::ConnectNetwork(ByteSpan networkId, ConnectCallback * callb
     Status networkingStatus = Status::kSuccess;
 
     // We only support one network, so reorder is actually no-op.
-    VerifyOrReturnError(NetworkMatch(mStagingNetwork, networkId), Status::kNetworkIDNotFound);
+    VerifyOrExit(NetworkMatch(mStagingNetwork, networkId), networkingStatus = Status::kNetworkIDNotFound);
 
     ChipLogProgress(NetworkProvisioning, "LinuxNetworkCommissioningDelegate: SSID: %s", networkId.data());
 
@@ -106,8 +106,13 @@ void LinuxWiFiDriver::ConnectNetwork(ByteSpan networkId, ConnectCallback * callb
 exit:
     if (err != CHIP_NO_ERROR)
     {
+        networkingStatus = Status::kUnknownError;
+    }
+
+    if (networkingStatus != Status::kSuccess)
+    {
         ChipLogError(NetworkProvisioning, "Failed to connect to WiFi network: %s", chip::ErrorStr(err));
-        callback->OnResult(Status::kUnknownError, CharSpan(), 0);
+        callback->OnResult(networkingStatus, CharSpan(), 0);
     }
 }
 

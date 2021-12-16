@@ -884,6 +884,9 @@ ConnectivityManagerImpl::ConnectWiFiNetworkAsync(ByteSpan ssid, ByteSpan credent
     GError * err    = nullptr;
     GVariant * args = nullptr;
     GVariantBuilder builder;
+    gboolean result;
+    char ssidStr[kMaxWiFiSSIDLength] = { 0 };
+    char keyStr[kMaxWiFiKeyLength]   = { 0 };
 
     if (mpConnectCallback != nullptr)
     {
@@ -919,8 +922,10 @@ ConnectivityManagerImpl::ConnectWiFiNetworkAsync(ByteSpan ssid, ByteSpan credent
     }
 
     g_variant_builder_init(&builder, G_VARIANT_TYPE_VARDICT);
-    g_variant_builder_add(&builder, "{sv}", "ssid", g_variant_new_string(ssid));
-    g_variant_builder_add(&builder, "{sv}", "psk", g_variant_new_string(key));
+    memcpy(ssidStr, ssid.data(), ssid.size());
+    memcpy(keyStr, credentials.data(), credentials.size());
+    g_variant_builder_add(&builder, "{sv}", "ssid", g_variant_new_string(ssidStr));
+    g_variant_builder_add(&builder, "{sv}", "psk", g_variant_new_string(keyStr));
     g_variant_builder_add(&builder, "{sv}", "key_mgmt", g_variant_new_string("WPA-PSK"));
     args = g_variant_builder_end(&builder);
 
@@ -929,16 +934,14 @@ ConnectivityManagerImpl::ConnectWiFiNetworkAsync(ByteSpan ssid, ByteSpan credent
 
     if (result)
     {
-        GError * error = nullptr;
-
-        ChipLogProgress(DeviceLayer, "wpa_supplicant: added network: SSID: %s: %s", ssid, mWpaSupplicant.networkPath);
+        ChipLogProgress(DeviceLayer, "wpa_supplicant: added network: %s", mWpaSupplicant.networkPath);
 
         wpa_fi_w1_wpa_supplicant1_interface_call_select_network(mWpaSupplicant.iface, mWpaSupplicant.networkPath, nullptr,
                                                                 _ConnectWiFiNetworkAsyncCallback, this);
     }
     else
     {
-        ChipLogProgress(DeviceLayer, "wpa_supplicant: failed to add network: %s: %s", ssid, err ? err->message : "unknown error");
+        ChipLogProgress(DeviceLayer, "wpa_supplicant: failed to add network: %s", err ? err->message : "unknown error");
 
         if (mWpaSupplicant.networkPath)
         {
@@ -967,7 +970,7 @@ void ConnectivityManagerImpl::_ConnectWiFiNetworkAsyncCallback(GObject * source_
         if (!result)
         {
             ChipLogError(DeviceLayer, "Failed to perform connect network: %s", err == nullptr ? "unknown error" : err->message);
-            DeviceLayer::SystemLayer().ScheduleLambda([]() {
+            DeviceLayer::SystemLayer().ScheduleLambda([this_]() {
                 if (mpConnectCallback != nullptr)
                 {
                     // TODO: Replace this with actual thread attach result.
@@ -975,7 +978,7 @@ void ConnectivityManagerImpl::_ConnectWiFiNetworkAsyncCallback(GObject * source_
                     this_->mpConnectCallback = nullptr;
                 }
                 mpConnectCallback = nullptr;
-            })
+            });
         }
         else
         {
@@ -1144,18 +1147,19 @@ void ConnectivityManagerImpl::PostNetworkConnect()
     }
 }
 
-CHIP_ERROR CommitConfig()
+CHIP_ERROR ConnectivityManagerImpl::CommitConfig()
 {
+    gboolean result;
     std::unique_ptr<GError, GErrorDeleter> err;
 
-    ChipLogProgress(DeviceLayer, "wpa_supplicant: connected to network: SSID: %s", ssid);
+    ChipLogProgress(DeviceLayer, "wpa_supplicant: connected to network");
 
     result = wpa_fi_w1_wpa_supplicant1_interface_call_save_config_sync(mWpaSupplicant.iface, nullptr,
                                                                        &MakeUniquePointerReceiver(err).Get());
 
     if (!result)
     {
-        ChipLogProgress(DeviceLayer, "wpa_supplicant: failed to save config: %s", gerror ? gerror->message : "unknown error");
+        ChipLogProgress(DeviceLayer, "wpa_supplicant: failed to save config: %s", err ? err->message : "unknown error");
         return CHIP_ERROR_INTERNAL;
     }
 
@@ -1447,7 +1451,7 @@ bool ConnectivityManagerImpl::_GetBssInfo(const gchar * bssPath, NetworkCommissi
     }
 
     // TODO: Fill band and channel
-    result.wiFiBand = 0;
+    result.wiFiBand = WiFiBand::k2g4;
     result.channel  = 0;
     result.security = GetNetworkSecurityType(bssProxy);
 

@@ -80,8 +80,8 @@ private:
     DeviceLayer::NetworkCommissioning::Internal::BaseDriver * const mpBaseDriver;
 
     // TODO: Use std::variant
-    DeviceLayer::NetworkCommissioning::WiFiDriver * const mpWiFiDriver;
-    DeviceLayer::NetworkCommissioning::ThreadDriver * const mpThreadDriver;
+    DeviceLayer::NetworkCommissioning::WiFiDriver * const mpWiFiDriver     = nullptr;
+    DeviceLayer::NetworkCommissioning::ThreadDriver * const mpThreadDriver = nullptr;
 
     app::CommandHandler::Handle mAsyncCommandHandle;
 

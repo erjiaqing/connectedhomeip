@@ -88,6 +88,7 @@ CHIP_ERROR Instance::Init()
 CHIP_ERROR Instance::Shutdown()
 {
     ReturnErrorOnFailure(mpBaseDriver->Shutdown());
+    return CHIP_NO_ERROR;
 }
 
 void Instance::InvokeCommand(HandlerContext & ctxt)
@@ -375,7 +376,7 @@ void Instance::OnFinished(Status status, CharSpan debugText, WiFiScanResponseIte
         result.ssid     = ByteSpan(scanResponse.ssid, scanResponse.ssidLen);
         result.bssid    = ByteSpan(scanResponse.bssid, sizeof(scanResponse.bssid));
         result.channel  = scanResponse.channel;
-        result.wiFiBand = scanResponse.wiFiBand;
+        result.wiFiBand = ToClusterObjectEnum(scanResponse.wiFiBand);
         result.rssi     = scanResponse.rssi;
         SuccessOrExit(err = DataModel::Encode(*writer, TLV::AnonymousTag, result));
     }
