@@ -265,7 +265,7 @@ class ClusterObjectTests:
     async def TestTimedRequest(cls, devCtrl):
         logger.info("1: Send Timed Command Request")
         req = Clusters.OnOff.Commands.On()
-        await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=LIGHTING_ENDPOINT_ID, payload=req, timedRequestTimeoutMs=1000)
+        await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=LIGHTING_ENDPOINT_ID, payload=req, timedRequestTimeoutMs=10)
 
         logger.info("2: Send Timed Write Request")
         await devCtrl.WriteAttribute(nodeid=NODE_ID,
@@ -273,13 +273,13 @@ class ClusterObjectTests:
                                          (0, Clusters.Basic.Attributes.NodeLabel(
                                              "Test")),
                                      ],
-                                     timedRequestTimeoutMs=1000)
+                                     timedRequestTimeoutMs=10)
 
         logger.info("3: Send Timed Command Request -- Timeout")
         try:
             req = Clusters.OnOff.Commands.On()
             # 10ms is a pretty short timeout, RTT is 400ms in simulated network on CI, so this test should fail.
-            await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=LIGHTING_ENDPOINT_ID, payload=req, timedRequestTimeoutMs=10)
+            await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=LIGHTING_ENDPOINT_ID, payload=req, timedRequestTimeoutMs=1000)
             raise AssertionError("Timeout expected!")
         except chip.exceptions.ChipStackException:
             pass
@@ -291,7 +291,7 @@ class ClusterObjectTests:
                                              (0, Clusters.Basic.Attributes.NodeLabel(
                                                  "Test")),
                                          ],
-                                         timedRequestTimeoutMs=10)
+                                         timedRequestTimeoutMs=1000)
             raise AssertionError("Timeout expected!")
         except chip.exceptions.ChipStackException:
             pass
