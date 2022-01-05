@@ -763,7 +763,7 @@ def _OnWriteDoneCallback(closure):
     ctypes.pythonapi.Py_DecRef(ctypes.py_object(closure))
 
 
-def WriteAttributes(future: Future, eventLoop, device, attributes: List[AttributeWriteRequest]) -> int:
+def WriteAttributes(future: Future, eventLoop, device, attributes: List[AttributeWriteRequest], timedRequestTimeoutMs: int = None) -> int:
     handle = chip.native.GetLibraryHandle()
     transaction = AsyncWriteTransaction(future, eventLoop)
 
@@ -782,7 +782,7 @@ def WriteAttributes(future: Future, eventLoop, device, attributes: List[Attribut
 
     ctypes.pythonapi.Py_IncRef(ctypes.py_object(transaction))
     res = handle.pychip_WriteClient_WriteAttributes(
-        ctypes.py_object(transaction), device, ctypes.c_size_t(len(attributes)), *writeargs)
+        ctypes.py_object(transaction), device, ctypes.c_uint16(0 if timedRequestTimeoutMs is None else timedRequestTimeoutMs), ctypes.c_size_t(len(attributes)), *writeargs)
     if res != 0:
         ctypes.pythonapi.Py_DecRef(ctypes.py_object(transaction))
     return res

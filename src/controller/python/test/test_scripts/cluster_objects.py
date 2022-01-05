@@ -17,6 +17,7 @@
 
 
 import chip.clusters as Clusters
+import chip.exceptions
 import logging
 from chip.clusters.Attribute import AttributePath, AttributeReadResult, AttributeStatus, ValueDecodeFailure, TypedAttributePath, SubscriptionTransaction
 import chip.interaction_model
@@ -261,6 +262,41 @@ class ClusterObjectTests:
         # TODO: Add more wildcard test for IM events.
 
     @classmethod
+    async def TestTimedRequest(cls, devCtrl):
+        logger.info("1: Send Timed Command Request")
+        req = Clusters.OnOff.Commands.On()
+        await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=LIGHTING_ENDPOINT_ID, payload=req, timedRequestTimeoutMs=1000)
+
+        logger.info("2: Send Timed Write Request")
+        await devCtrl.WriteAttribute(nodeid=NODE_ID,
+                                     attributes=[
+                                         (0, Clusters.Basic.Attributes.NodeLabel(
+                                             "Test")),
+                                     ],
+                                     timedRequestTimeoutMs=1000)
+
+        logger.info("3: Send Timed Command Request -- Timeout")
+        try:
+            req = Clusters.OnOff.Commands.On()
+            # 10ms is a pretty short timeout, RTT is 400ms in simulated network on CI, so this test should fail.
+            await devCtrl.SendCommand(nodeid=NODE_ID, endpoint=LIGHTING_ENDPOINT_ID, payload=req, timedRequestTimeoutMs=10)
+            raise AssertionError("Timeout expected!")
+        except chip.exceptions.ChipStackException:
+            pass
+
+        logger.info("4: Send Timed Command Request -- Timeout")
+        try:
+            await devCtrl.WriteAttribute(nodeid=NODE_ID,
+                                         attributes=[
+                                             (0, Clusters.Basic.Attributes.NodeLabel(
+                                                 "Test")),
+                                         ],
+                                         timedRequestTimeoutMs=10)
+            raise AssertionError("Timeout expected!")
+        except chip.exceptions.ChipStackException:
+            pass
+
+    @classmethod
     async def RunTest(cls, devCtrl):
         try:
             cls.TestAPI()
@@ -271,6 +307,7 @@ class ClusterObjectTests:
             await cls.SendWriteRequest(devCtrl)
             await cls.TestReadAttributeRequests(devCtrl)
             await cls.TestSubscribeAttribute(devCtrl)
+            await cls.TestTimedRequest(devCtrl)
         except Exception as ex:
             logger.error(
                 f"Unexpected error occurred when running tests: {ex}")
