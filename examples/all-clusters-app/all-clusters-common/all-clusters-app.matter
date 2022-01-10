@@ -2505,6 +2505,10 @@ server cluster TestCluster = 1295 {
     double h = 8;
   }
 
+  struct TestFabricScoped {
+    fabric_idx fabricIndex = 1;
+  }
+
   struct NestedStructList {
     INT8U a = 1;
     BOOLEAN b = 2;
@@ -2573,6 +2577,7 @@ server cluster TestCluster = 1295 {
   attribute(writable, reportable) int16u rangeRestrictedInt16u = 40;
   attribute(writable, reportable) int16s rangeRestrictedInt16s = 41;
   attribute(readonly) LONG_OCTET_STRING listLongOctetString[] = 42;
+  attribute(readonly) TestFabricScoped listFabricScoped[] = 43;
   attribute(writable, reportable) boolean timedWriteBoolean = 48;
   attribute(writable, reportable) boolean nullableBoolean = 32768;
   attribute(writable, reportable) bitmap8 nullableBitmap8 = 32769;
