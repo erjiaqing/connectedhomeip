@@ -33538,6 +33538,25 @@ public:
 };
 
 } // namespace DoubleNestedStructList
+namespace TestFabricScoped {
+enum class Fields
+{
+    kFabricIndex = 1,
+};
+
+struct Type
+{
+public:
+    chip::FabricIndex fabricIndex;
+
+    CHIP_ERROR Encode(TLV::TLVWriter & writer, TLV::Tag tag) const;
+    CHIP_ERROR Decode(TLV::TLVReader & reader);
+    bool MatchesFabricIndex(FabricIndex fabricIndex_) const { return fabricIndex == fabricIndex_; }
+};
+
+using DecodableType = Type;
+
+} // namespace TestFabricScoped
 namespace TestListStructOctet {
 enum class Fields
 {
@@ -35422,6 +35441,20 @@ struct TypeInfo
     static constexpr bool MustUseTimedWrite() { return false; }
 };
 } // namespace ListLongOctetString
+namespace ListFabricScoped {
+struct TypeInfo
+{
+    using Type = chip::app::DataModel::List<const chip::app::Clusters::TestCluster::Structs::TestFabricScoped::Type>;
+    using DecodableType =
+        chip::app::DataModel::DecodableList<chip::app::Clusters::TestCluster::Structs::TestFabricScoped::DecodableType>;
+    using DecodableArgType =
+        const chip::app::DataModel::DecodableList<chip::app::Clusters::TestCluster::Structs::TestFabricScoped::DecodableType> &;
+
+    static constexpr ClusterId GetClusterId() { return Clusters::TestCluster::Id; }
+    static constexpr AttributeId GetAttributeId() { return Attributes::ListFabricScoped::Id; }
+    static constexpr bool MustUseTimedWrite() { return false; }
+};
+} // namespace ListFabricScoped
 namespace TimedWriteBoolean {
 struct TypeInfo
 {
@@ -35931,6 +35964,7 @@ struct TypeInfo
         Attributes::RangeRestrictedInt16u::TypeInfo::DecodableType rangeRestrictedInt16u = static_cast<uint16_t>(0);
         Attributes::RangeRestrictedInt16s::TypeInfo::DecodableType rangeRestrictedInt16s = static_cast<int16_t>(0);
         Attributes::ListLongOctetString::TypeInfo::DecodableType listLongOctetString;
+        Attributes::ListFabricScoped::TypeInfo::DecodableType listFabricScoped;
         Attributes::TimedWriteBoolean::TypeInfo::DecodableType timedWriteBoolean = static_cast<bool>(0);
         Attributes::Unsupported::TypeInfo::DecodableType unsupported             = static_cast<bool>(0);
         Attributes::NullableBoolean::TypeInfo::DecodableType nullableBoolean;
