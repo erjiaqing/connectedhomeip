@@ -81,7 +81,7 @@ class TestPythonController(CHIPVirtualHome):
                    if device['type'] == 'MobileDevice']
 
         for server in server_ids:
-            self.execute_device_cmd(server, "CHIPCirqueDaemon.py -- run gdb -return-child-result -q -ex run -ex bt --args {} --thread".format(
+            self.execute_device_cmd(server, "CHIPCirqueDaemon.py -- run gdb -return-child-result -q -ex run -ex \"bt 25\" --args {} --thread".format(
                 os.path.join(CHIP_REPO, "out/debug/standalone/chip-all-clusters-app")))
 
         self.reset_thread_devices(server_ids)
