@@ -2285,8 +2285,9 @@
             { 0x00000028, ZAP_TYPE(INT16U), 2, ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE),                         \
               ZAP_MIN_MAX_DEFAULTS_INDEX(34) }, /* range_restricted_int16u */                                                      \
             { 0x00000029, ZAP_TYPE(INT16S), 2, ZAP_ATTRIBUTE_MASK(MIN_MAX) | ZAP_ATTRIBUTE_MASK(WRITABLE),                         \
-              ZAP_MIN_MAX_DEFAULTS_INDEX(35) },                                      /* range_restricted_int16s */                 \
-            { 0x0000002A, ZAP_TYPE(ARRAY), 1000, 0, ZAP_LONG_DEFAULTS_INDEX(2948) }, /* list_long_octet_string */                  \
+              ZAP_MIN_MAX_DEFAULTS_INDEX(35) }, /* range_restricted_int16s */                                                      \
+            { 0x0000002A, ZAP_TYPE(ARRAY), 1000, ZAP_ATTRIBUTE_MASK(WRITABLE),                                                     \
+              ZAP_LONG_DEFAULTS_INDEX(2948) }, /* list_long_octet_string */                                                        \
             { 0x00000030, ZAP_TYPE(BOOLEAN), 1, ZAP_ATTRIBUTE_MASK(WRITABLE) | ZAP_ATTRIBUTE_MASK(MUST_USE_TIMED_WRITE),           \
               ZAP_EMPTY_DEFAULT() }, /* timed_write_boolean */                                                                     \
             { 0x00008000, ZAP_TYPE(BOOLEAN), 1, ZAP_ATTRIBUTE_MASK(WRITABLE) | ZAP_ATTRIBUTE_MASK(NULLABLE),                       \
