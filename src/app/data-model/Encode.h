@@ -59,6 +59,10 @@ CHIP_ERROR Encode(TLV::TLVWriter & writer, TLV::Tag tag, BitFlags<X> x)
 
 inline CHIP_ERROR Encode(TLV::TLVWriter & writer, TLV::Tag tag, ByteSpan x)
 {
+    if (x.data() == nullptr)
+    {
+        return writer.Put(tag, ByteSpan(nullptr, 0));
+    }
     return writer.Put(tag, x);
 }
 
