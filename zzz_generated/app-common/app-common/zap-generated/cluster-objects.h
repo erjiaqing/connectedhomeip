@@ -33645,7 +33645,7 @@ public:
     chip::FabricIndex fabricIndex = static_cast<chip::FabricIndex>(0);
 
     CHIP_ERROR Encode(TLV::TLVWriter & writer, TLV::Tag tag) const;
-    CHIP_ERROR Decode(TLV::TLVReader & reader);
+    CHIP_ERROR Decode(TLV::TLVReader & reader, const chip::Optional<FabricIndex> & overwriteFabricIndex);
     bool MatchesFabricIndex(FabricIndex fabricIndex_) const { return fabricIndex == fabricIndex_; }
 };
 
