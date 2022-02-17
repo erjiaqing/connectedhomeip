@@ -1,0 +1,81 @@
+syntax = "proto3";
+
+package chip.rpc;
+
+import 'pw_protobuf_protos/common.proto';
+
+///////////////////////////////////////
+
+message Status {
+    uint32 Status = 1;
+}
+
+///////////////////////////
+///  Interaction Model  ///
+///////////////////////////
+
+message CommandPath {
+    uint32 EndpointID = 1;
+    uint32 ClusterID = 2;
+    uint32 CommandID = 3;
+}
+
+message InvokeCommandRequest {
+    uint64 FabricId = 1;
+    uint64 NodeId = 2;
+    CommandPath path = 3;
+    bytes payload = 4;
+}
+
+message InvokeCommandResponse {
+    CommandPath path = 1;
+    optional uint32 statusCode = 2;
+    optional bytes payload = 3;
+}
+
+message AttributePath {
+    optional uint32 EndpointID = 1;
+    optional uint32 ClusterID = 2;
+    optional uint32 AttributeID = 3;
+}
+
+message AttributeDataIB {
+    AttributePath Path = 1;
+    bytes Payload = 2;
+}
+
+message ReadAttributeRequest {
+    repeated AttributePath Path = 1;
+}
+
+message ReadAttributeResponse {
+    AttributeDataIB Payload = 1;
+}
+
+message AttributeStatus {
+    AttributePath Path = 1;
+}
+
+message WriteAttributeRequest {
+    repeated AttributeDataIB Payload = 1;
+}
+
+///////////////////////////
+///    Commissioning    ///
+///////////////////////////
+
+message IPCommissionRequest {
+    optional uint32 FabricIndex = 1;
+    string IP = 2;
+    uint32 Pincode = 3;
+    uint64 NodeId = 4;
+}
+
+///////////////////////////
+///       Service       ///
+///////////////////////////
+
+service MatterController {
+    rpc IPCommission(IPCommissionRequest) returns (Status) {}
+    rpc InvokeCommand(InvokeCommandRequest) returns (InvokeCommandResponse) {}
+}

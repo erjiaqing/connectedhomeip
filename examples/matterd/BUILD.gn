@@ -1,0 +1,95 @@
+import("//build_overrides/pigweed.gni")
+
+import("$dir_pw_build/target_types.gni")
+import("$dir_pw_protobuf_compiler/proto.gni")
+
+import("//build_overrides/build.gni")
+import("//build_overrides/chip.gni")
+
+import("${chip_root}/build/chip/tools.gni")
+import("${chip_root}/src/lib/core/core.gni")
+import("//with_pw_rpc.gni")
+
+declare_args() {
+  # Use a separate eventloop for CHIP tasks
+  config_use_separate_eventloop = true
+}
+
+config("config") {
+  include_dirs = [
+    ".",
+    "..",
+    "${chip_root}/zzz_generated/chip-tool",
+    "${chip_root}/src/lib",
+    "${chip_root}/src/controller/python",
+  ]
+
+  defines = [ "CONFIG_USE_SEPARATE_EVENTLOOP=${config_use_separate_eventloop}" ]
+}
+
+executable("matterd") {
+  sources = [ "main.cpp", "PersistentStorage.cpp" ]
+
+  # RPC
+  sources += [
+    "${dir_pigweed}/targets/host/system_rpc_server.cc",
+    "rpc.cpp",
+    "rpc/matter_controller.cpp",
+  ]
+
+  sources += [
+    "${chip_root}/src/controller/python/ChipDeviceController-ScriptDeviceAddressUpdateDelegate.cpp",
+    "${chip_root}/src/controller/python/ChipDeviceController-ScriptDeviceAddressUpdateDelegate.h",
+    "${chip_root}/src/controller/python/ChipDeviceController-ScriptDevicePairingDelegate.cpp",
+    "${chip_root}/src/controller/python/ChipDeviceController-ScriptDevicePairingDelegate.h",
+    "${chip_root}/src/controller/python/ChipDeviceController-StorageDelegate.cpp",
+    "${chip_root}/src/controller/python/ChipDeviceController-StorageDelegate.h",
+    "${chip_root}/src/controller/python/chip/clusters/attribute.cpp",
+    "${chip_root}/src/controller/python/chip/clusters/command.cpp",
+    "${chip_root}/src/controller/python/chip/discovery/NodeResolution.cpp",
+    "${chip_root}/src/controller/python/chip/interaction_model/Delegate.cpp",
+    "${chip_root}/src/controller/python/chip/interaction_model/Delegate.h",
+    "${chip_root}/src/controller/python/chip/internal/ChipThreadWork.cpp",
+    "${chip_root}/src/controller/python/chip/internal/ChipThreadWork.h",
+    "${chip_root}/src/controller/python/chip/internal/CommissionerImpl.cpp",
+    "${chip_root}/src/controller/python/chip/logging/LoggingRedirect.cpp",
+    "${chip_root}/src/controller/python/chip/native/StackInit.cpp",
+  ]
+
+  deps = [
+    "${chip_root}/src/app/server",
+    "${chip_root}/src/app/tests/suites/pics",
+    "${chip_root}/src/controller",
+    "${chip_root}/src/controller/data_model",
+    "${chip_root}/src/lib",
+    "${chip_root}/src/platform",
+    "${chip_root}/third_party/inipp",
+  ]
+
+  # Deps for RPC
+  deps += [
+    "protocols:matterd_protocol.nanopb_rpc",
+    "$dir_pw_hdlc:pw_rpc",
+    "$dir_pw_hdlc:rpc_channel_output",
+    "$dir_pw_log",
+    "$dir_pw_rpc:server",
+    "$dir_pw_rpc:synchronized_channel_output",
+    "$dir_pw_rpc/system_server:facade",
+    "$dir_pw_stream:socket_stream",
+    "$dir_pw_stream:sys_io_stream",
+    "$dir_pw_sync:mutex",
+    "${chip_root}/config/linux/lib/pw_rpc:pw_rpc",
+  ]
+
+  deps += pw_build_LINK_DEPS
+
+  public_configs = [ ":config" ]
+
+  defines = [ "PW_RPC_ENABLED" ]
+
+  output_dir = root_out_dir
+}
+
+group("default") {
+  deps = [ ":matterd" ]
+}

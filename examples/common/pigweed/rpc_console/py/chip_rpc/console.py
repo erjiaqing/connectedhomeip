@@ -63,6 +63,10 @@ from locking_service import locking_service_pb2
 from ot_cli_service import ot_cli_service_pb2
 from thread_service import thread_service_pb2
 from wifi_service import wifi_service_pb2
+import server_pb2
+
+from . import matterd
+import chip.clusters
 
 _LOG = logging.getLogger(__name__)
 _DEVICE_LOG = logging.getLogger('rpc_device')
@@ -79,7 +83,8 @@ PROTOS = [attributes_service_pb2,
           locking_service_pb2,
           ot_cli_service_pb2,
           thread_service_pb2,
-          wifi_service_pb2]
+          wifi_service_pb2,
+          server_pb2]
 
 
 def _parse_args():
@@ -113,7 +118,10 @@ def _start_ipython_terminal(client: HdlcRpcClient) -> None:
         client=client,
         channel_client=client.client.channel(1),
         rpcs=client.client.channel(1).rpcs,
+        controller=matterd.MatterControllerHelper(
+            client.client.channel(1).rpcs),
         protos=client.protos.packages,
+        clusters=chip.clusters,
         # Include the active pane logger for creating logs in the repl.
         LOG=_DEVICE_LOG,
     )

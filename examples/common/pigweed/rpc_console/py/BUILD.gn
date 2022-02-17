@@ -29,7 +29,7 @@ pw_python_package("chip_rpc") {
       install_requires = [ "ipython" ]
     }
   }
-  sources = [ "chip_rpc/console.py" ]
+  sources = [ "chip_rpc/console.py", "chip_rpc/matterd.py" ]
   python_deps = [
     "$dir_pw_console/py",
     "$dir_pw_hdlc/py",
@@ -45,6 +45,7 @@ pw_python_package("chip_rpc") {
     "${chip_root}/examples/common/pigweed:ot_cli_service.python",
     "${chip_root}/examples/common/pigweed:thread_service.python",
     "${chip_root}/examples/common/pigweed:wifi_service.python",
+    "${chip_root}/examples/matterd/protocols:matterd_protocol.python",
   ]
 }
 
