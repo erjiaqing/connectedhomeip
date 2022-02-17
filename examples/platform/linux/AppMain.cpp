@@ -161,6 +161,66 @@ static bool EnsureWiFiIsStarted()
 }
 #endif
 
+// Network commissioning
+namespace {
+// // This file is being used by platforms other than Linux, so we need this check to disable related features since we only
+// // implemented them on linux.
+// constexpr EndpointId kNetworkCommissioningEndpointMain      = 0;
+// constexpr EndpointId kNetworkCommissioningEndpointSecondary = 0xFFFE;
+
+// #if CHIP_DEVICE_LAYER_TARGET_LINUX
+
+// constexpr CommandId networkCommissioningWiFiIncomingCommands[] = {
+//     NetworkCommissioning::Commands::ScanNetworks::Id,  NetworkCommissioning::Commands::AddOrUpdateWiFiNetwork::Id,
+//     NetworkCommissioning::Commands::RemoveNetwork::Id, NetworkCommissioning::Commands::ConnectNetwork::Id,
+//     NetworkCommissioning::Commands::RemoveNetwork::Id, kInvalidCommandId,
+// };
+
+// constexpr CommandId networkCommissioningWiFiResponseCommands[] = {
+//     NetworkCommissioning::Commands::ScanNetworksResponse::Id,
+//     NetworkCommissioning::Commands::NetworkConfigResponse::Id,
+//     NetworkCommissioning::Commands::ConnectNetworkResponse::Id,
+//     kInvalidCommandId,
+// };
+
+// DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(networkCommissioningWirelessAttrs)
+// DECLARE_DYNAMIC_ATTRIBUTE(NetworkCommissioning::Attributes::MaxNetworks::Id, INT8U, 1, 0),
+//     DECLARE_DYNAMIC_ATTRIBUTE(NetworkCommissioning::Attributes::Networks::Id, STRUCT, 1, 0),
+//     DECLARE_DYNAMIC_ATTRIBUTE(NetworkCommissioning::Attributes::ScanMaxTimeSeconds::Id, INT8U, 1, 0),
+//     DECLARE_DYNAMIC_ATTRIBUTE(NetworkCommissioning::Attributes::ConnectMaxTimeSeconds::Id, INT8U, 1, 0),
+//     DECLARE_DYNAMIC_ATTRIBUTE(NetworkCommissioning::Attributes::LastNetworkingStatus::Id, ENUM8, 1, 0),
+//     DECLARE_DYNAMIC_ATTRIBUTE(NetworkCommissioning::Attributes::LastNetworkID::Id, OCTET_STRING, 1, 0),
+//     DECLARE_DYNAMIC_ATTRIBUTE(NetworkCommissioning::Attributes::LastConnectErrorValue::Id, INT32S, 1, 0),
+//     DECLARE_DYNAMIC_ATTRIBUTE(NetworkCommissioning::Attributes::FeatureMap::Id, INT32U, 1, 0),
+//     DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+
+// DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(wifiEndpointConfig)
+// DECLARE_DYNAMIC_CLUSTER(NetworkCommissioning::Id, onOffAttrs, onOffIncomingCommands, nullptr),
+//     DECLARE_DYNAMIC_CLUSTER(ZCL_DESCRIPTOR_CLUSTER_ID, descriptorAttrs, nullptr, nullptr),
+//     DECLARE_DYNAMIC_CLUSTER(ZCL_BRIDGED_DEVICE_BASIC_CLUSTER_ID, bridgedDeviceBasicAttrs, nullptr, nullptr),
+//     DECLARE_DYNAMIC_CLUSTER(ZCL_FIXED_LABEL_CLUSTER_ID, fixedLabelAttrs, nullptr, nullptr), DECLARE_DYNAMIC_CLUSTER_LIST_END;
+
+// DECLARE_DYNAMIC_ENDPOINT(secondaryNetworkCommissioningEndpoint, clusterList)
+
+#if CHIP_DEVICE_CONFIG_ENABLE_THREAD
+NetworkCommissioning::LinuxThreadDriver sLinuxThreadDriver;
+Clusters::NetworkCommissioning::Instance sThreadNetworkCommissioningInstance(kNetworkCommissioningEndpointMain,
+                                                                             &sLinuxThreadDriver);
+#endif
+#if CHIP_DEVICE_CONFIG_ENABLE_WPA
+NetworkCommissioning::LinuxWiFiDriver sLinuxWiFiDriver;
+Clusters::NetworkCommissioning::Instance sWiFiNetworkCommissioningInstance(kNetworkCommissioningEndpointSecondary,
+                                                                           &sLinuxWiFiDriver);
+#endif
+
+Clusters::NetworkCommissioning::NullNetworkDriver sNullNetworkDriver;
+Clusters::NetworkCommissioning::Instance sNullNetworkCommissioningInstance(kNetworkCommissioningEndpointMain, &sNullNetworkDriver);
+
+#endif // CHIP_DEVICE_LAYER_TARGET_LINUX
+} // namespace
+
+void ApplicationInit() {}
+
 int ChipLinuxAppInit(int argc, char ** argv, OptionSet * customOptions)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
@@ -591,6 +651,62 @@ void ChipLinuxAppMainLoop()
 #endif // CHIP_DEVICE_CONFIG_ENABLE_BOTH_COMMISSIONER_AND_COMMISSIONEE
 
     SetupSignalHandlers();
+
+    // Network Commissioning
+    (void) kNetworkCommissioningEndpointMain;
+    // Enable secondary endpoint only when we need it, this should be applied to all platforms.
+    emberAfEndpointEnableDisable(kNetworkCommissioningEndpointSecondary, false);
+
+#if CHIP_DEVICE_LAYER_TARGET_LINUX
+    const bool kThreadEnabled = {
+#if CHIP_DEVICE_CONFIG_ENABLE_THREAD
+        LinuxDeviceOptions::GetInstance().mThread
+#else
+        false
+#endif
+    };
+
+    const bool kWiFiEnabled = {
+#if CHIP_DEVICE_CONFIG_ENABLE_WPA
+        LinuxDeviceOptions::GetInstance().mWiFi
+#else
+        false
+#endif
+    };
+
+    if (kThreadEnabled && kWiFiEnabled)
+    {
+#if CHIP_DEVICE_CONFIG_ENABLE_THREAD
+        sThreadNetworkCommissioningInstance.Init();
+#endif
+#if CHIP_DEVICE_CONFIG_ENABLE_WPA
+        sWiFiNetworkCommissioningInstance.Init();
+#endif
+        // Only enable secondary endpoint for network commissioning cluster when both WiFi and Thread are enabled.
+        emberAfEndpointEnableDisable(kNetworkCommissioningEndpointSecondary, true);
+    }
+    else if (kThreadEnabled)
+    {
+#if CHIP_DEVICE_CONFIG_ENABLE_THREAD
+        sThreadNetworkCommissioningInstance.Init();
+#endif
+    }
+    else if (kWiFiEnabled)
+    {
+#if CHIP_DEVICE_CONFIG_ENABLE_WPA
+        // If we only enable WiFi on this device, "move" WiFi instance to main NetworkCommissioning cluster endpoint.
+        sWiFiNetworkCommissioningInstance.~Instance();
+        new (&sWiFiNetworkCommissioningInstance)
+            Clusters::NetworkCommissioning::Instance(kNetworkCommissioningEndpointMain, &sLinuxWiFiDriver);
+        sWiFiNetworkCommissioningInstance.Init();
+#endif
+    }
+    else
+    {
+        // Use NullNetworkCommissioningInstance to disable the network commissioning functions.
+        sNullNetworkCommissioningInstance.Init();
+    }
+#endif // CHIP_DEVICE_LAYER_TARGET_LINUX
 
     ApplicationInit();
 
