@@ -1360,3 +1360,7 @@ endpoint 1 {
   server  cluster Thermostat;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+

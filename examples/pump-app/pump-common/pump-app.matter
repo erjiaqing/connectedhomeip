@@ -1082,3 +1082,7 @@ endpoint 1 {
   server  cluster TemperatureMeasurement;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+

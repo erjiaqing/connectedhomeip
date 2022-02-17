@@ -2033,3 +2033,7 @@ endpoint 5 {
   server  cluster Descriptor;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+

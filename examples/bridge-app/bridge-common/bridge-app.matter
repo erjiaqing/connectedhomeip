@@ -1132,3 +1132,7 @@ endpoint 1 {
   server  cluster Switch;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+

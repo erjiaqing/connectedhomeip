@@ -1130,3 +1130,7 @@ endpoint 1 {
   binding cluster TemperatureMeasurement;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+

@@ -626,3 +626,7 @@ endpoint 0 {
   server  cluster UserLabel;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+

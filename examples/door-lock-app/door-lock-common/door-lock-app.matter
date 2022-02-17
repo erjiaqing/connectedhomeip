@@ -1522,3 +1522,7 @@ endpoint 1 {
   server  cluster PowerSource;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+

@@ -208,6 +208,11 @@ server cluster NetworkCommissioning = 49 {
     kEthernetNetworkInterface = 0x4;
   }
 
+  struct NetworkInfo {
+    OCTET_STRING networkID = 0;
+    BOOLEAN connected = 1;
+  }
+
   struct WiFiInterfaceScanResult {
     BITMAP8 security = 0;
     OCTET_STRING ssid = 1;
@@ -228,6 +233,15 @@ server cluster NetworkCommissioning = 49 {
     INT8U lqi = 7;
   }
 
+  readonly attribute int8u maxNetworks = 0;
+  readonly attribute NetworkInfo networks[] = 1;
+  readonly attribute int8u scanMaxTimeSeconds = 2;
+  readonly attribute int8u connectMaxTimeSeconds = 3;
+  attribute boolean interfaceEnabled = 4;
+  readonly attribute nullable NetworkCommissioningStatus lastNetworkingStatus = 5;
+  readonly attribute nullable octet_string<32> lastNetworkID = 6;
+  readonly attribute nullable int32s lastConnectErrorValue = 7;
+  readonly global attribute bitmap32 featureMap = 65532;
   readonly global attribute int16u clusterRevision = 65533;
 
   request struct AddOrUpdateThreadNetworkRequest {
@@ -386,5 +400,9 @@ endpoint 0 {
   server  cluster GeneralCommissioning;
   server  cluster NetworkCommissioning;
   server  cluster OperationalCredentials;
+}
+
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
 }
 

@@ -2952,3 +2952,7 @@ endpoint 2 {
   server  cluster OnOff;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+

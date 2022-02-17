@@ -1700,3 +1700,7 @@ endpoint 2 {
   server  cluster OnOffSwitchConfiguration;
 }
 
+endpoint 65534 {
+  server  cluster NetworkCommissioning;
+}
+
