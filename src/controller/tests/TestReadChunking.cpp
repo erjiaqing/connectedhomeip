@@ -64,8 +64,8 @@ constexpr EndpointId kTestEndpointId3 = 3;
 constexpr EndpointId kTestEndpointId4    = 4;
 constexpr EndpointId kTestEndpointId5    = 5;
 constexpr AttributeId kTestListAttribute = 6;
-constexpr AttributeId kTestBadAttribute =
-    7; // Reading this attribute will return CHIP_ERROR_NO_MEMORY but nothing is actually encoded.
+constexpr AttributeId kTestBadAttribute  = 7; // Reading this attribute will return CHIP_NO_MEMORY but nothing is actually encoded.
+constexpr AttributeId kTestBadAtomicAttribute = 8;
 
 class TestCommandInteraction
 {
@@ -93,7 +93,7 @@ DECLARE_DYNAMIC_ENDPOINT(testEndpoint, testEndpointClusters);
 
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(testClusterAttrsOnEndpoint3)
 DECLARE_DYNAMIC_ATTRIBUTE(kTestListAttribute, ARRAY, 1, 0), DECLARE_DYNAMIC_ATTRIBUTE(kTestBadAttribute, ARRAY, 1, 0),
-    DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+    DECLARE_DYNAMIC_ATTRIBUTE(kTestBadAtomicAttribute, OCTET_STRING, 1, 0), DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(testEndpoint3Clusters)
 DECLARE_DYNAMIC_CLUSTER(TestCluster::Id, testClusterAttrsOnEndpoint3, nullptr, nullptr), DECLARE_DYNAMIC_CLUSTER_LIST_END;
@@ -120,7 +120,7 @@ DECLARE_DYNAMIC_ENDPOINT(testEndpoint5, testEndpoint5Clusters);
 
 //clang-format on
 
-uint8_t sAnStringThatCanNeverFitIntoTheMTU[4096] = { 0 };
+uint8_t sAStringThatCanNeverFitIntoTheMTU[4096] = { 0 };
 
 class TestReadCallback : public app::ReadClient::Callback
 {
@@ -136,6 +136,7 @@ public:
     void OnSubscriptionEstablished(SubscriptionId aSubscriptionId) override { mOnSubscriptionEstablished = true; }
 
     uint32_t mAttributeCount        = 0;
+    uint32_t mFailedCount           = 0;
     bool mOnReportEnd               = false;
     bool mOnSubscriptionEstablished = false;
     app::BufferedReadCallback mBufferedCallback;
@@ -144,7 +145,11 @@ public:
 void TestReadCallback::OnAttributeData(const app::ConcreteDataAttributePath & aPath, TLV::TLVReader * apData,
                                        const app::StatusIB & aStatus)
 {
-    if (aPath.mAttributeId == Globals::Attributes::GeneratedCommandList::Id)
+    if (aStatus.IsFailure())
+    {
+        mFailedCount++;
+    }
+    else if (aPath.mAttributeId == Globals::Attributes::GeneratedCommandList::Id)
     {
         app::DataModel::DecodableList<CommandId> v;
         NL_TEST_ASSERT(gSuite, app::DataModel::Decode(*apData, v) == CHIP_NO_ERROR);
@@ -277,8 +282,10 @@ CHIP_ERROR TestAttrAccess::Read(const app::ConcreteReadAttributePath & aPath, ap
         // The "BadAttribute" is implemented by encoding a very large octet string, then the encode will always return
         // CHIP_ERROR_NO_MEMORY.
         return aEncoder.EncodeList([](const auto & encoder) {
-            return encoder.Encode(ByteSpan(sAnStringThatCanNeverFitIntoTheMTU, sizeof(sAnStringThatCanNeverFitIntoTheMTU)));
+            return encoder.Encode(ByteSpan(sAStringThatCanNeverFitIntoTheMTU, sizeof(sAStringThatCanNeverFitIntoTheMTU)));
         });
+    case kTestBadAtomicAttribute:
+        return aEncoder.Encode(ByteSpan(sAStringThatCanNeverFitIntoTheMTU));
     default:
         return aEncoder.Encode((uint8_t) gIterationCount);
     }
@@ -502,17 +509,17 @@ void TestCommandInteraction::TestBadChunking(nlTestSuite * apSuite, void * apCon
     DataVersion dataVersionStorage[ArraySize(testEndpoint3Clusters)];
     emberAfSetDynamicEndpoint(0, kTestEndpointId3, &testEndpoint3, Span<DataVersion>(dataVersionStorage));
 
-    app::AttributePathParams attributePath(kTestEndpointId3, app::Clusters::TestCluster::Id, kTestBadAttribute);
-    app::ReadPrepareParams readParams(sessionHandle);
-
-    readParams.mpAttributePathParamsList    = &attributePath;
-    readParams.mAttributePathParamsListSize = 1;
-
-    TestReadCallback readCallback;
-
     {
+        TestReadCallback readCallback;
+
         app::ReadClient readClient(engine, &ctx.GetExchangeManager(), readCallback.mBufferedCallback,
                                    app::ReadClient::InteractionType::Read);
+
+        app::AttributePathParams attributePath(kTestEndpointId3, app::Clusters::TestCluster::Id, kTestBadAttribute);
+        app::ReadPrepareParams readParams(sessionHandle);
+
+        readParams.mpAttributePathParamsList    = &attributePath;
+        readParams.mAttributePathParamsListSize = 1;
 
         NL_TEST_ASSERT(apSuite, readClient.SendRequest(readParams) == CHIP_NO_ERROR);
 
@@ -523,8 +530,36 @@ void TestCommandInteraction::TestBadChunking(nlTestSuite * apSuite, void * apCon
         //
 
         // Nothing is actually encoded. buffered callback does not handle the message to us.
-        NL_TEST_ASSERT(apSuite, readCallback.mAttributeCount == 0);
-        NL_TEST_ASSERT(apSuite, !readCallback.mOnReportEnd);
+        NL_TEST_ASSERT(apSuite, readCallback.mAttributeCount == 1);
+        NL_TEST_ASSERT(apSuite, readCallback.mFailedCount == 1);
+
+        // The server should shutted down, while the client is still alive (pending for the attribute data.)
+        NL_TEST_ASSERT(apSuite, ctx.GetExchangeManager().GetNumActiveExchanges() == 0);
+    }
+
+    {
+        TestReadCallback readCallback;
+
+        app::ReadClient readClient(engine, &ctx.GetExchangeManager(), readCallback.mBufferedCallback,
+                                   app::ReadClient::InteractionType::Read);
+
+        app::AttributePathParams attributePath(kTestEndpointId3, app::Clusters::TestCluster::Id, kTestBadAtomicAttribute);
+        app::ReadPrepareParams readParams(sessionHandle);
+
+        readParams.mpAttributePathParamsList    = &attributePath;
+        readParams.mAttributePathParamsListSize = 1;
+
+        NL_TEST_ASSERT(apSuite, readClient.SendRequest(readParams) == CHIP_NO_ERROR);
+
+        // We should only have one report for this read request.
+        // The only data should be "resource exhausted" status code.
+        ctx.DrainAndServiceIO();
+        chip::app::InteractionModelEngine::GetInstance()->GetReportingEngine().Run();
+        ctx.DrainAndServiceIO();
+
+        // Nothing is actually encoded. buffered callback does not handle the message to us.
+        NL_TEST_ASSERT(apSuite, readCallback.mAttributeCount == 1);
+        NL_TEST_ASSERT(apSuite, readCallback.mFailedCount == 1);
 
         // The server should shutted down, while the client is still alive (pending for the attribute data.)
         NL_TEST_ASSERT(apSuite, ctx.GetExchangeManager().GetNumActiveExchanges() == 0);
