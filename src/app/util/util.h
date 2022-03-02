@@ -158,30 +158,6 @@ void emberAfDecodeAndPrintCluster(chip::ClusterId cluster);
  */
 EmberAfDifferenceType emberAfGetDifference(uint8_t * pData, EmberAfDifferenceType value, uint8_t dataSize);
 
-/**
- * Retrieves an uint64_t from the given Zigbee payload. The integer retrieved
- * may be cast into an integer of the appropriate size depending on the
- * number of bytes requested from the message. In Zigbee, all integers are
- * passed over the air in LSB form. LSB to MSB conversion is
- * done within this function automatically before the integer is returned.
- *
- * Obviously (due to return value) this function can only handle
- * the retrieval of integers between 1 and 8 bytes in length.
- *
- */
-uint64_t emberAfGetInt(const uint8_t * message, uint16_t currentIndex, uint16_t msgLen, uint8_t bytes);
-
-void emberAfClearResponseData(void);
-uint8_t * emberAfPutInt8uInResp(uint8_t value);
-uint16_t * emberAfPutInt16uInResp(uint16_t value);
-uint32_t * emberAfPutInt32uInResp(uint32_t value);
-uint32_t * emberAfPutInt24uInResp(uint32_t value);
-uint8_t * emberAfPutBlockInResp(const uint8_t * data, uint16_t length);
-uint8_t * emberAfPutStringInResp(const uint8_t * buffer);
-uint8_t * emberAfPutDateInResp(EmberAfDate * value);
-void emberAfPutInt16sInResp(int16_t value);
-void emberAfPutStatusInResp(EmberAfStatus value);
-
 bool emberAfIsThisMyEui64(EmberEUI64 eui64);
 
 #ifdef EZSP_HOST
