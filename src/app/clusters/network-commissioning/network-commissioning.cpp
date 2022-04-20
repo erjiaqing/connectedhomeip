@@ -247,11 +247,6 @@ void Instance::HandleScanNetworks(HandlerContext & ctx, const Commands::ScanNetw
     MATTER_TRACE_EVENT_SCOPE("HandleScanNetwork", "NetworkCommissioning");
     if (mFeatureFlags.Has(NetworkCommissioningFeature::kWiFiNetworkInterface))
     {
-        if (!req.ssid.HasValue())
-        {
-            ctx.mCommandHandler.AddStatus(ctx.mRequestPath, Protocols::InteractionModel::Status::InvalidCommand);
-            return;
-        }
         const auto nullableSSID = req.ssid.Value();
         ByteSpan ssid;
         if (!nullableSSID.IsNull())
