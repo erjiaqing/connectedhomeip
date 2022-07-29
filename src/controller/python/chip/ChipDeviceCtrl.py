@@ -120,6 +120,17 @@ class DCState(enum.IntEnum):
 class ChipDeviceController():
     activeList = set()
 
+    class OnNetworkCommissionFilter(enum.IntEnum):
+        NONE = 0
+        SHORT_DISCRIMINATOR = 1
+        LONG_DISCRIMINATOR = 2
+        VENDOR_ID = 3
+        DEVICE_TYPE = 4
+        COMMISSIONING_MODE = 5
+        INSTANCE_NAME = 6
+        COMMISSIONER = 7
+        COMPRESSED_FABRIC_ID = 8
+
     def __init__(self, opCredsContext: ctypes.c_void_p, fabricId: int, fabricIndex: int, nodeId: int, adminVendorId: int, paaTrustStorePath: str = "", useTestCommissioner: bool = False):
         self.state = DCState.NOT_INITIALIZED
         self.devCtrl = None
@@ -339,6 +350,42 @@ class ChipDeviceController():
 
     def CheckTestCommissionerPaseConnection(self, nodeid):
         return self._dmLib.pychip_TestPaseConnection(nodeid)
+
+    def CommissionOnNetwork(self, nodeId: int, setupPinCode: int, filterType: OnNetworkCommissionFilter = OnNetworkCommissionFilter.NONE, filter: typing.Any = None):
+        '''
+        Does the routine for OnNetworkCommissioning, with a filter for mDNS discovery.
+        Supported filters are:
+
+            devCtrl.OnNetworkCommissionFilter.NONE
+            devCtrl.OnNetworkCommissionFilter.SHORT_DISCRIMINATOR
+            devCtrl.OnNetworkCommissionFilter.LONG_DISCRIMINATOR
+            devCtrl.OnNetworkCommissionFilter.VENDOR_ID
+            devCtrl.OnNetworkCommissionFilter.DEVICE_TYPE
+            devCtrl.OnNetworkCommissionFilter.COMMISSIONING_MODE
+            devCtrl.OnNetworkCommissionFilter.INSTANCE_NAME
+            devCtrl.OnNetworkCommissionFilter.COMMISSIONER
+            devCtrl.OnNetworkCommissionFilter.COMPRESSED_FABRIC_ID
+
+            (When using REPL, you can use <tab> for completion)
+
+        The filter can be an integer, a string or None depending on the actual type of selected filter.
+        '''
+        self.CheckIsActive()
+
+        # IP connection will run through full commissioning, so we need to wait
+        # for the commissioning complete event, not just any callback.
+        self.state = DCState.COMMISSIONING
+
+        self._ChipStack.commissioningCompleteEvent.clear()
+
+        self._ChipStack.CallAsync(
+            lambda: self._dmLib.pychip_DeviceController_OnNetworkCommission(
+                self.devCtrl, nodeId, setupPinCode, int(filterType), str(filter).encode("utf-8") + b"\x00" if filter is not None else None)
+        )
+        if not self._ChipStack.commissioningCompleteEvent.isSet():
+            # Error 50 is a timeout
+            return False
+        return self._ChipStack.commissioningEventRes == 0
 
     def CommissionWithCode(self, setupPayload: str, nodeid: int):
         self.CheckIsActive()
@@ -1070,6 +1117,9 @@ class ChipDeviceController():
             self._dmLib.pychip_DeviceController_Commission.argtypes = [
                 c_void_p, c_uint64]
             self._dmLib.pychip_DeviceController_Commission.restype = c_uint32
+
+            self._dmLib.pychip_DeviceController_OnNetworkCommission.argtypes = [c_void_p, c_uint64, c_uint32, c_uint8, c_char_p]
+            self._dmLib.pychip_DeviceController_OnNetworkCommission.restype = c_uint32
 
             self._dmLib.pychip_DeviceController_DiscoverAllCommissionableNodes.argtypes = [
                 c_void_p]
