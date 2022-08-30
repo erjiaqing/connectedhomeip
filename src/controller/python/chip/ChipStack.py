@@ -39,7 +39,6 @@ from .storage import *
 from .exceptions import *
 import builtins
 
-from .interaction_model import InteractionModelError, delegate as im
 from .clusters import Command as ClusterCommand
 from .clusters import Attribute as ClusterAttribute
 from .clusters import ClusterObjects as ClusterObjects
@@ -167,14 +166,6 @@ class AsyncCallableHandle:
             return self._res
 
 
-_CompleteFunct = CFUNCTYPE(None, c_void_p, c_void_p)
-_ErrorFunct = CFUNCTYPE(None, c_void_p, c_void_p,
-                        c_ulong, POINTER(DeviceStatusStruct))
-_LogMessageFunct = CFUNCTYPE(
-    None, c_int64, c_int64, c_char_p, c_uint8, c_char_p)
-_ChipThreadTaskRunnerFunct = CFUNCTYPE(None, py_object)
-
-
 @_singleton
 class ChipStack(object):
     def __init__(self, persistentStoragePath: str, installDefaultLogHandler=True, bluetoothAdapter=None):
@@ -249,13 +240,11 @@ class ChipStack(object):
             self.callbackRes = self.ErrorToException(err, devStatusPtr)
             self.completeEvent.set()
 
-        @_ChipThreadTaskRunnerFunct
+        @chip.native.Callbacks.ChipThreadTaskRunnerFunct
         def HandleChipThreadRun(callback):
             callback()
 
         self.cbHandleChipThreadRun = HandleChipThreadRun
-        self.cbHandleComplete = _CompleteFunct(HandleComplete)
-        self.cbHandleError = _ErrorFunct(HandleError)
         # set by other modules(BLE) that require service by thread while thread blocks.
         self.blockingCB = None
 
@@ -266,11 +255,8 @@ class ChipStack(object):
         self._persistentStorage = PersistentStorage(persistentStoragePath)
 
         # Initialize the chip stack.
-        res = self._ChipStackLib.pychip_DeviceController_StackInit(self._persistentStorage.GetSdkStorageObject())
-        if res != 0:
-            raise self.ErrorToException(res)
+        chip.native.Api.DeviceController.StackInit(self._persistentStorage.GetSdkStorageObject())
 
-        im.InitIMDelegate()
         ClusterAttribute.Init()
         ClusterCommand.Init()
 
@@ -312,27 +298,27 @@ class ChipStack(object):
         Specifying None configures the chip library to log directly to stdout."""
         if logFunct is None:
             logFunct = 0
-        if not isinstance(logFunct, _LogMessageFunct):
-            logFunct = _LogMessageFunct(logFunct)
+        if not isinstance(logFunct, chip.native.Callbacks.LogMessageFunct):
+            logFunct = chip.native.Callbacks.LogMessageFunct(logFunct)
         with self.networkLock:
             # NOTE: ChipStack must hold a reference to the CFUNCTYPE object while it is
             # set. Otherwise it may get garbage collected, and logging calls from the
             # chip library will fail.
             self._activeLogFunct = logFunct
-            self._ChipStackLib.pychip_Stack_SetLogFunct(logFunct)
+            chip.native.Api.Stack.SetLogFunct(logFunct)
 
     def Shutdown(self):
         # Make sure PersistentStorage is destructed before chipStack
         # to avoid accessing builtins.chipStack after destruction.
         self._persistentStorage.Shutdown()
         self._persistentStorage = None
-        self.Call(lambda: self._ChipStackLib.pychip_DeviceController_StackShutdown())
+        self.Call(lambda: chip.native.Api.DeviceController.StackShutdown())
 
         #
         # Stack init happens in native, but shutdown happens here unfortunately.
         # #20437 tracks consolidating these.
         #
-        self._ChipStackLib.pychip_CommonStackShutdown()
+        chip.native.Api.CommonStackShutdown()
         self.networkLock = None
         self.completeEvent = None
         self._ChipStackLib = None
@@ -387,8 +373,7 @@ class ChipStack(object):
         '''
         callObj = AsyncCallableHandle(callFunct)
         pythonapi.Py_IncRef(py_object(callObj))
-        res = self._ChipStackLib.pychip_DeviceController_PostTaskOnChipThread(
-            self.cbHandleChipThreadRun, py_object(callObj))
+        res = chip.native.Api.DeviceController.PostTaskOnChipThread(self.cbHandleChipThreadRun, py_object(callObj))
         if res != 0:
             pythonapi.Py_DecRef(py_object(callObj))
             raise self.ErrorToException(res)
@@ -397,13 +382,7 @@ class ChipStack(object):
     def ErrorToException(self, err, devStatusPtr=None):
         if err == 0x2C and devStatusPtr:
             devStatus = devStatusPtr.contents
-            msg = ChipUtility.CStringToString(
-                (
-                    self._ChipStackLib.pychip_Stack_StatusReportToString(
-                        devStatus.ProfileId, devStatus.StatusCode
-                    )
-                )
-            )
+            msg = ChipUtility.CStringToString(chip.native.Api.Stack.StatusReportToString(devStatus.ProfileId, devStatus.StatusCode))
             sysErrorCode = (
                 devStatus.SysErrorCode if (
                     devStatus.SysErrorCode != 0) else None
@@ -416,9 +395,7 @@ class ChipStack(object):
         else:
             return ChipStackError(
                 err,
-                ChipUtility.CStringToString(
-                    (self._ChipStackLib.pychip_Stack_ErrorToString(err))
-                ),
+                ChipUtility.CStringToString(chip.native.Api.Stack.ErrorToString(err)),
             )
 
     def LocateChipDLL(self):
@@ -439,22 +416,3 @@ class ChipStack(object):
         if self._ChipStackLib is None:
             self._ChipStackLib = chip.native.GetLibraryHandle()
             self._chipDLLPath = chip.native.FindNativeLibraryPath()
-
-            self._ChipStackLib.pychip_DeviceController_StackInit.argtypes = [c_void_p]
-            self._ChipStackLib.pychip_DeviceController_StackInit.restype = c_uint32
-            self._ChipStackLib.pychip_DeviceController_StackShutdown.argtypes = []
-            self._ChipStackLib.pychip_DeviceController_StackShutdown.restype = c_uint32
-            self._ChipStackLib.pychip_Stack_StatusReportToString.argtypes = [
-                c_uint32,
-                c_uint16,
-            ]
-            self._ChipStackLib.pychip_Stack_StatusReportToString.restype = c_char_p
-            self._ChipStackLib.pychip_Stack_ErrorToString.argtypes = [c_uint32]
-            self._ChipStackLib.pychip_Stack_ErrorToString.restype = c_char_p
-            self._ChipStackLib.pychip_Stack_SetLogFunct.argtypes = [
-                _LogMessageFunct]
-            self._ChipStackLib.pychip_Stack_SetLogFunct.restype = c_uint32
-
-            self._ChipStackLib.pychip_DeviceController_PostTaskOnChipThread.argtypes = [
-                _ChipThreadTaskRunnerFunct, py_object]
-            self._ChipStackLib.pychip_DeviceController_PostTaskOnChipThread.restype = c_uint32

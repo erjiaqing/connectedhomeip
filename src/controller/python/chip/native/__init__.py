@@ -1,10 +1,39 @@
-import ctypes
+#
+#    Copyright (c) 2022 Project CHIP Authors
+#    All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
+
+from dataclasses import is_dataclass
 import glob
 import os
+import ctypes
 import platform
+from types import NoneType
+import typing
+from typing import Callable, Type, Any
 import construct
+import inspect
+
+from . import api_define
+from chip.exceptions import ChipStackError
 
 NATIVE_LIBRARY_BASE_NAME = "_ChipDeviceCtrl.so"
+
+# The main API namespace
+Api: api_define.ApiDefine = None
+Callbacks = api_define.Callbacks
 
 
 def _AllDirsToRoot(dir):
@@ -67,24 +96,51 @@ class NativeLibraryHandleMethodArguments:
         method.argtype = argumentTypes
 
 
-_nativeLibraryHandle: ctypes.CDLL = None
+_nativeLibraryHandle = ctypes.CDLL(FindNativeLibraryPath())
+_nativeLibraryInitialized = False
 
 
 def _GetLibraryHandle(shouldInit: bool) -> ctypes.CDLL:
     """Get a memoized handle to the chip native code dll."""
 
     global _nativeLibraryHandle
-    if _nativeLibraryHandle is None:
-        if shouldInit:
-            raise Exception("Common stack has not been initialized!")
-        _nativeLibraryHandle = ctypes.CDLL(FindNativeLibraryPath())
+    global _nativeLibraryInitialized
+
+    if shouldInit and not _nativeLibraryInitialized:
+        raise Exception("Common stack has not been initialized!")
+
+    if not _nativeLibraryHandle.pychip_CommonStackInit.argtypes:
         setter = NativeLibraryHandleMethodArguments(_nativeLibraryHandle)
         setter.Set("pychip_CommonStackInit", ctypes.c_uint32, [ctypes.c_char_p])
 
     return _nativeLibraryHandle
 
 
+def GetLibraryHandle():
+    return _GetLibraryHandle(True)
+
+
+def GetLastError(expected_err=None) -> ChipStackError:
+    ''' Returns the exception object from the current thread.
+
+    The function should be invoked from the function where the previous function is called.
+    Users should use `CallNativeWithException` instead of calling this function by their own.
+    '''
+    return ChipStackError(expected_err)
+
+
+def CallNativeWithException(func, *args):
+    ''' Calling a function from Matter's native library, and raise an exception when it returns non-zero value.
+    '''
+    res = func(*args)
+    if res != 0:
+        raise GetLastError(expected_err=res)
+
+
 def Init(bluetoothAdapter: int = None):
+    global _nativeLibraryInitialized
+    global Api
+
     CommonStackParams = construct.Struct(
         "BluetoothAdapterId" / construct.Int32ul,
     )
@@ -93,7 +149,65 @@ def Init(bluetoothAdapter: int = None):
     params = CommonStackParams.build(params)
 
     _GetLibraryHandle(False).pychip_CommonStackInit(ctypes.c_char_p(params))
+    Api = _BuildApi(api_define.ApiDefine)
+    _nativeLibraryInitialized = True
 
 
-def GetLibraryHandle():
-    return _GetLibraryHandle(True)
+# Note: Below is the experimental API for calling functions and convert ChipError to throwing exceptions fluently.
+
+def _GetNativeFunc(func: str):
+    return getattr(_nativeLibraryHandle, func)
+
+
+def _DmlibFunc(func: str, signature: Type[Callable]) -> Callable[..., Any]:
+    ''' Wraps the func from Matter dynamic library into Python function.
+
+    If ret_type is ChipStackError, calling it will raise an exception if the underlying function returns an non-zero error code.
+
+    The signature is a Callable[[Type of Args], ReturnType], where the ReturnType can be:
+    - None / NoneType: The underlying function returns nothing.
+    - ChipStackError:  The underlying function returns an ChipError error code, and an exception should be raised if it is not zero,
+    - Types:           The underlying returns value of corresponding type.
+    '''
+    arg_types, ret_type = typing.get_args(signature)
+
+    c_ret_type = ret_type
+    if ret_type == NoneType or ret_type is None:
+        c_ret_type = None
+    elif inspect.isclass(ret_type) and issubclass(ret_type, ChipStackError):
+        c_ret_type = ctypes.c_uint32
+    f = _GetNativeFunc(func)
+    f.restype = c_ret_type
+    if arg_types is not Ellipsis:
+        f.argtype = arg_types
+
+    def CallWithException(*args: arg_types) -> ret_type:
+        CallNativeWithException(f, *args)
+
+    def Call(*args: arg_types) -> ret_type:
+        return f(*args)
+
+    ret_func = Call
+    if issubclass(ret_type, ChipStackError):
+        ret_func = CallWithException
+
+    ret_func.__name__ = func
+
+    return ret_func
+
+
+def _BuildApi(cls):
+    ''' Builds the API from the function signatures from api_define class.
+    '''
+    typehints = typing.get_type_hints(cls)
+    vals = {}
+    namespace_prefix = cls.prefix
+    for k, v in typehints.items():
+        if k == 'prefix':
+            continue
+        if is_dataclass(v):
+            vals[k] = _BuildApi(v)
+        else:
+            vals[k] = _DmlibFunc(namespace_prefix + k, v)
+
+    return cls(**vals)

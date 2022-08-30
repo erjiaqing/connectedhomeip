@@ -17,18 +17,17 @@
 import ctypes
 from typing import Generator
 from dataclasses import dataclass
-from chip.ble.library_handle import _GetBleLibraryHandle
 from queue import Queue
-from chip.ble.types import DeviceScannedCallback, ScanDoneCallback
+import chip.native as Native
 
 
-@DeviceScannedCallback
+@Native.Callbacks.DeviceScannedCallback
 def ScanFoundCallback(closure, address: str, discriminator: int, vendor: int,
                       product: int):
     closure.DeviceFound(address, discriminator, vendor, product)
 
 
-@ScanDoneCallback
+@Native.Callbacks.ScanDoneCallback
 def ScanDoneCallback(closure):
     closure.ScanCompleted()
 
@@ -50,15 +49,13 @@ def DiscoverAsync(timeoutMs: int, scanCallback, doneCallback, adapter=None):
     if adapter and not isinstance(adapter, str):
         adapter = adapter.address
 
-    handle = _GetBleLibraryHandle()
-
-    nativeList = handle.pychip_ble_adapter_list_new()
+    nativeList = Native.Api.Ble.adapter_list_new()
     if nativeList == 0:
         raise Exception('Failed to list available adapters')
 
     try:
-        while handle.pychip_ble_adapter_list_next(nativeList):
-            if adapter and (adapter != handle.pychip_ble_adapter_list_get_address(
+        while Native.Api.Ble.adapter_list_next(nativeList):
+            if adapter and (adapter != Native.Api.Ble.adapter_list_get_address(
                     nativeList).decode('utf8')):
                 continue
 
@@ -74,9 +71,9 @@ def DiscoverAsync(timeoutMs: int, scanCallback, doneCallback, adapter=None):
             closure = ScannerClosure()
             ctypes.pythonapi.Py_IncRef(ctypes.py_object(closure))
 
-            scanner = handle.pychip_ble_start_scanning(
+            scanner = Native.Api.Ble.start_scanning(
                 ctypes.py_object(closure),
-                handle.pychip_ble_adapter_list_get_raw_adapter(
+                Native.Api.Ble.adapter_list_get_raw_adapter(
                     nativeList), timeoutMs,
                 ScanFoundCallback, ScanDoneCallback)
 
@@ -84,7 +81,7 @@ def DiscoverAsync(timeoutMs: int, scanCallback, doneCallback, adapter=None):
                 raise Exception('Failed to initiate scan')
             break
     finally:
-        handle.pychip_ble_adapter_list_delete(nativeList)
+        Native.Api.Ble.adapter_list_delete(nativeList)
 
 
 @dataclass

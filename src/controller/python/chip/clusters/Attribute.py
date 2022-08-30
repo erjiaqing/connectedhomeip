@@ -31,6 +31,7 @@ from .ClusterObjects import Cluster, ClusterAttributeDescriptor, ClusterEvent
 import chip.exceptions
 import chip.interaction_model
 import chip.tlv
+import chip.native as Native
 from enum import Enum, unique
 import inspect
 import sys
@@ -497,9 +498,8 @@ class SubscriptionTransaction:
         return self._readTransaction.GetAllEventValues()
 
     def OverrideLivenessTimeoutMs(self, timeoutMs: int):
-        handle = chip.native.GetLibraryHandle()
         builtins.chipStack.Call(
-            lambda: handle.pychip_ReadClient_OverrideLivenessTimeout(self._readTransaction._pReadClient, timeoutMs)
+            lambda: Native.Api.ReadClient_OverrideLivenessTimeout(self._readTransaction._pReadClient, timeoutMs)
         )
 
     def SetResubscriptionAttemptedCallback(self, callback: Callable[[SubscriptionTransaction, int, int], None], isAsync=False):
@@ -561,9 +561,8 @@ class SubscriptionTransaction:
             print("Subscription was already terminated previously!")
             return
 
-        handle = chip.native.GetLibraryHandle()
         builtins.chipStack.Call(
-            lambda: handle.pychip_ReadClient_Abort(
+            lambda: Native.Api.ReadClient_Abort(
                 self._readTransaction._pReadClient, self._readTransaction._pReadCallback))
         self._isDone = True
 
@@ -824,30 +823,14 @@ class AsyncWriteTransaction:
         self._event_loop.call_soon_threadsafe(self._handleDone)
 
 
-_OnReadAttributeDataCallbackFunct = CFUNCTYPE(
-    None, py_object, c_uint32, c_uint16, c_uint32, c_uint32, c_uint8, c_void_p, c_size_t)
-_OnSubscriptionEstablishedCallbackFunct = CFUNCTYPE(None, py_object, c_uint32)
-_OnResubscriptionAttemptedCallbackFunct = CFUNCTYPE(None, py_object, c_uint32, c_uint32)
-_OnReadEventDataCallbackFunct = CFUNCTYPE(
-    None, py_object, c_uint16, c_uint32, c_uint32, c_uint64, c_uint8, c_uint64, c_uint8, c_void_p, c_size_t, c_uint8)
-_OnReadErrorCallbackFunct = CFUNCTYPE(
-    None, py_object, c_uint32)
-_OnReadDoneCallbackFunct = CFUNCTYPE(
-    None, py_object)
-_OnReportBeginCallbackFunct = CFUNCTYPE(
-    None, py_object)
-_OnReportEndCallbackFunct = CFUNCTYPE(
-    None, py_object)
-
-
-@_OnReadAttributeDataCallbackFunct
+@Native.Callbacks.OnReadAttributeDataCallbackFunct
 def _OnReadAttributeDataCallback(closure, dataVersion: int, endpoint: int, cluster: int, attribute: int, status, data, len):
     dataBytes = ctypes.string_at(data, len)
     closure.handleAttributeData(AttributePath(
         EndpointId=endpoint, ClusterId=cluster, AttributeId=attribute), dataVersion, status, dataBytes[:])
 
 
-@_OnReadEventDataCallbackFunct
+@Native.Callbacks.OnReadEventDataCallbackFunct
 def _OnReadEventDataCallback(closure, endpoint: int, cluster: int, event: c_uint64, number: int, priority: int, timestamp: int, timestampType: int, data, len, status):
     dataBytes = ctypes.string_at(data, len)
     path = EventPath(ClusterId=cluster, EventId=event)
@@ -855,56 +838,48 @@ def _OnReadEventDataCallback(closure, endpoint: int, cluster: int, event: c_uint
         EndpointId=endpoint, ClusterId=cluster, EventId=event, EventNumber=number, Priority=EventPriority(priority), Timestamp=timestamp, TimestampType=EventTimestampType(timestampType)), path, dataBytes[:], status)
 
 
-@_OnSubscriptionEstablishedCallbackFunct
+@Native.Callbacks.OnSubscriptionEstablishedCallbackFunct
 def _OnSubscriptionEstablishedCallback(closure, subscriptionId):
     closure.handleSubscriptionEstablished(subscriptionId)
 
 
-@_OnResubscriptionAttemptedCallbackFunct
+@Native.Callbacks.OnResubscriptionAttemptedCallbackFunct
 def _OnResubscriptionAttemptedCallback(closure, terminationCause: int, nextResubscribeIntervalMsec: int):
     closure.handleResubscriptionAttempted(terminationCause, nextResubscribeIntervalMsec)
 
 
-@_OnReadErrorCallbackFunct
+@Native.Callbacks.OnReadErrorCallbackFunct
 def _OnReadErrorCallback(closure, chiperror: int):
     closure.handleError(chiperror)
 
 
-@_OnReportBeginCallbackFunct
+@Native.Callbacks.OnReportBeginCallbackFunct
 def _OnReportBeginCallback(closure):
     closure.handleReportBegin()
 
 
-@_OnReportEndCallbackFunct
+@Native.Callbacks.OnReportEndCallbackFunct
 def _OnReportEndCallback(closure):
     closure.handleReportEnd()
 
 
-@_OnReadDoneCallbackFunct
+@Native.Callbacks.OnReadDoneCallbackFunct
 def _OnReadDoneCallback(closure):
     closure.handleDone()
 
 
-_OnWriteResponseCallbackFunct = CFUNCTYPE(
-    None, py_object, c_uint16, c_uint32, c_uint32, c_uint16)
-_OnWriteErrorCallbackFunct = CFUNCTYPE(
-    None, py_object, c_uint32)
-_OnWriteDoneCallbackFunct = CFUNCTYPE(
-    None, py_object)
-
-
-@_OnWriteResponseCallbackFunct
+@Native.OnWriteResponseCallbackFunct
 def _OnWriteResponseCallback(closure, endpoint: int, cluster: int, attribute: int, status):
     closure.handleResponse(AttributePath(
         EndpointId=endpoint, ClusterId=cluster, AttributeId=attribute), status)
 
 
-@_OnWriteErrorCallbackFunct
+@Native.OnWriteErrorCallbackFunct
 def _OnWriteErrorCallback(closure, chiperror: int):
     closure.handleError(chiperror)
 
 
-@_OnWriteDoneCallbackFunct
+@Native.OnWriteDoneCallbackFunct
 def _OnWriteDoneCallback(closure):
     closure.handleDone()
 
@@ -930,14 +905,15 @@ def WriteAttributes(future: Future, eventLoop, device, attributes: List[Attribut
         writeargs.append(ctypes.c_char_p(bytes(tlv)))
         writeargs.append(ctypes.c_int(len(tlv)))
 
-    transaction = AsyncWriteTransaction(future, eventLoop)
-    ctypes.pythonapi.Py_IncRef(ctypes.py_object(transaction))
-    res = builtins.chipStack.Call(
-        lambda: handle.pychip_WriteClient_WriteAttributes(
-            ctypes.py_object(transaction), device, ctypes.c_uint16(0 if timedRequestTimeoutMs is None else timedRequestTimeoutMs), ctypes.c_uint16(0 if interactionTimeoutMs is None else interactionTimeoutMs), ctypes.c_size_t(len(attributes)), *writeargs))
-    if res != 0:
+    try:
+        transaction = AsyncWriteTransaction(future, eventLoop)
+        ctypes.pythonapi.Py_IncRef(ctypes.py_object(transaction))
+        builtins.chipStack.Call(
+            lambda: Native.Api.InteractionModel.WriteClient_WriteAttributes(
+                ctypes.py_object(transaction), device, ctypes.c_uint16(0 if timedRequestTimeoutMs is None else timedRequestTimeoutMs), ctypes.c_uint16(0 if interactionTimeoutMs is None else interactionTimeoutMs), ctypes.c_size_t(len(attributes)), *writeargs))
+    except Exception as ex:
         ctypes.pythonapi.Py_DecRef(ctypes.py_object(transaction))
-    return res
+        raise ex
 
 
 # This struct matches the PyReadAttributeParams in attribute.cpp, for passing various params together.
@@ -1024,7 +1000,6 @@ def Read(future: Future, eventLoop, device, devCtrl, attributes: List[AttributeP
     readClientObj = ctypes.POINTER(c_void_p)()
     readCallbackObj = ctypes.POINTER(c_void_p)()
 
-    ctypes.pythonapi.Py_IncRef(ctypes.py_object(transaction))
     params = _ReadParams.parse(b'\x00' * _ReadParams.sizeof())
     if subscriptionParameters is not None:
         params.MinInterval = subscriptionParameters.MinReportIntervalFloorSeconds
@@ -1034,24 +1009,25 @@ def Read(future: Future, eventLoop, device, devCtrl, attributes: List[AttributeP
     params.IsFabricFiltered = fabricFiltered
     params = _ReadParams.build(params)
 
-    res = builtins.chipStack.Call(
-        lambda: handle.pychip_ReadClient_Read(
-            ctypes.py_object(transaction),
-            ctypes.byref(readClientObj),
-            ctypes.byref(readCallbackObj),
-            device,
-            ctypes.c_char_p(params),
-            ctypes.c_size_t(0 if attributes is None else len(attributes)),
-            ctypes.c_size_t(
-                0 if dataVersionFilters is None else len(dataVersionFilters)),
-            ctypes.c_size_t(0 if events is None else len(events)),
-            *readargs))
+    try:
+        ctypes.pythonapi.Py_IncRef(ctypes.py_object(transaction))
+        builtins.chipStack.Call(
+            lambda: Native.Api.InteractionModel.ReadClient_Read(
+                ctypes.py_object(transaction),
+                ctypes.byref(readClientObj),
+                ctypes.byref(readCallbackObj),
+                device,
+                ctypes.c_char_p(params),
+                ctypes.c_size_t(0 if attributes is None else len(attributes)),
+                ctypes.c_size_t(
+                    0 if dataVersionFilters is None else len(dataVersionFilters)),
+                ctypes.c_size_t(0 if events is None else len(events)),
+                *readargs))
 
-    transaction.SetClientObjPointers(readClientObj, readCallbackObj)
-
-    if res != 0:
+        transaction.SetClientObjPointers(readClientObj, readCallbackObj)
+    except Exception as ex:
         ctypes.pythonapi.Py_DecRef(ctypes.py_object(transaction))
-    return res
+        raise ex
 
 
 def ReadAttributes(future: Future, eventLoop, device, devCtrl, attributes: List[AttributePath], dataVersionFilters: List[DataVersionFilter] = None, returnClusterObject: bool = True, subscriptionParameters: SubscriptionParameters = None, fabricFiltered: bool = True) -> int:
@@ -1063,24 +1039,9 @@ def ReadEvents(future: Future, eventLoop, device, devCtrl, events: List[EventPat
 
 
 def Init():
-    handle = chip.native.GetLibraryHandle()
-
-    # Uses one of the type decorators as an indicator for everything being
-    # initialized.
-    if not handle.pychip_WriteClient_InitCallbacks.argtypes:
-        setter = chip.native.NativeLibraryHandleMethodArguments(handle)
-
-        handle.pychip_WriteClient_WriteAttributes.restype = c_uint32
-        setter.Set('pychip_WriteClient_InitCallbacks', None, [
-                   _OnWriteResponseCallbackFunct, _OnWriteErrorCallbackFunct, _OnWriteDoneCallbackFunct])
-        handle.pychip_ReadClient_Read.restype = c_uint32
-        setter.Set('pychip_ReadClient_InitCallbacks', None, [
-                   _OnReadAttributeDataCallbackFunct, _OnReadEventDataCallbackFunct, _OnSubscriptionEstablishedCallbackFunct, _OnResubscriptionAttemptedCallbackFunct, _OnReadErrorCallbackFunct, _OnReadDoneCallbackFunct,
-                   _OnReportBeginCallbackFunct, _OnReportEndCallbackFunct])
-
-    handle.pychip_WriteClient_InitCallbacks(
+    Native.Api.WriteClient_InitCallbacks(
         _OnWriteResponseCallback, _OnWriteErrorCallback, _OnWriteDoneCallback)
-    handle.pychip_ReadClient_InitCallbacks(
+    Native.Api.ReadClient_InitCallbacks(
         _OnReadAttributeDataCallback, _OnReadEventDataCallback, _OnSubscriptionEstablishedCallback, _OnResubscriptionAttemptedCallback, _OnReadErrorCallback, _OnReadDoneCallback,
         _OnReportBeginCallback, _OnReportEndCallback)
 

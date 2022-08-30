@@ -22,7 +22,6 @@
 #include <app/DeviceProxy.h>
 #include <lib/support/CodeUtils.h>
 
-#include <controller/python/chip/interaction_model/Delegate.h>
 #include <cstdio>
 #include <lib/support/logging/CHIPLogging.h>
 
@@ -41,6 +40,8 @@ chip::ChipError::StorageType pychip_CommandSender_SendCommand(void * appContext,
 
 namespace chip {
 namespace python {
+
+static constexpr ClusterStatus kUndefinedClusterStatus = 0xFF;
 
 using OnCommandSenderResponseCallback = void (*)(PyObject appContext, chip::EndpointId endpointId, chip::ClusterId clusterId,
                                                  chip::CommandId commandId,

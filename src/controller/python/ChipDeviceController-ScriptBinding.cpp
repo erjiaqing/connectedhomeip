@@ -53,7 +53,6 @@
 #include <controller/python/ChipDeviceController-ScriptDevicePairingDelegate.h>
 #include <controller/python/ChipDeviceController-ScriptPairingDeviceDiscoveryDelegate.h>
 #include <controller/python/ChipDeviceController-StorageDelegate.h>
-#include <controller/python/chip/interaction_model/Delegate.h>
 
 #include <credentials/GroupDataProviderImpl.h>
 #include <credentials/PersistentStorageOpCertStore.h>
@@ -182,7 +181,7 @@ ChipError::StorageType pychip_ScriptDevicePairingDelegate_SetCommissioningStatus
     chip::Controller::DevicePairingDelegate_OnCommissioningStatusUpdateFunct callback);
 
 // BLE
-ChipError::StorageType pychip_DeviceCommissioner_CloseBleConnection(chip::Controller::DeviceCommissioner * devCtrl);
+ChipError::StorageType pychip_DeviceController_CloseBleConnection(chip::Controller::DeviceCommissioner * devCtrl);
 
 uint8_t pychip_DeviceController_GetLogFilter();
 void pychip_DeviceController_SetLogFilter(uint8_t category);
@@ -672,7 +671,7 @@ ChipError::StorageType pychip_ExpireSessions(chip::Controller::DeviceCommissione
     return CHIP_NO_ERROR.AsInteger();
 }
 
-ChipError::StorageType pychip_DeviceCommissioner_CloseBleConnection(chip::Controller::DeviceCommissioner * devCtrl)
+ChipError::StorageType pychip_DeviceController_CloseBleConnection(chip::Controller::DeviceCommissioner * devCtrl)
 {
 #if CONFIG_NETWORK_LAYER_BLE
     devCtrl->CloseBleConnection();

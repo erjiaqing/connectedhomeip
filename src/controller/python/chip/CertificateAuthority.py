@@ -31,6 +31,7 @@ import chip.exceptions
 from chip import ChipDeviceCtrl
 from chip import ChipStack
 from chip import FabricAdmin
+import chip.native as Native
 from chip.storage import PersistentStorage
 
 
@@ -71,12 +72,6 @@ class CertificateAuthority:
         self._chipStack = chipStack
         self._caIndex = caIndex
 
-        self._Handle().pychip_OpCreds_InitializeDelegate.restype = c_void_p
-        self._Handle().pychip_OpCreds_InitializeDelegate.argtypes = [ctypes.py_object, ctypes.c_uint32, ctypes.c_void_p]
-
-        self._Handle().pychip_OpCreds_SetMaximallyLargeCertsUsed.restype = c_uint32
-        self._Handle().pychip_OpCreds_SetMaximallyLargeCertsUsed.argtypes = [ctypes.c_void_p, ctypes.c_bool]
-
         if (persistentStorage is None):
             persistentStorage = self._chipStack.GetStorageManager()
 
@@ -84,8 +79,8 @@ class CertificateAuthority:
         self._maximizeCertChains = False
 
         self._closure = self._chipStack.Call(
-            lambda: self._Handle().pychip_OpCreds_InitializeDelegate(
-                ctypes.py_object(self), ctypes.c_uint32(self._caIndex), self._persistentStorage.GetSdkStorageObject())
+            lambda: Native.Api.OpCreds.InitializeDelegate(
+                ctypes.py_object(self), ctypes.c_uint32(self._caIndex), ctypes.c_void_p(self._persistentStorage.GetSdkStorageObject()))
         )
 
         if (self._closure is None):
@@ -161,9 +156,8 @@ class CertificateAuthority:
                 admin.Shutdown()
 
             self._activeAdmins = []
-            self._Handle().pychip_OpCreds_FreeDelegate.argtypes = [ctypes.c_void_p]
             self._chipStack.Call(
-                lambda: self._Handle().pychip_OpCreds_FreeDelegate(
+                lambda: Native.Api.OpCreds.FreeDelegate(
                     ctypes.c_void_p(self._closure))
             )
 
@@ -192,11 +186,8 @@ class CertificateAuthority:
     @maximizeCertChains.setter
     def maximizeCertChains(self, enabled: bool):
         res = self._chipStack.Call(
-            lambda: self._Handle().pychip_OpCreds_SetMaximallyLargeCertsUsed(ctypes.c_void_p(self._closure), ctypes.c_bool(enabled))
+            lambda: Native.Api.OpCreds.SetMaximallyLargeCertsUsed(ctypes.c_void_p(self._closure), ctypes.c_bool(enabled))
         )
-
-        if res != 0:
-            raise self._chipStack.ErrorToException(res)
 
         self._maximizeCertChains = enabled
 

@@ -26,6 +26,7 @@ from construct.core import ValidationError
 from .ClusterObjects import ClusterCommand
 import chip.exceptions
 import chip.interaction_model
+import chip.native as Native
 
 import inspect
 import sys
@@ -120,27 +121,19 @@ class AsyncCommandTransaction:
         )
 
 
-_OnCommandSenderResponseCallbackFunct = CFUNCTYPE(
-    None, py_object, c_uint16, c_uint32, c_uint32, c_uint16, c_uint8, c_void_p, c_uint32)
-_OnCommandSenderErrorCallbackFunct = CFUNCTYPE(
-    None, py_object, c_uint16, c_uint8, c_uint32)
-_OnCommandSenderDoneCallbackFunct = CFUNCTYPE(
-    None, py_object)
-
-
-@_OnCommandSenderResponseCallbackFunct
+@Native.Callbacks.OnCommandSenderResponseCallbackFunct
 def _OnCommandSenderResponseCallback(closure, endpoint: int, cluster: int, command: int, imStatus: int, clusterStatus: int, payload, size):
     data = ctypes.string_at(payload, size)
     closure.handleResponse(CommandPath(endpoint, cluster, command), Status(
         imStatus, clusterStatus), data[:])
 
 
-@_OnCommandSenderErrorCallbackFunct
+@Native.Callbacks.OnCommandSenderErrorCallbackFunct
 def _OnCommandSenderErrorCallback(closure, imStatus: int, clusterStatus: int, chiperror: int):
     closure.handleError(Status(imStatus, clusterStatus), chiperror)
 
 
-@_OnCommandSenderDoneCallbackFunct
+@Native.Callbacks.OnCommandSenderDoneCallbackFunct
 def _OnCommandSenderDoneCallback(closure):
     ctypes.pythonapi.Py_DecRef(ctypes.py_object(closure))
 
@@ -170,22 +163,12 @@ def SendCommand(future: Future, eventLoop, responseType: Type, device, commandPa
     payloadTLV = payload.ToTLV()
     ctypes.pythonapi.Py_IncRef(ctypes.py_object(transaction))
     return builtins.chipStack.Call(
-        lambda: handle.pychip_CommandSender_SendCommand(ctypes.py_object(
+        lambda: Native.Api.CommandSender_SendCommand(ctypes.py_object(
             transaction), device, c_uint16(0 if timedRequestTimeoutMs is None else timedRequestTimeoutMs), commandPath.EndpointId, commandPath.ClusterId, commandPath.CommandId, payloadTLV, len(payloadTLV), ctypes.c_uint16(0 if interactionTimeoutMs is None else interactionTimeoutMs)))
 
 
 def Init():
     handle = chip.native.GetLibraryHandle()
 
-    # Uses one of the type decorators as an indicator for everything being
-    # initialized.
-    if not handle.pychip_CommandSender_SendCommand.argtypes:
-        setter = chip.native.NativeLibraryHandleMethodArguments(handle)
-
-        setter.Set('pychip_CommandSender_SendCommand',
-                   c_uint32, [py_object, c_void_p, c_uint16, c_uint32, c_uint32, c_char_p, c_size_t, c_uint16])
-        setter.Set('pychip_CommandSender_InitCallbacks', None, [
-                   _OnCommandSenderResponseCallbackFunct, _OnCommandSenderErrorCallbackFunct, _OnCommandSenderDoneCallbackFunct])
-
-    handle.pychip_CommandSender_InitCallbacks(
+    Native.Api.InteractionModel.CommandSender_InitCallbacks(
         _OnCommandSenderResponseCallback, _OnCommandSenderErrorCallback, _OnCommandSenderDoneCallback)
