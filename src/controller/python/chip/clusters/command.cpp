@@ -23,7 +23,9 @@
 #include <lib/support/CodeUtils.h>
 
 #include <controller/python/chip/interaction_model/Delegate.h>
+#include <controller/python/chip/native/error.h>
 #include <cstdio>
+#include <lib/core/CHIPError.h>
 #include <lib/support/logging/CHIPLogging.h>
 
 using namespace chip;
@@ -32,11 +34,9 @@ using namespace chip::app;
 using PyObject = void *;
 
 extern "C" {
-chip::ChipError::StorageType pychip_CommandSender_SendCommand(void * appContext, DeviceProxy * device,
-                                                              uint16_t timedRequestTimeoutMs, chip::EndpointId endpointId,
-                                                              chip::ClusterId clusterId, chip::CommandId commandId,
-                                                              const uint8_t * payload, size_t length,
-                                                              uint16_t interactionTimeoutMs);
+PyChipError pychip_CommandSender_SendCommand(void * appContext, DeviceProxy * device, uint16_t timedRequestTimeoutMs,
+                                             chip::EndpointId endpointId, chip::ClusterId clusterId, chip::CommandId commandId,
+                                             const uint8_t * payload, size_t length, uint16_t interactionTimeoutMs);
 }
 
 namespace chip {
@@ -48,7 +48,7 @@ using OnCommandSenderResponseCallback = void (*)(PyObject appContext, chip::Endp
                                                  chip::ClusterStatus clusterStatus, const uint8_t * payload, uint32_t length);
 using OnCommandSenderErrorCallback    = void (*)(PyObject appContext,
                                               std::underlying_type_t<Protocols::InteractionModel::Status> status,
-                                              chip::ClusterStatus clusterStatus, uint32_t chiperror);
+                                              chip::ClusterStatus clusterStatus, PyChipError chiperror);
 using OnCommandSenderDoneCallback     = void (*)(PyObject appContext);
 
 OnCommandSenderResponseCallback gOnCommandSenderResponseCallback = nullptr;
@@ -96,7 +96,7 @@ public:
                                       // for the error code, because otherwise
                                       // the callee will think we have a stack
                                       // exception.
-                                      aProtocolError.IsIMStatus() ? 0 : aProtocolError.AsInteger());
+                                      aProtocolError.IsIMStatus() ? CHIP_NO_ERROR : aProtocolError);
     }
 
     void OnDone(CommandSender * apCommandSender) override
@@ -125,14 +125,13 @@ void pychip_CommandSender_InitCallbacks(OnCommandSenderResponseCallback onComman
     gOnCommandSenderDoneCallback     = onCommandSenderDoneCallback;
 }
 
-chip::ChipError::StorageType pychip_CommandSender_SendCommand(void * appContext, DeviceProxy * device,
-                                                              uint16_t timedRequestTimeoutMs, chip::EndpointId endpointId,
-                                                              chip::ClusterId clusterId, chip::CommandId commandId,
-                                                              const uint8_t * payload, size_t length, uint16_t interactionTimeoutMs)
+PyChipError pychip_CommandSender_SendCommand(void * appContext, DeviceProxy * device, uint16_t timedRequestTimeoutMs,
+                                             chip::EndpointId endpointId, chip::ClusterId clusterId, chip::CommandId commandId,
+                                             const uint8_t * payload, size_t length, uint16_t interactionTimeoutMs)
 {
     CHIP_ERROR err = CHIP_NO_ERROR;
 
-    VerifyOrReturnError(device->GetSecureSession().HasValue(), CHIP_ERROR_MISSING_SECURE_SESSION.AsInteger());
+    VerifyOrReturnError(device->GetSecureSession().HasValue(), CHIP_ERROR_MISSING_SECURE_SESSION);
 
     std::unique_ptr<CommandSenderCallback> callback = std::make_unique<CommandSenderCallback>(appContext);
     std::unique_ptr<CommandSender> sender           = std::make_unique<CommandSender>(callback.get(), device->GetExchangeManager(),
@@ -164,6 +163,6 @@ chip::ChipError::StorageType pychip_CommandSender_SendCommand(void * appContext,
     callback.release();
 
 exit:
-    return err.AsInteger();
+    return err;
 }
 }

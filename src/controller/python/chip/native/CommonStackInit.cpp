@@ -31,6 +31,7 @@
 #include <system/SystemError.h>
 #include <system/SystemLayer.h>
 
+#include <controller/python/chip/native/error.h>
 #include <lib/core/CHIPError.h>
 #include <lib/support/CHIPMem.h>
 #include <lib/support/CodeUtils.h>
@@ -39,8 +40,6 @@
 #include <platform/CHIPDeviceLayer.h>
 
 using namespace chip;
-
-static_assert(std::is_same<uint32_t, ChipError::StorageType>::value, "python assumes CHIP_ERROR maps to c_uint32");
 
 extern "C" {
 
@@ -60,19 +59,18 @@ void pychip_CauseCrash()
     *ptr          = 0;
 }
 
-ChipError::StorageType pychip_CommonStackInit(const PyCommonStackInitParams * aParams)
+PyChipError pychip_CommonStackInit(const PyCommonStackInitParams * aParams)
 {
-    ReturnErrorOnFailure(Platform::MemoryInit().AsInteger());
+    ReturnErrorOnFailure(Platform::MemoryInit());
 
 #if CHIP_DEVICE_LAYER_TARGET_LINUX && CHIP_DEVICE_CONFIG_ENABLE_CHIPOBLE
     // By default, Linux device is configured as a BLE peripheral while the controller needs a BLE central.
-    ReturnErrorOnFailure(
-        DeviceLayer::Internal::BLEMgrImpl().ConfigureBle(aParams->mBluetoothAdapterId, /* BLE central */ true).AsInteger());
+    ReturnErrorOnFailure(DeviceLayer::Internal::BLEMgrImpl().ConfigureBle(aParams->mBluetoothAdapterId, /* BLE central */ true));
 #endif
 
-    ReturnErrorOnFailure(DeviceLayer::PlatformMgr().InitChipStack().AsInteger());
+    ReturnErrorOnFailure(DeviceLayer::PlatformMgr().InitChipStack());
 
-    return CHIP_NO_ERROR.AsInteger();
+    return CHIP_NO_ERROR;
 }
 
 void pychip_CommonStackShutdown()
