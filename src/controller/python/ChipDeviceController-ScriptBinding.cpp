@@ -110,9 +110,6 @@ chip::NodeId kDefaultLocalDeviceId = chip::kTestControllerNodeId;
 chip::NodeId kRemoteDeviceId       = chip::kTestDeviceNodeId;
 
 extern "C" {
-PyChipError pychip_DeviceController_StackInit(Controller::Python::StorageAdapter * storageAdapter, bool enableServerInteractions);
-PyChipError pychip_DeviceController_StackShutdown();
-
 PyChipError pychip_DeviceController_NewDeviceController(chip::Controller::DeviceCommissioner ** outDevCtrl,
                                                         chip::NodeId localDeviceId, bool useTestCommissioner);
 PyChipError pychip_DeviceController_DeleteDeviceController(chip::Controller::DeviceCommissioner * devCtrl);
@@ -195,94 +192,6 @@ PyChipError pychip_ExpireSessions(chip::Controller::DeviceCommissioner * devCtrl
 uint64_t pychip_GetCommandSenderHandle(chip::DeviceProxy * device);
 
 PyChipError pychip_InteractionModel_ShutdownSubscription(SubscriptionId subscriptionId);
-
-//
-// Storage
-//
-void * pychip_Storage_InitializeStorageAdapter(chip::Controller::Python::PyObject * context,
-                                               chip::Controller::Python::SyncSetKeyValueCb setCb,
-                                               chip::Controller::Python::SetGetKeyValueCb getCb,
-                                               chip::Controller::Python::SyncDeleteKeyValueCb deleteCb);
-void pychip_Storage_ShutdownAdapter(chip::Controller::Python::StorageAdapter * storageAdapter);
-}
-
-void * pychip_Storage_InitializeStorageAdapter(chip::Controller::Python::PyObject * context,
-                                               chip::Controller::Python::SyncSetKeyValueCb setCb,
-                                               chip::Controller::Python::SetGetKeyValueCb getCb,
-                                               chip::Controller::Python::SyncDeleteKeyValueCb deleteCb)
-{
-    auto ptr = new chip::Controller::Python::StorageAdapter(context, setCb, getCb, deleteCb);
-    return ptr;
-}
-
-void pychip_Storage_ShutdownAdapter(chip::Controller::Python::StorageAdapter * storageAdapter)
-{
-    delete storageAdapter;
-}
-
-PyChipError pychip_DeviceController_StackInit(Controller::Python::StorageAdapter * storageAdapter, bool enableServerInteractions)
-{
-    VerifyOrDie(storageAdapter != nullptr);
-
-    FactoryInitParams factoryParams;
-
-    factoryParams.fabricIndependentStorage = storageAdapter;
-
-    sGroupDataProvider.SetStorageDelegate(storageAdapter);
-    PyReturnErrorOnFailure(ToPyChipError(sGroupDataProvider.Init()));
-    factoryParams.groupDataProvider = &sGroupDataProvider;
-
-    PyReturnErrorOnFailure(ToPyChipError(sPersistentStorageOpCertStore.Init(storageAdapter)));
-    factoryParams.opCertStore = &sPersistentStorageOpCertStore;
-
-    factoryParams.enableServerInteractions = enableServerInteractions;
-
-    // Hack needed due to the fact that DnsSd server uses the CommissionableDataProvider even
-    // when never starting commissionable advertising. This will not be used but prevents
-    // null pointer dereferences.
-    static chip::DeviceLayer::TestOnlyCommissionableDataProvider TestOnlyCommissionableDataProvider;
-    chip::DeviceLayer::SetCommissionableDataProvider(&TestOnlyCommissionableDataProvider);
-
-    PyReturnErrorOnFailure(ToPyChipError(DeviceControllerFactory::GetInstance().Init(factoryParams)));
-
-    //
-    // In situations where all the controller instances get shutdown, the entire stack is then also
-    // implicitly shutdown. In the REPL, users can create such a situation by manually shutting down
-    // controllers (for example, when they call ChipReplStartup::LoadFabricAdmins multiple times). In
-    // that situation, momentarily, the stack gets de-initialized. This results in further interactions with
-    // the stack being dangerous (and in fact, causes crashes).
-    //
-    // This retain call ensures the stack doesn't get de-initialized in the REPL.
-    //
-    DeviceControllerFactory::GetInstance().RetainSystemState();
-
-    //
-    // Finally, start up the main Matter thread. Any further interactions with the stack
-    // will now need to happen on the Matter thread, OR protected with the stack lock.
-    //
-    PyReturnErrorOnFailure(ToPyChipError(chip::DeviceLayer::PlatformMgr().StartEventLoopTask()));
-
-    return ToPyChipError(CHIP_NO_ERROR);
-}
-
-PyChipError pychip_DeviceController_StackShutdown()
-{
-    ChipLogError(Controller, "Shutting down the stack...");
-
-    //
-    // Let's stop the Matter thread, and wait till the event loop has stopped.
-    //
-    PyReturnErrorOnFailure(ToPyChipError(chip::DeviceLayer::PlatformMgr().StopEventLoopTask()));
-
-    //
-    // There is the symmetric call to match the Retain called at stack initialization
-    // time. This will release all resources (if there are no other controllers active).
-    //
-    DeviceControllerFactory::GetInstance().ReleaseSystemState();
-
-    DeviceControllerFactory::GetInstance().Shutdown();
-
-    return ToPyChipError(CHIP_NO_ERROR);
 }
 
 PyChipError pychip_DeviceController_GetAddressAndPort(chip::Controller::DeviceCommissioner * devCtrl, chip::NodeId nodeId,

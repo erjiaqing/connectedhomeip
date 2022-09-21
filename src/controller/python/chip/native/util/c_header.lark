@@ -1,0 +1,42 @@
+struct: "struct"i id ";"i
+
+const_type: "const"i type
+            | "const"i ptr_type
+ptr_type: type "*"i
+        | ptr_type "*"i
+var_type: const_type | ptr_type | type
+
+type_alias: "typedef"i var_type id ";"i
+
+function_def: var_type id "("i _separated{function_arg, ","i}? ")"i ";"i
+function_ptr_def: "typedef"i var_type "("i "*"i id ")"i "("i _separated{function_arg, ","i}? ")"i ";"i
+function_arg: var_type id
+type: id
+ifdef_macro: "#ifdef"i id
+endif_macro: "#endif"i
+payload: (id | string | "{" | "}")
+c_macro_ifdef: ifdef_macro payload* endif_macro
+
+id: ID
+any: ANY
+string: ESCAPED_STRING
+
+_separated{x, sep}: x (sep x)*
+
+INCLUDE: "#include"i ANY
+PRAGMA: "#pragma"i ANY
+
+ID: /[a-zA-Z_][a-zA-Z0-9_]*/
+ANY: /[^\n]+/
+
+header: (c_macro_ifdef | function_def | function_ptr_def | struct | type_alias)*
+
+%import common.ESCAPED_STRING
+%import common.WS
+%import common.C_COMMENT
+%import common.CPP_COMMENT
+%ignore WS
+%ignore C_COMMENT
+%ignore CPP_COMMENT
+%ignore INCLUDE
+%ignore PRAGMA
