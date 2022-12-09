@@ -33,6 +33,7 @@ from chip import ChipDeviceCtrl
 from chip import ChipStack
 from chip import FabricAdmin
 from chip.storage import PersistentStorage
+from chip.certificate_authority import CertificateAuthorityAdapter, ExampleCertificateAuthority
 
 
 class CertificateAuthority:
@@ -57,7 +58,7 @@ class CertificateAuthority:
     def logger(cls):
         return logging.getLogger('CertificateAuthority')
 
-    def __init__(self, chipStack: ChipStack.ChipStack, caIndex: int, persistentStorage: PersistentStorage = None):
+    def __init__(self, chipStack: ChipStack.ChipStack, caIndex: int, caAdapter: CertificateAuthorityAdapter, persistentStorage: PersistentStorage = None, ):
         '''  Initializes the CertificateAuthority. This will set-up the associated C++ OperationalCredentialsAdapter
              as well.
 
@@ -86,7 +87,7 @@ class CertificateAuthority:
 
         self._closure = self._chipStack.Call(
             lambda: self._Handle().pychip_OpCreds_InitializeDelegate(
-                ctypes.py_object(self), ctypes.c_uint32(self._caIndex), self._persistentStorage.GetSdkStorageObject())
+                ctypes.py_object(self), ctypes.c_uint32(self._caIndex), caAdapter)
         )
 
         if (self._closure is None):
@@ -260,6 +261,25 @@ class CertificateAuthorityManager:
             ca = self.NewCertificateAuthority(int(caIndex))
             ca.LoadFabricAdminsFromStorage()
 
+    def AddExternalCertificateAuthority(self, caAdapter: CertificateAuthorityAdapter, caIndex: int = None, maximizeCertChains: bool = False):
+        ''' Creates a new CertificateAuthority instance with the provided CA Index. External Certificate
+            Authorities are not presistented by the library.
+        '''
+
+        caList = self._persistentStorage.GetReplKey('caList')
+        if (caList is None):
+            caList = {}
+
+        if (str(caIndex) in caList):
+            raise ArgumentError("CA Index exists")
+
+        ca = CertificateAuthority(chipStack=self._chipStack, caIndex=caIndex,
+                                  persistentStorage=self._persistentStorage, caAdapter=caAdapter)
+        ca.maximizeCertChains = maximizeCertChains
+        self._activeCaList.append(ca)
+
+        return ca
+
     def NewCertificateAuthority(self, caIndex: int = None, maximizeCertChains: bool = False):
         ''' Creates a new CertificateAuthority instance with the provided CA Index and the PersistentStorage
             instance previously setup in the constructor.
@@ -284,7 +304,9 @@ class CertificateAuthorityManager:
             caList[str(caIndex)] = []
             self._persistentStorage.SetReplKey(key='caList', value=caList)
 
-        ca = CertificateAuthority(chipStack=self._chipStack, caIndex=caIndex, persistentStorage=self._persistentStorage)
+        caAdapter = ExampleCertificateAuthority(self._chipStack, caIndex, self._persistentStorage)
+        ca = CertificateAuthority(chipStack=self._chipStack, caIndex=caIndex,
+                                  caAdapter=caAdapter, persistentStorage=self._persistentStorage)
         ca.maximizeCertChains = maximizeCertChains
         self._activeCaList.append(ca)
 

@@ -18,7 +18,10 @@
  *    limitations under the License.
  */
 
+#include <algorithm>
 #include <type_traits>
+
+#include <controller/python/chip/certificate_authority/certificate_authority.h>
 
 #include "ChipDeviceController-ScriptDevicePairingDelegate.h"
 #include "ChipDeviceController-StorageDelegate.h"
@@ -43,6 +46,7 @@
 #include <credentials/attestation_verifier/FileAttestationTrustStore.h>
 
 using namespace chip;
+using namespace chip::Controller::Python;
 
 using Py_GenerateNOCChainFunc         = void (*)(void * pyContext, const char * csrElements, const char * attestationSignature,
                                          const char * dac, const char * pai, const char * paa,
@@ -62,6 +66,193 @@ const chip::Credentials::AttestationTrustStore * GetTestFileAttestationTrustStor
 namespace chip {
 namespace Controller {
 namespace Python {
+
+class PythonCertificateIssuerAdapter : public OperationalCredentialsDelegate
+{
+public:
+    using SetNodeIdRequestFunc           = chip_python_PythonCertificateIssuerAdapter_SetNodeIdForNextNOCRequestRequestFunc;
+    using SetFabricIdRequestFunc         = chip_python_PythonCertificateIssuerAdapter_SetFabricIdForNextNOCRequestRequestFunc;
+    using GenerateNocChainInputArguments = chip_python_PythonCertificateIssuerAdapter_GenerateNocChainInputArguments;
+    using IssueNOCChainCallback          = chip_python_PythonCertificateIssuerAdapter_IssueNOCChainCallback;
+    using GenerateNocChainFunc           = chip_python_PythonCertificateIssuerAdapter_GenerateNocChainFunc;
+    using GenerateNocChainAfterValidationInputArguments =
+        chip_python_PythonCertificateIssuerAdapter_GenerateNocChainAfterValidationInputArguments;
+    using GenerateNocChainAfterValidationOutputArguments =
+        chip_python_PythonCertificateIssuerAdapter_GenerateNocChainAfterValidationInputArguments;
+    using GenerateNOCChainAfterValidationFunc = chip_python_PythonCertificateIssuerAdapter_GenerateNOCChainAfterValidationFunc;
+
+    PythonCertificateIssuerAdapter(PyObject * aPyObject) : mPyContext(aPyObject){};
+
+    void SetSetNodeIdForNextNOCRequestFunc(SetNodeIdForNextNOCRequestRequestFunc aFunc) { mSetNodeIdRequestFunc = aFunc; }
+
+    void SetSetFabricIdForNextNOCRequestFunc(SetFabricIdForNextNOCRequestRequestFunc aFunc) { mSetFabricIdRequestFunc = aFunc; }
+
+    void SetGenerateNOCChainAfterValidationFunc(GenerateNOCChainAfterValidationFunc aFunc)
+    {
+        mGenerateNOCChainAfterValidationFunc = aFunc;
+    }
+
+    void SetGenerateNocChainFunc(GenerateNocChainFunc aFunc) { mGenerateNocChainFunc = aFunc; }
+
+    void SetNodeIdForNextNOCRequest(NodeId nodeId) override { mSetNodeIdRequestFunc(mPyContext, nodeId); }
+
+    void SetFabricIdForNextNOCRequest(FabricId fabricId) override { mSetFabricIdRequestFunc(mPyContext, fabricId); }
+
+    CHIP_ERROR GenerateNOCChain(NodeId nodeId, FabricId fabricId, const CATValues & cats, const Crypto::P256PublicKey & pubKey,
+                                MutableByteSpan & rcac, MutableByteSpan & icac, MutableByteSpan & noc)
+    {
+        GenerateNocChainAfterValidationInputArguments req = GenerateNocChainAfterValidationInputArguments{
+            .nodeId          = nodeId,
+            .fabricId        = fabricId,
+            .catValues       = cats.values.data(),
+            .catValuesLength = cats.size(),
+            .pubKey          = pubKey.Bytes(),
+            .pubkeyLen       = pubKey.Length(),
+        };
+
+        uint8_t rcacData = rcac.data();
+        uint32_t rcacLen = rcac.size();
+        uint8_t icacData = icac.data();
+        uint32_t icacLen = icac.size();
+        uint8_t nocData  = noc.data();
+        uint32_t nocLen  = noc.size();
+
+        VerifyOrReturnError(mGenerateNOCChainAfterValidationFunc(&req, &rcacData, &rcacLen, &icacData, &icacLen, &nocData, &nocLen),
+                            CHIP_ERROR_INTERNAL);
+
+        rcac = MutableByteSpan(rcacData, rcacLen);
+        icac = MutableByteSpan(icacData, icacLen);
+        noc  = MutableByteSpan(nocData, nocLen);
+
+        return CHIP_NO_ERROR;
+    }
+
+    CHIP_ERROR
+    GenerateNOCChain(const ByteSpan & csrElements, const ByteSpan & csrNonce, const ByteSpan & attestationSignature,
+                     const ByteSpan & attestationChallenge, const ByteSpan & DAC, const ByteSpan & PAI,
+                     Callback::Callback<OnNOCChainGeneration> * onCompletion) override
+    {
+        GenerateNocChainInputArguments req = GenerateNocChainInputArguments{
+            .csrElements             = csrElements.data(),
+            .csrElementsLen          = csrElements.size(),
+            .csrNonce                = csrNonce.data(),
+            .csrNonceLen             = csrElements.size(),
+            .attestationSignature    = attestationSignature.data(),
+            .attestationSignatureLen = attestationSignature.size(),
+            .attestationChallenge    = attestationChallenge.data(),
+            .attestationChallengeLen = attestationChallenge.size(),
+            .DAC                     = DAC.data(),
+            .DACLen                  = DAC.size(),
+            .PAI                     = PAI.data(),
+            .PAILen                  = PAI.size(),
+        };
+        mGenerateNocChainFunc(onCompletion, &req, OnIssueNOCChainCallback);
+        return CHIP_NO_ERROR;
+    }
+
+private:
+    SetNodeIdRequestFunc mSetNodeIdRequestFunc;
+    SetFabricIdRequestFunc mSetFabricIdRequestFunc;
+
+    GenerateNOCChainAfterValidationFunc mGenerateNOCChainAfterValidationFunc;
+    GenerateNocChainFunc mGenerateNocChainFunc;
+
+    static void OnIssueNOCChainCallback(void * context, bool success, const uint8_t * noc, size_t nocLen, const uint8_t * icac,
+                                        size_t icacLen, const uint8_t * rcac, size_t rcacLen, const uint8_t * ipk, size_t ipkLen,
+                                        NodeId adminSubject)
+    {
+        Callback::Callback<OnNOCChainGeneration> * cb = static_cast<Callback::Callback<OnNOCChainGeneration> *>(context);
+        onCompletion->mCall(onCompletion->mContext, success ? CHIP_NO_ERROR : CHIP_ERROR_INTERNAL, ByteSpan(noc, nocLen),
+                            ByteSpan(icac, icacLen), ByteSpan(rcac, rcacLen),
+                            ipkLen != 0 ? MakeOptional(ByteSpan(ipk, ipkLen)) : NullOptional,
+                            adminSubject != 0 ? MakeOptional(adminSubject) : NullOptional);
+    }
+
+    PyObject * mPyContext;
+};
+
+class PythonExampleOpCredsIssuer
+{
+public:
+    PythonExampleOpCredsIssuer(uint32_t fabricCredentialsIndex) :
+        mOnNOCChainGenerationBridge(OnNOCChainGenerationBridgeFunc, this), mExampleOpCredsIssuer(fabricCredentialsIndex)
+    {}
+
+    CHIP_ERROR Initialize(PersistentStorageDelegate & storageDelegate) { return mExampleOpCredsIssuer.Initialize(storageDelegate); }
+
+    void SetNodeIdForNextNOCRequest(NodeId nodeId) override { mExampleOpCredsIssuer.SetNodeIdForNextNOCRequest(nodeId); }
+
+    void SetFabricIdForNextNOCRequest(FabricId fabricId) override { mExampleOpCredsIssuer.SetFabricIdForNextNOCRequest(fabricId); }
+
+    CHIP_ERROR
+    GenerateNOCChainAfterValidation(const PythonCertificateIssuerAdapter::GenerateNocChainAfterValidationInputArguments * inputArgs,
+                                    uint8_t * rcac, uint32_t * rcacLen, uint8_t * icac, uint32_t * icacLen, uint8_t * noc,
+                                    uint32_t * nocLen)
+    {
+        CATValues & cats;
+        Crypto::P256PublicKey & pubKey;
+
+        MutableByteSpan rcac(*rcac, *rcacLen);
+        MutableByteSpan icac(*icac, *icacLen);
+        MutableByteSpan noc(*noc, *nocLen);
+
+        std::fill(cats.values.begin(), cats.values.end(), kUndefinedCAT);
+        std::copy(inputArgs->catValues, inputArgs->catValues + inputArgs->catValuesLength, cats.values.begin());
+
+        VerifyOrReturn(kP256_PublicKey_Length == inputArgs->pubkeyLen, CHIP_ERROR_INVALID_ARGS);
+        pubKey = FixedByteSpan<kP256_PublicKey_Length>(inputArgs->pubKey);
+
+        ReturnErrorOnFailure(mExampleOpCredsIssuer.GenerateNOCChainAfterValidation(inputArgs->nodeId, inputArgs->fabricId, cats,
+                                                                                   pubKey, rcac, icac, noc));
+        *rcacLen = rcac.size();
+        *icacLen = icac.size();
+        *nocLen  = noc.size();
+
+        return CHIP_NO_ERROR;
+    }
+
+    CHIP_ERROR GenerateNOCChain(void * context, const PythonCertificateIssuerAdapter::GenerateNocChainInputArguments * inputArgs,
+                                PythonCertificateIssuerAdapter::IssueNOCChainCallback onFinished)
+    {
+        VerifyOrReturn(mPendingGenerateNocContext == nullptr && mPendingGenerateNocOnFinished == nullptr, CHIP_ERROR_BUSY);
+        mPendingGenerateNocContext    = context;
+        mPendingGenerateNocOnFinished = onFinished;
+
+        CHIP_ERROR err = mExampleOpCredsIssuer.GenerateNOCChain(
+            ByteSpan(inputArgs->csrElements, inputArgs->csrElementsLen), ByteSpan(inputArgs->csrNonce, inputArgs->csrNonceLen),
+            ByteSpan(inputArgs->attestationSignature, inputArgs->attestationSignatureLen),
+            ByteSpan(inputArgs->attestationChallenge, inputArgs->attestationChallengeLen),
+            ByteSpan(inputArgs->DAC, inputArgs->DACLen), ByteSpan(inputArgs->PAI, inputArgs->PAILen), &mOnNOCChainGenerationBridge);
+
+        if (err != CHIP_NO_ERROR)
+        {
+            mPendingGenerateNocContext    = nullptr;
+            mPendingGenerateNocOnFinished = nullptr;
+        }
+
+        return err;
+    }
+
+    static void OnNOCChainGenerationBridgeFunc(void * context, CHIP_ERROR status, const ByteSpan & noc, const ByteSpan & icac,
+                                               const ByteSpan & rcac, Optional<Crypto::AesCcm128KeySpan> ipk,
+                                               Optional<NodeId> adminSubject)
+    {
+        PythonExampleOpCredsIssuer * this_ = static_cast<PythonExampleOpCredsIssuer *>(context);
+        this_->mPendingGenerateNocOnFinished(this_->mPendingGenerateNocContext, status == CHIP_NO_ERROR, noc.data(), noc.size(),
+                                             icac.data(), icac.size(), rcac.data(), rcac.size(),
+                                             ipk.HasValue() ? ipc.Value().data() : nullptr, ipk.HasValue() ? ipc.Value().size() : 0,
+                                             adminSubject.ValueOr(kUndefinedNodeId));
+        this_->mPendingGenerateNocContext    = nullptr;
+        this_->mPendingGenerateNocOnFinished = nullptr;
+    }
+
+private:
+    void * mPendingGenerateNocContext                                                   = nullptr;
+    PythonCertificateIssuerAdapter::IssueNOCChainCallback mPendingGenerateNocOnFinished = nullptr;
+
+    Callback::Callback<OnNOCChainGeneration> mOnNOCChainGenerationBridge;
+    ExampleOperationalCredentialsIssuer mExampleOpCredsIssuer;
+};
 
 class OperationalCredentialsAdapter : public OperationalCredentialsDelegate
 {
@@ -93,6 +284,95 @@ private:
 
     ExampleOperationalCredentialsIssuer mExampleOpCredsIssuer;
 };
+
+extern "C" {
+void * chip_python_PythonCertificateIssuerAdapter_New(PyObject * aObject)
+{
+    PythonCertificateIssuerAdapter * this_ = new PythonCertificateIssuerAdapter(aObject);
+    return this_;
+}
+
+void chip_python_PythonCertificateIssuerAdapter_Free(void * aContext)
+{
+    PythonCertificateIssuerAdapter * this_ = static_cast<PythonCertificateIssuerAdapter *>(aContext);
+    delete this_;
+}
+
+void chip_python_PythonCertificateIssuerAdapter_SetSetNodeIdForNextNOCRequestFunc(
+    void * aContext, chip_python_PythonCertificateIssuerAdapter_SetNodeIdForNextNOCRequestRequestFunc aFunc)
+{
+    PythonCertificateIssuerAdapter * this_ = static_cast<PythonCertificateIssuerAdapter *>(aContext);
+    this_->SetSetNodeIdForNextNOCRequestRequestFunc(aFunc);
+}
+
+void chip_python_PythonCertificateIssuerAdapter_SetSetFabricIdForNextNOCRequestFunc(
+    void * aContext, chip_python_PythonCertificateIssuerAdapter_SetFabricIdForNextNOCRequestRequestFunc aFunc)
+{
+    PythonCertificateIssuerAdapter * this_ = static_cast<PythonCertificateIssuerAdapter *>(aContext);
+    this_->SetSetFabricIdForNextNOCRequestRequestFunc(aFunc);
+}
+
+void chip_python_PythonCertificateIssuerAdapter_SetGenerateNOCChainAfterValidationFunc(
+    void * aContext, chip_python_PythonCertificateIssuerAdapter_GenerateNOCChainAfterValidationFunc aFunc)
+{
+    PythonCertificateIssuerAdapter * this_ = static_cast<PythonCertificateIssuerAdapter *>(aContext);
+    this_->SetGenerateNOCChainAfterValidationFunc(aFunc);
+}
+
+void chip_python_PythonCertificateIssuerAdapter_SetGenerateNocChainFunc(
+    void * aContext, chip_python_PythonCertificateIssuerAdapter_GenerateNocChainFunc aFunc)
+{
+    PythonCertificateIssuerAdapter * this_ = static_cast<PythonCertificateIssuerAdapter *>(aContext);
+    this_->SetGenerateNocChainFunc(aFunc);
+}
+
+void * chip_python_PythonExampleOpCredsIssuer_New(void * This, uint32_t fabricCredentialsIndex)
+{
+    PythonExampleOpCredsIssuer * this_ = static_cast<PythonExampleOpCredsIssuer *>(This);
+    return new PythonExampleOpCredsIssuer(fabricCredentialsIndex);
+}
+
+void chip_python_PythonExampleOpCredsIssuer_Delete(void * This)
+{
+    PythonExampleOpCredsIssuer * this_ = static_cast<PythonExampleOpCredsIssuer *>(This);
+    delete this_;
+}
+
+PyChipError chip_python_PythonExampleOpCredsIssuer_Initialize(void * This,
+                                                              chip::Controller::Python::StorageAdapter * storageAdapter)
+{
+    PythonExampleOpCredsIssuer * this_ = static_cast<PythonExampleOpCredsIssuer *>(This);
+    return ToPyChipError(this_->Initialize(*storageAdapter));
+}
+
+void chip_python_PythonExampleOpCredsIssuer_SetNodeIdForNextNOCRequest(void * This, chip::NodeId aNodeId)
+{
+    PythonExampleOpCredsIssuer * this_ = static_cast<PythonExampleOpCredsIssuer *>(This);
+    this_->SetNodeIdForNextNOCRequest(aNodeId);
+}
+
+void chip_python_PythonExampleOpCredsIssuer_SetFabricIdForNextNOCRequest(void * This, chip::FabricId aFabricId)
+{
+    PythonExampleOpCredsIssuer * this_ = static_cast<PythonExampleOpCredsIssuer *>(This);
+    this_->SetFabricIdForNextNOCRequest(aFabricId);
+}
+
+PyChipError chip_python_PythonExampleOpCredsIssuer_GenerateNOCChainAfterValidation(
+    void * This, const chip_python_PythonCertificateIssuerAdapter_GenerateNocChainAfterValidationInputArguments * inputArgs,
+    uint8_t * rcac, uint32_t * rcacLen, uint8_t * icac, uint32_t * icacLen, uint8_t * noc, uint32_t * nocLen)
+{
+    PythonExampleOpCredsIssuer * this_ = static_cast<PythonExampleOpCredsIssuer *>(This);
+    return ToPyChipError(this_->GenerateNOCChainAfterValidation(inputArgs, rcac, rcacLen, icac, icacLen, noc, nocLen));
+}
+
+PyChipError chip_python_PythonExampleOpCredsIssuer_GenerateNOCChain(
+    void * This, void * aContext, const chip_python_PythonCertificateIssuerAdapter_GenerateNocChainInputArguments * inputArgs,
+    chip_python_PythonCertificateIssuerAdapter_IssueNOCChainCallback onComplete)
+{
+    PythonExampleOpCredsIssuer * this_ = static_cast<PythonExampleOpCredsIssuer *>(This);
+    return ToPyChipError(this_->GenerateNOCChain(aContext, inputArgs, onComplete));
+}
+}
 
 } // namespace Python
 } // namespace Controller
@@ -287,20 +567,15 @@ TestCommissioner sTestCommissioner;
 extern "C" {
 struct OpCredsContext
 {
-    Platform::UniquePtr<Controller::Python::OperationalCredentialsAdapter> mAdapter;
+    PythonCertificateIssuerAdapter * mAdapter;
     void * mPyContext;
 };
 
 void * pychip_OpCreds_InitializeDelegate(void * pyContext, uint32_t fabricCredentialsIndex,
-                                         Controller::Python::StorageAdapter * storageAdapter)
+                                         PythonCertificateIssuerAdapter * certificateAdapter)
 {
     auto context      = Platform::MakeUnique<OpCredsContext>();
-    context->mAdapter = Platform::MakeUnique<Controller::Python::OperationalCredentialsAdapter>(fabricCredentialsIndex);
-
-    if (context->mAdapter->Initialize(*storageAdapter) != CHIP_NO_ERROR)
-    {
-        return nullptr;
-    }
+    context->mAdapter = certificateAdapter;
 
     return context.release();
 }

@@ -155,11 +155,12 @@ def FindNativeLibraryPath() -> str:
 class NativeLibraryHandleMethodArguments:
     """Convenience wrapper to set native method argtype and restype for methods."""
 
-    def __init__(self, handle):
+    def __init__(self, handle, methodPrefix=""):
         self.handle = handle
+        self.methodPrefix = methodPrefix
 
     def Set(self, methodName: str, resultType, argumentTypes: list):
-        method = getattr(self.handle, methodName)
+        method = getattr(self.handle, self.methodPrefix + methodName)
         method.restype = resultType
         method.argtype = argumentTypes
 
