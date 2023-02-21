@@ -1,3 +1,20 @@
+#
+#    Copyright (c) 2023 Project CHIP Authors
+#    All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License");
+#    you may not use this file except in compliance with the License.
+#    You may obtain a copy of the License at
+#
+#        http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS,
+#    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#    See the License for the specific language governing permissions and
+#    limitations under the License.
+#
+
 import abc
 import hashlib
 from ctypes import *
@@ -15,7 +32,7 @@ P256_PUBLIC_KEY_LENGTH = 2 * 32 + 1
 
 
 @ _pychip_P256Keypair_ECDSA_sign_msg_func
-def _pychip_ECDSA_sign_msg(self_: 'P256Keypair', message_buf: POINTER(c_uint8), message_size: int, signature_buf: POINTER(c_uint8), signature_buf_size: POINTER(c_uint32)) -> bool:
+def _pychip_ECDSA_sign_msg(self_: 'P256Keypair', message_buf: POINTER(c_uint8), message_size: int, signature_buf: POINTER(c_uint8), signature_buf_size: POINTER(c_size_t)) -> bool:
     res = self_.ECDSA_sign_msg(string_at(message_buf, message_size)[:])
     memmove(signature_buf, res, len(res))
     signature_buf_size.content = len(res)
@@ -40,14 +57,19 @@ class P256Keypair:
             setter = native.NativeLibraryHandleMethodArguments(handle)
             setter.Set("pychip_NewP256Keypair", c_void_p, [py_object,
                        _pychip_P256Keypair_ECDSA_sign_msg_func, _pychip_P256Keypair_ECDH_derive_secret_func])
-            setter.Set("pychip_P256Keypair_UpdatePubkey", None, [c_void_p])
+            setter.Set("pychip_P256Keypair_UpdatePubkey", native.PyChipError, [c_void_p, POINTER(c_char), c_size_t])
+            setter.Set("pychip_DeleteP256Keypair", None, [c_void_p])
         self._native_obj = handle.pychip_NewP256Keypair(
             py_object(self), _pychip_ECDSA_sign_msg, _pychip_ECDH_derive_secret)
 
-        pythonapi.Py_IncRef(py_object(self))
-
         self.UpdatePublicKey()
         return self._native_obj
+
+    def __del__(self):
+        if self._native_obj is not None:
+            handle = native.GetLibraryHandle()
+            handle.pychip_DeleteP256Keypair(self._native_obj)
+            self._native_obj = None
 
     @property
     def native_object(self) -> c_void_p:
@@ -62,7 +84,7 @@ class P256Keypair:
         generates a new keypair.
         '''
         handle = native.GetLibraryHandle()
-        handle.pychip_P256Keypair_UpdatePubkey(c_void_p(self.native_object), self.public_key)
+        handle.pychip_P256Keypair_UpdatePubkey(c_void_p(self.native_object), self.public_key, len(self.public_key)).raise_on_error()
 
     @ abc.abstractproperty
     def public_key(self) -> bytes:

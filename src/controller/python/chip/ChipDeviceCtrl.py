@@ -1330,7 +1330,10 @@ class ChipDeviceController(ChipDeviceControllerBase):
     '''
 
     def __init__(self, opCredsContext: ctypes.c_void_p, fabricId: int, nodeId: int, adminVendorId: int, catTags: typing.List[int] = [], paaTrustStorePath: str = "", useTestCommissioner: bool = False, fabricAdmin: FabricAdmin = None, name: str = None, keypair: p256keypair.P256Keypair = None):
-        super().__init__("caIndex(%x)/fabricId(0x%016X)/nodeId(0x%016X)" % (fabricAdmin.caIndex, fabricId, nodeId) if name is None else name)
+        super().__init__(
+            name or
+            f"caIndex({fabricAdmin.caIndex:x})/fabricId(0x{fabricId:016X})/nodeId(0x{nodeId:016X})"
+        )
 
         self._dmLib.pychip_DeviceController_SetIssueNOCChainCallbackPythonCallback(_IssueNOCChainCallbackPythonCallback)
 
@@ -1367,7 +1370,18 @@ class ChipDeviceController(ChipDeviceControllerBase):
     def fabricAdmin(self) -> FabricAdmin:
         return self._fabricAdmin
 
-    def Commission(self, nodeid):
+    def Commission(self, nodeid) -> bool:
+        '''
+        Start the auto-commissioning process on a node after establishing a PASE connection.
+        This function is intended to be used in conjunction with `EstablishPASESessionBLE` or
+        `EstablishPASESessionIP`. It can be called either before or after the DevicePairingDelegate
+        receives the OnPairingComplete call. Commissioners that want to perform simple
+        auto-commissioning should use the supplied "PairDevice" functions above, which will
+        establish the PASE connection and commission automatically.
+
+        Return:
+          bool: True if successful, False otherwise.
+        '''
         self.CheckIsActive()
         self._ChipStack.commissioningCompleteEvent.clear()
         self.state = DCState.COMMISSIONING
@@ -1376,10 +1390,7 @@ class ChipDeviceController(ChipDeviceControllerBase):
             lambda: self._dmLib.pychip_DeviceController_Commission(
                 self.devCtrl, nodeid)
         )
-        if not self._ChipStack.commissioningCompleteEvent.isSet():
-            # Error 50 is a timeout
-            return False
-        return self._ChipStack.commissioningEventRes == 0
+        return (self._ChipStack.commissioningCompleteEvent.isSet() and (self._ChipStack.commissioningEventRes == 0))
 
     def CommissionThread(self, discriminator, setupPinCode, nodeId, threadOperationalDataset: bytes):
         ''' Commissions a Thread device over BLE
@@ -1518,10 +1529,12 @@ class BareChipDeviceController(ChipDeviceControllerBase):
             adminVendorId: The adminVendorId of the controller.
             name: The name of the controller, for debugging use only.
         '''
-        super().__init__(f"ctrl(v/{adminVendorId})" if name is None else name)
+        super().__init__(name or f"ctrl(v/{adminVendorId})")
 
         devCtrl = c_void_p(None)
 
+        # Device should hold a reference to the key to avoid it being GC-ed.
+        self._operationalKey = operationalKey
         nativeKey = operationalKey.create_native_object()
 
         self._ChipStack.Call(
