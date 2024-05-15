@@ -26,24 +26,24 @@
 using namespace chip;
 using namespace chip::app;
 
-int inotifyWatchFd = -1;
-
-pid_t selfPid = 0;
-
 void ApplicationInit() {}
 
 void ApplicationShutdown() {}
 
-void IcdWatchThread()
+void ICDNotifierThread()
 {
-
+    while (true) {
+        sleep(10);
+        PlatformMgr().ScheduleWork([](intptr_t) { ICDNotifier::GetInstance().NotifyNetworkActivityNotification(); });
+    }
 }
 
 int main(int argc, char * argv[])
 {
-    self_pid = getpid();
-
     VerifyOrDie(ChipLinuxAppInit(argc, argv) == 0);
+
+    std::thread icdNotifierThread(ICDNotifierThread);
+
     ChipLinuxAppMainLoop();
     return 0;
 }
